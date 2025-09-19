@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    active: local
+
+  config:
+    import: optional:file:.env[.properties]
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
