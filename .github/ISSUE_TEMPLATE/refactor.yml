@@ -1,0 +1,34 @@
+name: Refactor Template
+description: 리팩토링할 때 쓰는 템플릿
+title: "♻️ [Refactor] "
+labels: ["♻️refactor"]
+
+body:
+  - type: dropdown
+    id: select-attribute
+    attributes:
+      label: "✔️ Refactor 종류"
+      description: "어떤 것을 리팩토링하는지 선택해주세요!"
+      options:
+        - "기타"
+        - "이름 바꾸기"
+        - "불필요한 코드 제거"
+        - "Code Formatting 개선"
+    validations:
+      required: true
+  - type: input
+    id: feature-content
+    attributes:
+      label: "📝 어떤 부분을 리팩토링하나요?"
+      description: 리팩토링할 작업에 대한 설명을 적어주세요.
+      placeholder: ex. 게시글 조회 함수 리팩토링
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: "👀 자세한 내용 (Optional)"
+      description: 설명이 부족하다면 더 자세한 내용을 적어주세요.
+      placeholder: ex. 게시글 조회 부분 private 함수로 분리
+    validations:
+      required: false

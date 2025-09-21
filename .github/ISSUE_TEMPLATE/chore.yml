@@ -1,0 +1,22 @@
+name: Chore Template
+description: 기타 사항 추가 시 쓰는 템플릿
+title: "🚀 [Chore] "
+labels: ["🚀chore"]
+
+body:
+  - type: input
+    id: feature-content
+    attributes:
+      label: "📝 어떤 기타 사항인가요?"
+      description: 작업할 기타 사항에 대한 설명을 적어주세요.
+      placeholder: ex. 템플릿 수정
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: "👀 자세한 내용 (Optional)"
+      description: 설명이 부족하다면 더 자세한 내용을 적어주세요.
+      placeholder: ex. 기능 템플릿 label 수정
+    validations:
+      required: false

@@ -1,0 +1,35 @@
+name: Fix template
+description: 무언가를 수정할 때 쓰는 템플릿
+title: "🐛 [Fix] "
+labels: ["🐛bug"]
+
+body:
+  - type: dropdown
+    id: select-attribute
+    attributes:
+      label: "✔️ 수정 사항"
+      description: "수정할 것을 선택해주세요!"
+      options:
+        - "기타"
+        - "API 수정"
+        - "Config 수정"
+        - "비즈니스 로직 수정"
+        - "인프라 수정"
+    validations:
+      required: true
+  - type: input
+    id: fix-content
+    attributes:
+      label: "📝 어떤 기능을 수정하나요?"
+      description: 수정 사항 대한 설명을 적어주세요.
+      placeholder: ex. 게시글 DTO 수정
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: "👀 자세한 내용 (Optional)"
+      description: 설명이 부족하다면 더 자세한 내용을 적어주세요.
+      placeholder: ex. 게시글 조회 DTO 필드 수정
+    validations:
+      required: false
