@@ -1,0 +1,23 @@
+name: Setting Template
+description: 환경 설정, 의존성 관리 등 세팅 관련 작업을 위한 템플릿
+title: "⚙️ [Setting] "
+labels: ["⚙️setting"]
+
+body:
+  - type: input
+    id: setting-content
+    attributes:
+      label: "⚙️ 어떤 설정을 하시나요?"
+      description: 추가/변경할 설정에 요약을 적어주세요.
+      placeholder: ex. CI/CD 운영 환경 Secret 추가
+    validations:
+      required: true
+  - type: textarea
+    id: additional-details
+    attributes:
+      label: "👀 자세한 내용 (Optional)"
+      description: 작업에 대한 구체적인 배경이나 참고 자료가 있다면 더 자세히 적어주세요.
+      placeholder: |
+        ex. 운영 DB 접속을 위해 PROD_DB_URL, PROD_DB_USERNAME Secret 추가 필요
+    validations:
+      required: false

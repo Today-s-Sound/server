@@ -1,0 +1,25 @@
+name: Docs Template
+description: 문서 추가 또는 수정을 위한 템플릿
+title: "📖 [Docs] "
+labels: ["📖docs"]
+
+body:
+  - type: input
+    id: document-name
+    attributes:
+      label: "📄 어떤 문서를 작업하시나요?"
+      description: 작업할 문서의 이름이나 위치를 적어주세요.
+      placeholder: "ex. README.md, ex. API 명세서, ex. 배포 가이드"
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: "👀 자세한 내용"
+      description: "수정/추가할 내용이나 문서의 목적에 대해 구체적으로 설명해주세요."
+      placeholder: |
+        ex. User API 중 '회원가입' 부분 명세 추가
+        ex. README.md에 로컬 개발 환경 실행 방법 업데이트
+    validations:
+      required: false
