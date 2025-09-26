@@ -14,21 +14,23 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class SubscriptionQueryService {
 
-  private final SubscriptionRepository subscriptionRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
-  public List<SubscriptionResponse> getMySubscriptions(final PageRequestDTO pageRequest,
-      final Long userId) {
+    public List<SubscriptionResponse> getMySubscriptions(final PageRequestDTO pageRequest,
+            final Long userId) {
 
-    List<Subscription> mySubscriptions =
-        subscriptionRepository.findByUserId(userId, pageRequest.cursor(), pageRequest.size());
+        List<Subscription> mySubscriptions = subscriptionRepository.findByUserId(userId,
+                pageRequest.cursor(), pageRequest.size());
 
-    return mySubscriptions.stream()
-        .map(
-            subscription -> SubscriptionResponse.of(subscription,
+        return mySubscriptions.stream().map(subscription -> SubscriptionResponse.of(subscription,
                 subscription.getSubscriptionKeywords().stream()
-                    .map(subscriptionKeyword -> subscriptionKeyword.getKeyword()).toList()))
-        .toList();
+                        .map(subscriptionKeyword -> subscriptionKeyword.getKeyword()).toList()))
+                .toList();
 
-  }
+    }
+
+    public void deleteSubscription(final Long subscriptionId) {
+        subscriptionRepository.deleteById(subscriptionId);
+    }
 
 }
