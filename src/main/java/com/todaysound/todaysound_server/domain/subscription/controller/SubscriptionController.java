@@ -3,8 +3,7 @@ package com.todaysound.todaysound_server.domain.subscription.controller;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse;
 import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionCommandService;
 import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionQueryService;
-import com.todaysound.todaysound_server.global.dto.PageCursorRequestDTO;
-import com.todaysound.todaysound_server.global.response.ApiResponse;
+import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,22 +23,20 @@ public class SubscriptionController {
     private final SubscriptionCommandService subscriptionCommandService;
 
     @GetMapping()
-    public ApiResponse<List<SubscriptionResponse>> getMySubscriptions(
-            @ModelAttribute final PageCursorRequestDTO pageRequest) {
+    public List<SubscriptionResponse> getMySubscriptions(
+            @ModelAttribute final PageRequestDTO pageRequest) {
 
         Long userId = 1L; // TODO: 인증 로직 추가 후 수정
 
-        return ApiResponse
-                .success(subscriptionQueryService.getMySubscriptions(pageRequest, userId));
+        return subscriptionQueryService.getMySubscriptions(pageRequest, userId);
     }
 
     @DeleteMapping("/{subscriptionId}")
-    public ApiResponse<Void> deleteSubscription(@PathVariable Long subscriptionId) {
+    public void deleteSubscription(@PathVariable Long subscriptionId) {
 
         Long userId = 1L; // TODO: 인증 로직 추가 후 수정
 
         subscriptionCommandService.deleteSubscription(subscriptionId, userId);
-        return ApiResponse.success(null);
     }
 
 }
