@@ -5,7 +5,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
-import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.util.Objects;
 
