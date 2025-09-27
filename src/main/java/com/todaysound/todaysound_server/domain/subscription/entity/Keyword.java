@@ -1,6 +1,9 @@
 package com.todaysound.todaysound_server.domain.subscription.entity;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.todaysound.todaysound_server.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -16,7 +19,8 @@ public class Keyword extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subscription_id", nullable = false)
-    private Subscription subscription;
+    @OneToMany(mappedBy = "keyword", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SubscriptionKeyword> subscriptions = new ArrayList<>();
+
+
 }

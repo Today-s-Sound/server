@@ -1,6 +1,5 @@
 package com.todaysound.todaysound_server.domain.subscription.entity;
 
-import com.querydsl.codegen.Keywords;
 import com.todaysound.todaysound_server.domain.auth.entity.User;
 import com.todaysound.todaysound_server.domain.summary.entity.Summary;
 import com.todaysound.todaysound_server.global.entity.BaseEntity;
@@ -8,12 +7,12 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.parameters.P;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -37,10 +36,15 @@ public class Subscription extends BaseEntity {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Keyword> keywords = new ArrayList<>();
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "summary", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    List<SubscriptionKeyword> subscriptionKeywords = new ArrayList<>();
+
+    @OneToMany(mappedBy = "subscription")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     List<Summary> summaries = new ArrayList<>();
 
 }
