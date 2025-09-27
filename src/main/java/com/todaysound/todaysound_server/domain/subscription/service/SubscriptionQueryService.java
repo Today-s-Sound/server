@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse;
 import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
-import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
+import com.todaysound.todaysound_server.global.dto.PageCursorRequestDTO;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -16,7 +16,7 @@ public class SubscriptionQueryService {
 
     private final SubscriptionRepository subscriptionRepository;
 
-    public List<SubscriptionResponse> getMySubscriptions(final PageRequestDTO pageRequest,
+    public List<SubscriptionResponse> getMySubscriptions(final PageCursorRequestDTO pageRequest,
             final Long userId) {
 
         List<Subscription> mySubscriptions = subscriptionRepository.findByUserId(userId,

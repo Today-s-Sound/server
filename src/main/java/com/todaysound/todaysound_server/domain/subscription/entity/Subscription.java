@@ -36,6 +36,9 @@ public class Subscription extends BaseEntity {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
     @OneToMany(mappedBy = "subscription")
     @OnDelete(action = OnDeleteAction.CASCADE)
     List<SubscriptionKeyword> subscriptionKeywords = new ArrayList<>();

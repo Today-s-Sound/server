@@ -3,7 +3,7 @@ package com.todaysound.todaysound_server.domain.subscription.controller;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse;
 import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionCommandService;
 import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionQueryService;
-import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
+import com.todaysound.todaysound_server.global.dto.PageCursorRequestDTO;
 import com.todaysound.todaysound_server.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +25,7 @@ public class SubscriptionController {
 
     @GetMapping()
     public ApiResponse<List<SubscriptionResponse>> getMySubscriptions(
-            @ModelAttribute final PageRequestDTO pageRequest) {
+            @ModelAttribute final PageCursorRequestDTO pageRequest) {
 
         Long userId = 1L; // TODO: 인증 로직 추가 후 수정
 
@@ -41,4 +41,5 @@ public class SubscriptionController {
         subscriptionCommandService.deleteSubscription(subscriptionId, userId);
         return ApiResponse.success(null);
     }
+
 }
