@@ -1,7 +1,7 @@
 package com.todaysound.todaysound_server.domain.subscription.entity;
 
 import com.querydsl.codegen.Keywords;
-import com.todaysound.todaysound_server.domain.auth.entity.User;
+import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.summary.entity.Summary;
 import com.todaysound.todaysound_server.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -40,7 +40,7 @@ public class Subscription extends BaseEntity {
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Keyword> keywords = new ArrayList<>();
 
-    @OneToMany(mappedBy = "summary", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Summary> summaries = new ArrayList<>();
 
 }

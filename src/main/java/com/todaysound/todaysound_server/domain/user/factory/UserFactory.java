@@ -2,9 +2,9 @@ package com.todaysound.todaysound_server.domain.user.factory;
 
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.entity.UserType;
+import com.todaysound.todaysound_server.domain.user.service.SecretService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -14,7 +14,7 @@ import com.todaysound.todaysound_server.global.utils.CryptoUtils;
 @RequiredArgsConstructor
 @Slf4j
 public class UserFactory {
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final SecretService secretService;
 
     /**
      * 익명 사용자 생성
@@ -28,7 +28,7 @@ public class UserFactory {
         String userId = UUID.randomUUID().toString();
 
         // BCrypt 해쉬화
-        String hashedSecret = bCryptPasswordEncoder.encode(deviceSecret);
+        String hashedSecret = secretService.encode(deviceSecret);
 
         // 중복 검사용 fingerprint 생성 (SHA-256)
         String secretFingerprint = CryptoUtils.sha256(deviceSecret);
@@ -47,5 +47,6 @@ public class UserFactory {
 
         return user;
     }
+
 
 }

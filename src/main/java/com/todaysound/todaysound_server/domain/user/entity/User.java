@@ -4,7 +4,6 @@ import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +17,6 @@ import java.util.List;
 public class User extends BaseEntity {
 
     //********************************* static final 상수 필드 *********************************/
-
-    /**
-     * 비밀번호 해시화를 위한 BCrypt 인코더
-     */
-    private static final BCryptPasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     /********************************* PK 필드 *********************************/
 
@@ -99,14 +93,6 @@ public class User extends BaseEntity {
 
     /********************************* 비니지스 로직 *********************************/
 
-    /**
-     * 시크릿 검증 메서드
-     * @param inputSecret 입력받은 평문 시크릿
-     * @return 검증 결과
-     */
-    public boolean verifySecret(String inputSecret) {
-        return PASSWORD_ENCODER.matches(inputSecret, this.hashedSecret);
-    }
 
     /**
      * 사용자 비활성화
