@@ -12,6 +12,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        show_sql: true
+        generate_statistics: true
 
 logging:
   level:
