@@ -17,6 +17,8 @@ public enum CommonErrorCode implements ErrorCode {
     NOT_SUPPORTED_METHOD_ERROR(HttpStatus.METHOD_NOT_ALLOWED, "COMMON_006", "지원하지 않는 HTTP 메서드입니다."),
     NOT_SUPPORTED_URI_ERROR(HttpStatus.NOT_FOUND, "COMMON_007", "지원하지 않는 URI입니다."),
     NOT_SUPPORTED_MEDIA_TYPE_ERROR(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "COMMON_008", "지원하지 않는 미디어 타입입니다."),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "COMMON_009", "잘못된 파라미터입니다."),
+    ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMON_010", "요청한 엔티티를 찾을 수 없습니다."),
 
 
     // ===== 서버 에러 (5xx) =====

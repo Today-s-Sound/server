@@ -35,6 +35,7 @@ public class SecurityConfig {
                 // URL별 권한 설정
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/api/users/anonymous").permitAll()
+                        .requestMatchers("/api/subscriptions/**").permitAll()  // 구독 API 허용
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

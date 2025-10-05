@@ -52,7 +52,13 @@ public class SubscriptionDynamicRepositoryImpl implements SubscriptionDynamicRep
 		if (cursor == null) {
 			return null;
 		}
-		return subscription.createdAt.loe(getCursorCreatedAt(cursor))
+		
+		LocalDateTime cursorCreatedAt = getCursorCreatedAt(cursor);
+		if (cursorCreatedAt == null) {
+			return null;
+		}
+		
+		return subscription.createdAt.loe(cursorCreatedAt)
 				.and(subscription.id.lt(cursor));
 	}
 

@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse;
 import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
+import com.todaysound.todaysound_server.domain.user.entity.User;
+import com.todaysound.todaysound_server.domain.user.validator.HeaderAuthValidator;
 import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
 import lombok.RequiredArgsConstructor;
 
@@ -15,11 +17,15 @@ import lombok.RequiredArgsConstructor;
 public class SubscriptionQueryService {
 
         private final SubscriptionRepository subscriptionRepository;
+        private final HeaderAuthValidator headerAuthValidator;
 
         public List<SubscriptionResponse> getMySubscriptions(final PageRequestDTO pageRequest,
-                        final Long userId) {
+                        final String userUuid, final String deviceSecret) {
 
-                List<Subscription> mySubscriptions = subscriptionRepository.findByUserId(userId,
+                // 헤더 인증 검증 및 사용자 획득
+                User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
+
+                List<Subscription> mySubscriptions = subscriptionRepository.findByUserId(user.getId(),
                                 pageRequest.cursor(), pageRequest.size());
 
                 return mySubscriptions.stream().map(subscription -> SubscriptionResponse.of(
