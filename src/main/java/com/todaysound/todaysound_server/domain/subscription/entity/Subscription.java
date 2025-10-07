@@ -1,28 +1,33 @@
 package com.todaysound.todaysound_server.domain.subscription.entity;
 
-import com.querydsl.codegen.Keywords;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.summary.entity.Summary;
 import com.todaysound.todaysound_server.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
+@Builder
 @Table(name = "subscriptions")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Subscription extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "url", nullable = false)
@@ -31,21 +36,24 @@ public class Subscription extends BaseEntity {
     @Column(name = "alias", nullable = false)
     private String alias;
 
+    @Builder.Default
     @Column(name = "is_urgent", nullable = false)
-    private boolean isUrgent;
+    private boolean isUrgent = false;
 
-    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "subscription")
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    List<SubscriptionKeyword> subscriptionKeywords = new ArrayList<>();
+    private List<SubscriptionKeyword> subscriptionKeywords = new ArrayList<>();
 
-    @OneToMany(mappedBy = "subscription")
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    List<Summary> summaries = new ArrayList<>();
+    private List<Summary> summaries = new ArrayList<>();
 
 }
