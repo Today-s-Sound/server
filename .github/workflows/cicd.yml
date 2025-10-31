@@ -57,12 +57,18 @@ jobs:
 
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
-          envs: DOCKER_USERNAME,IMAGE_NAME
+          envs: DOCKER_USERNAME,IMAGE_NAME,DB_URL,DB_USERNAME,DB_PASSWORD
           script: |
             set -e
 
@@ -78,6 +84,10 @@ jobs:
               sudo sh get-docker.sh
               sudo usermod -aG docker $USER
             fi
+            
+            # Start Docker service
+            sudo systemctl start docker
+            sudo systemctl enable docker
 
             # Docker setup
             sudo docker network create ${NET_NAME} || true
@@ -91,9 +101,9 @@ jobs:
               --network ${NET_NAME} \
               -p 127.0.0.1:${PORT}:8080 \
               -e SPRING_PROFILES_ACTIVE=prod \
-              -e DB_URL='${{ secrets.DB_URL }}' \
-              -e DB_USERNAME='${{ secrets.DB_USERNAME }}' \
-              -e DB_PASSWORD='${{ secrets.DB_PASSWORD }}' \
+              -e DB_URL="${DB_URL}" \
+              -e DB_USERNAME="${DB_USERNAME}" \
+              -e DB_PASSWORD="${DB_PASSWORD}" \
               ${IMAGE}
 
             # Nginx reverse proxy for today-sound.com
