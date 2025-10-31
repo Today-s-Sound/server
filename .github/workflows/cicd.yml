@@ -1,0 +1,155 @@
+name: TodaySound Server CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: todaysound-server
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('server/**/*.gradle*', 'server/**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x server/gradlew
+
+      - name: Build Spring Boot app (skip tests)
+        run: cd server && ./gradlew clean bootJar -x test
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and tag Docker image
+        run: |
+          cd server
+          GIT_SHA=${GITHUB_SHA::7}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest -t ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${GIT_SHA} .
+
+      - name: Push Docker image
+        run: |
+          GIT_SHA=${GITHUB_SHA::7}
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${GIT_SHA}
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script_stop: true
+          envs: DOCKER_USERNAME,IMAGE_NAME
+          script: |
+            set -e
+
+            # Variables
+            IMAGE="${DOCKER_USERNAME}/${IMAGE_NAME}:latest"
+            APP_NAME="todaysound-server"
+            NET_NAME="todaysound-net"
+            PORT=8080
+
+            # Install Docker if not present
+            if ! command -v docker &> /dev/null; then
+              curl -fsSL https://get.docker.com -o get-docker.sh
+              sudo sh get-docker.sh
+              sudo usermod -aG docker $USER
+            fi
+
+            # Docker setup
+            sudo docker network create ${NET_NAME} || true
+            sudo docker pull ${IMAGE}
+
+            # Run or replace container
+            sudo docker rm -f ${APP_NAME} || true
+            sudo docker run -d \
+              --name ${APP_NAME} \
+              --restart unless-stopped \
+              --network ${NET_NAME} \
+              -p 127.0.0.1:${PORT}:8080 \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              -e DB_URL='${{ secrets.DB_URL }}' \
+              -e DB_USERNAME='${{ secrets.DB_USERNAME }}' \
+              -e DB_PASSWORD='${{ secrets.DB_PASSWORD }}' \
+              ${IMAGE}
+
+            # Nginx reverse proxy for today-sound.com
+            if command -v nginx &> /dev/null; then
+              sudo tee /etc/nginx/sites-available/todaysound >/dev/null <<'NGINX'
+            server {
+                listen 80;
+                server_name today-sound.com www.today-sound.com;
+
+                location / {
+                    proxy_pass http://127.0.0.1:8080;
+                    proxy_set_header Host \$host;
+                    proxy_set_header X-Real-IP \$remote_addr;
+                    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto \$scheme;
+                    proxy_connect_timeout 30s;
+                    proxy_send_timeout 30s;
+                    proxy_read_timeout 30s;
+                }
+
+                location /health {
+                    proxy_pass http://127.0.0.1:8080/actuator/health;
+                    proxy_set_header Host \$host;
+                }
+            }
+            NGINX
+              sudo ln -sf /etc/nginx/sites-available/todaysound /etc/nginx/sites-enabled/todaysound
+              sudo rm -f /etc/nginx/sites-enabled/default
+              sudo nginx -t
+              sudo systemctl reload nginx || sudo service nginx reload
+            fi
+
+            # Health check (local) - try basic endpoint first
+            echo "Waiting for app to start..." && sleep 30
+            
+            # Try basic health check first
+            for i in {1..10}; do
+              if curl -f http://127.0.0.1:${PORT}/ 2>/dev/null; then
+                echo "App is responding!"
+                break
+              elif curl -f http://127.0.0.1:${PORT}/actuator/health 2>/dev/null; then
+                echo "Health check passed!"
+                break
+              else
+                echo "Attempt $i failed, retrying in 10s..."
+                sleep 10
+              fi
+              
+              if [ $i -eq 10 ]; then
+                echo "Health check failed after 10 attempts"
+                sudo docker logs ${APP_NAME}
+                exit 1
+              fi
+            done
+
+            # Optional domain health check
+            curl -f http://today-sound.com/ || echo "Domain check failed, but continuing..."
+
