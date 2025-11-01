@@ -1,17 +1,15 @@
 package com.todaysound.todaysound_server.domain.alarm.controller;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.web.bind.annotation.*;
 import com.todaysound.todaysound_server.domain.alarm.dto.response.RecentAlarmResponse;
 import com.todaysound.todaysound_server.domain.alarm.service.AlarmQueryService;
 import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/alrams")
+@RequestMapping("/api/alarms")
 @RequiredArgsConstructor
 public class AlarmController {
 
@@ -19,10 +17,10 @@ public class AlarmController {
 
     @GetMapping()
     public List<RecentAlarmResponse> getRecentAlarms(
-            @ModelAttribute final PageRequestDTO pageRequest) {
+            @ModelAttribute final PageRequestDTO pageRequest,
+            @RequestHeader("X-User-ID") String userUuid,
+            @RequestHeader("X-Device-Secret") String deviceSecret) {
 
-        Long userId = 1L; // TODO: 인증 로직 추가 후 수정
-
-        return alarmQueryService.getRecentAlarms(userId, pageRequest);
+        return alarmQueryService.getRecentAlarms(pageRequest, userUuid, deviceSecret);
     }
 }

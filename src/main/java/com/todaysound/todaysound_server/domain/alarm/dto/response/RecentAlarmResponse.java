@@ -6,11 +6,12 @@ import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.domain.summary.entity.Summary;
 import com.todaysound.todaysound_server.global.utils.TimeUtil;
 
-public record RecentAlarmResponse(String alias, String timeAgo, List<SummaryResponse> summaries) {
+public record RecentAlarmResponse(String alias, String timeAgo, boolean isUrgent, List<SummaryResponse> summaries) {
 
     public static RecentAlarmResponse of(Subscription subscription) {
         return new RecentAlarmResponse(subscription.getAlias(),
                 TimeUtil.toRelativeTime(subscription.getUpdatedAt()),
+                subscription.isUrgent(),
                 subscription.getSummaries().stream().map(SummaryResponse::of).toList());
     }
 

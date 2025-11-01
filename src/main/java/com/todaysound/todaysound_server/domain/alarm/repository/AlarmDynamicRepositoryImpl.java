@@ -26,54 +26,22 @@ public class AlarmDynamicRepositoryImpl implements AlarmDynamicRepository {
     public List<Subscription> findSubscriptionWithUnreadSummaries(Long userId,
             PageRequestDTO pageRequest) {
 
-        List<Long> subscriptionIds = fetchPaginatedSubscriptionIds(userId, pageRequest);
-
-        if (subscriptionIds.isEmpty()) {
-            return List.of();
-        }
-
-        return queryFactory.select(subscription).from(subscription).distinct()
+        return queryFactory
+                .selectFrom(subscription)
+                .distinct()
                 .leftJoin(subscription.summaries, summary).fetchJoin()
-                .where(subscription.id.in(subscriptionIds), summary.isRead.eq(false))
-                .orderBy(subscription.isUrgent.desc(), subscription.updatedAt.desc(),
-                        subscription.id.desc())
+                .where(
+                        subscription.user.id.eq(userId),
+                        hasUnReadSummary()  // 읽지 않은 요약이 있는 것만
+                )
+                .orderBy(
+                        subscription.isUrgent.desc(),
+                        subscription.updatedAt.desc(),
+                        subscription.id.desc()
+                )
+                .offset(pageRequest.page() * pageRequest.size())
+                .limit(pageRequest.size())
                 .fetch();
-    }
-
-    private List<Long> fetchPaginatedSubscriptionIds(Long userId, PageRequestDTO pageRequest) {
-
-        Subscription cursor = findCursor(userId, pageRequest.cursor());
-
-        return queryFactory.select(subscription.id).from(subscription)
-                .where(subscription.user.id.eq(userId), hasUnReadSummary(),
-                        createCursorCondition(cursor))
-                .orderBy(subscription.isUrgent.desc(), subscription.updatedAt.desc(),
-                        subscription.id.desc())
-                .limit(pageRequest.size()).fetch();
-    }
-
-    private Subscription findCursor(Long userId, Long cursorId) {
-        if (cursorId == null) {
-            return null; // 첫 페이지는 커서가 없음
-        }
-
-        Subscription cursor = queryFactory.selectFrom(subscription)
-                .where(subscription.user.id.eq(userId), subscription.id.eq(cursorId)).fetchFirst();
-
-        if (cursor == null) {
-            throw BaseException.type(AlarmException.ALARM_NOT_FOUND);
-        }
-        return cursor;
-    }
-
-    private BooleanExpression createCursorCondition(Subscription cursor) {
-
-        return subscription.isUrgent.lt(cursor.isUrgent())
-                .or(subscription.isUrgent.eq(cursor.isUrgent())
-                        .and(subscription.updatedAt.lt(cursor.getUpdatedAt())))
-                .or(subscription.isUrgent.eq(cursor.isUrgent())
-                        .and(subscription.updatedAt.eq(cursor.getUpdatedAt()))
-                        .and(subscription.id.lt(cursor.getId())));
     }
 
     private BooleanExpression hasUnReadSummary() {

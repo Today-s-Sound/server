@@ -26,7 +26,7 @@ public class SubscriptionQueryService {
                 User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
 
                 List<Subscription> mySubscriptions = subscriptionRepository.findByUserId(user.getId(),
-                                pageRequest.cursor(), pageRequest.size());
+                                pageRequest.page(), pageRequest.size());
 
                 return mySubscriptions.stream().map(subscription -> SubscriptionResponse.of(
                                 subscription,
