@@ -110,6 +110,10 @@ jobs:
             # Health check (local) - try basic endpoint first
             echo "Waiting for app to start..." && sleep 30
             
+            # Show container logs for debugging
+            echo "=== Container Logs ==="
+            sudo docker logs ${APP_NAME} || true
+            
             # Try basic health check first
             for i in {1..10}; do
               if curl -f http://127.0.0.1:${PORT}/ 2>/dev/null; then
