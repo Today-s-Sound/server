@@ -1,7 +1,7 @@
 package com.todaysound.todaysound_server.global.dto;
 
-public record PageRequestDTO(Long cursor, Integer size) {
-    private static final Integer DEFAULT_SIZE = 10;
+public record PageRequestDTO(Long page, Integer size) {
+    private static final Integer DEFAULT_SIZE = 5;
 
     @Override
     public Integer size() {
