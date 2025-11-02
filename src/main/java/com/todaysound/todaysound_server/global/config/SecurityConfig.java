@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/alarms/**").permitAll()
                         .requestMatchers("/api/subscriptions/**").permitAll()  // 구독 API 허용
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/", "/actuator/health").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
