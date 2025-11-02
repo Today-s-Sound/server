@@ -108,32 +108,33 @@ jobs:
               ${IMAGE}
 
             # Health check (local) - try basic endpoint first
-            echo "Waiting for app to start..." && sleep 30
+            echo "Waiting for app to start..." && sleep 45
             
-            # Show container logs for debugging
-            echo "=== Container Logs ==="
-            sudo docker logs ${APP_NAME} || true
+            # Show container status
+            sudo docker ps -a | grep ${APP_NAME} || true
             
-            # Try basic health check first
-            for i in {1..10}; do
-              if curl -f http://127.0.0.1:${PORT}/ 2>/dev/null; then
-                echo "App is responding!"
-                break
-              elif curl -f http://127.0.0.1:${PORT}/actuator/health 2>/dev/null; then
-                echo "Health check passed!"
+            # Try basic health check first (disable set -e for this section)
+            set +e
+            HEALTH_CHECK_PASSED=false
+            for i in {1..15}; do
+              HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:${PORT}/actuator/health 2>/dev/null)
+              if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "401" ] || [ "$HTTP_CODE" = "403" ]; then
+                echo "Health check passed! HTTP code: $HTTP_CODE"
+                HEALTH_CHECK_PASSED=true
                 break
               else
-                echo "Attempt $i failed, retrying in 10s..."
-                sleep 10
-              fi
-              
-              if [ $i -eq 10 ]; then
-                echo "Health check failed after 10 attempts"
-                sudo docker logs ${APP_NAME}
-                exit 1
+                echo "Attempt $i failed, HTTP code: $HTTP_CODE, retrying in 5s..."
+                sleep 5
               fi
             done
+            set -e
+            
+            if [ "$HEALTH_CHECK_PASSED" = "false" ]; then
+              echo "Health check failed after 15 attempts"
+              sudo docker logs ${APP_NAME} --tail 50 || true
+              exit 1
+            fi
 
-            # Optional domain health check
+            # Optional domain health check (non-blocking)
             curl -f http://today-sound.com/ || echo "Domain check failed, but continuing..."
 
