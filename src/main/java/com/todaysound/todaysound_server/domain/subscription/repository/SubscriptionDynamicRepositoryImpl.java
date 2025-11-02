@@ -22,29 +22,37 @@ public class SubscriptionDynamicRepositoryImpl implements SubscriptionDynamicRep
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<Subscription> findByUserId(Long userId, Long cursor, Integer size) {
+	public List<Subscription> findByUserId(Long userId, Long page, Integer size) {
 
-		List<Long> subscriptionIds = fetchSubscriptionIds(userId, cursor, size);
-
-		if (subscriptionIds.isEmpty()) {
-			return List.of();
-		}
-
-		return queryFactory.selectFrom(subscription).distinct()
-				.leftJoin(subscription.subscriptionKeywords, subscriptionKeyword).fetchJoin()
-				.leftJoin(subscriptionKeyword.keyword, keyword).fetchJoin()
-				.where(subscription.id.in(subscriptionIds)).orderBy(subscription.isUrgent.desc(),
-						subscription.createdAt.desc(), subscription.id.desc())
-				.fetch();
+        return queryFactory
+                .selectFrom(subscription)
+                .distinct()
+                .leftJoin(subscription.subscriptionKeywords, subscriptionKeyword).fetchJoin()
+                .leftJoin(subscriptionKeyword.keyword, keyword).fetchJoin()
+                .where(subscription.user.id.eq(userId))
+                .orderBy(
+                        subscription.isUrgent.desc(),
+                        subscription.createdAt.desc(),
+                        subscription.id.desc()
+                )
+                .offset(page * size)
+                .limit(size)
+                .fetch();
 
 	}
 
-	private List<Long> fetchSubscriptionIds(Long userId, Long cursor, Integer size) {
-		return queryFactory.select(subscription.id).from(subscription)
-				.where(subscription.user.id.eq(userId), getPaginationConditions(cursor))
-				.orderBy(subscription.isUrgent.desc(), subscription.createdAt.desc(),
-						subscription.id.desc())
-				.limit(size).fetch();
+	private List<Long> fetchSubscriptionIds(Long userId, Long page, Integer size) {
+        return queryFactory.select(subscription.id)
+                .from(subscription)
+                .where(subscription.user.id.eq(userId))
+                .orderBy(
+                        subscription.isUrgent.desc(),
+                        subscription.createdAt.desc(),
+                        subscription.id.desc()
+                )
+                .offset(page * size)
+                .limit(size)
+                .fetch();
 	}
 
 
@@ -53,20 +61,19 @@ public class SubscriptionDynamicRepositoryImpl implements SubscriptionDynamicRep
 			return null;
 		}
 		
-		LocalDateTime cursorCreatedAt = getCursorCreatedAt(cursor);
-		if (cursorCreatedAt == null) {
-			return null;
-		}
+//		LocalDateTime cursorCreatedAt = getCursorCreatedAt(cursor);
+//		if (cursorCreatedAt == null) {
+//			return null;
+//		}
 		
-		return subscription.createdAt.loe(cursorCreatedAt)
-				.and(subscription.id.lt(cursor));
+		return subscription.id.lt(cursor);
 	}
 
-	private LocalDateTime getCursorCreatedAt(final Long cursor) {
-		if (cursor == null) {
-			return null;
-		}
-		return queryFactory.select(subscription.createdAt).from(subscription)
-				.where(subscription.id.eq(cursor)).fetchFirst();
-	}
+//	private LocalDateTime getCursorCreatedAt(final Long cursor) {
+//		if (cursor == null) {
+//			return null;
+//		}
+//		return queryFactory.select(subscription.createdAt).from(subscription)
+//				.where(subscription.id.eq(cursor)).fetchFirst();
+//	}
 }

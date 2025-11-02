@@ -107,42 +107,6 @@ jobs:
               -e DB_PASSWORD="${DB_PASSWORD}" \
               ${IMAGE}
 
-            # Nginx reverse proxy for today-sound.com
-            if command -v nginx &> /dev/null; then
-              # remove previous config if broken
-              sudo rm -f /etc/nginx/sites-available/todaysound /etc/nginx/sites-enabled/todaysound
-
-              # write config in a single shell to avoid wrapper prefixes injected into file
-              sudo bash -lc 'cat > /etc/nginx/sites-available/todaysound << "NGINX"
-              
-            server {
-                listen 80;
-                server_name today-sound.com www.today-sound.com;
-
-                location / {
-                    proxy_pass http://127.0.0.1:8080;
-                    proxy_set_header Host $host;
-                    proxy_set_header X-Real-IP $remote_addr;
-                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_set_header X-Forwarded-Proto $scheme;
-                    proxy_connect_timeout 30s;
-                    proxy_send_timeout 30s;
-                    proxy_read_timeout 30s;
-                }
-
-                location /health {
-                    proxy_pass http://127.0.0.1:8080/actuator/health;
-                    proxy_set_header Host $host;
-                }
-            }
-            NGINX'
-
-              sudo ln -sf /etc/nginx/sites-available/todaysound /etc/nginx/sites-enabled/todaysound
-              sudo rm -f /etc/nginx/sites-enabled/default
-              sudo nginx -t
-              sudo systemctl reload nginx || sudo service nginx reload
-            fi
-
             # Health check (local) - try basic endpoint first
             echo "Waiting for app to start..." && sleep 30
             
