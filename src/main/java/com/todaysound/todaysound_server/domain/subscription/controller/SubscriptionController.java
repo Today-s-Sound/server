@@ -1,6 +1,7 @@
 package com.todaysound.todaysound_server.domain.subscription.controller;
 
 import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionCreateRequestDto;
+import com.todaysound.todaysound_server.domain.subscription.dto.response.KeywordListResponseDto;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponseDto;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse;
 import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionCommandService;
@@ -55,6 +56,14 @@ public class SubscriptionController {
             @RequestHeader("X-Device-Secret") String deviceSecret
     ) {
         return subscriptionCommandService.createSubscription(userUuid, deviceSecret, subscriptionCreateRequestDto);
+    }
+
+    /**
+     * 저장된 모든 키워드 목록 조회
+     */
+    @GetMapping("/keywords")
+    public KeywordListResponseDto getAllKeywords() {
+        return subscriptionQueryService.getAllKeywords();
     }
 
 }

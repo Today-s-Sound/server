@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 import com.todaysound.todaysound_server.domain.alarm.dto.response.RecentAlarmResponse;
+import com.todaysound.todaysound_server.domain.alarm.dto.response.UnreadAlarmResponse;
 import com.todaysound.todaysound_server.domain.alarm.service.AlarmQueryService;
+import com.todaysound.todaysound_server.domain.summary.service.SummaryCommandService;
 import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class AlarmController {
 
     private final AlarmQueryService alarmQueryService;
+    private final SummaryCommandService summaryCommandService;
 
     @GetMapping()
     public List<RecentAlarmResponse> getRecentAlarms(
@@ -22,5 +25,31 @@ public class AlarmController {
             @RequestHeader("X-Device-Secret") String deviceSecret) {
 
         return alarmQueryService.getRecentAlarms(pageRequest, userUuid, deviceSecret);
+    }
+
+    /**
+     * 메인화면용 읽지 않은 알람 조회
+     * - 읽지 않은 Summary만 포함하여 반환
+     */
+    @GetMapping("/unread")
+    public List<UnreadAlarmResponse> getUnreadAlarmsForMain(
+            @ModelAttribute final PageRequestDTO pageRequest,
+            @RequestHeader("X-User-ID") String userUuid,
+            @RequestHeader("X-Device-Secret") String deviceSecret) {
+
+        return alarmQueryService.getUnreadAlarmsForMain(pageRequest, userUuid, deviceSecret);
+    }
+
+    /**
+     * Summary 읽음 처리
+     * - 프론트에서 사용자가 Summary를 읽었을 때 호출
+     */
+    @PatchMapping("/summaries/{summaryId}/read")
+    public void markSummaryAsRead(
+            @PathVariable Long summaryId,
+            @RequestHeader("X-User-ID") String userUuid,
+            @RequestHeader("X-Device-Secret") String deviceSecret) {
+
+        summaryCommandService.markSummaryAsRead(summaryId, userUuid, deviceSecret);
     }
 }
