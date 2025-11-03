@@ -34,4 +34,11 @@ public class Summary extends BaseEntity {
     @JoinColumn(name = "subscription_id", nullable = false)
     private Subscription subscription;
 
+    /**
+     * Summary를 읽음 처리
+     */
+    public void markAsRead() {
+        this.isRead = true;
+    }
+
 }
