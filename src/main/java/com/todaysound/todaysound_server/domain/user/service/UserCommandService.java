@@ -11,11 +11,13 @@ import com.todaysound.todaysound_server.domain.user.validator.UserValidator;
 import com.todaysound.todaysound_server.global.exception.BaseException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -28,12 +30,14 @@ public class UserCommandService {
 
     public UserIdResponseDto anonymous(UserSecretRequestDto userSecretRequestDto) {
 
+        log.info("Anonymous user command received");
         boolean secretExists =
                 userQueryService.existsBySecretFingerprint(userSecretRequestDto.deviceSecret());
 
         User savedUser;
 
         if (secretExists) {
+            log.info("User secret already exists");
             User existingUser =
                     userQueryService.findBySecretFingerprint(userSecretRequestDto.deviceSecret());
 
@@ -45,10 +49,12 @@ public class UserCommandService {
             FCM_Token newFcmToken = FCM_Token.builder().fcmToken(userSecretRequestDto.fcmToken())
                     .model(userSecretRequestDto.model()).user(existingUser).build();
 
+            log.info("New FCM_Token: {}", newFcmToken.getFcmToken());
             existingUser.addFcmToken(newFcmToken);
             savedUser = userRepository.save(existingUser);
 
         } else {
+            log.info("User secret does not exist");
             // 중복 시크릿이 없다면 새로 유저 만들기
             User newUser = userFactory.createAnonymousUser(userSecretRequestDto);
 
