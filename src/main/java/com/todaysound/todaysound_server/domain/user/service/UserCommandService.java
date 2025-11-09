@@ -55,6 +55,7 @@ public class UserCommandService {
 
         } else {
             log.info("User secret does not exist");
+            log.info("fcmToken: {}", userSecretRequestDto.fcmToken());
             // 중복 시크릿이 없다면 새로 유저 만들기
             User newUser = userFactory.createAnonymousUser(userSecretRequestDto);
 
