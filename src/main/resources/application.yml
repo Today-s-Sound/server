@@ -12,4 +12,4 @@ spring:
 
 fcm:
   # Docker에서 넘겨준 값이 없으면 null
-  secret-string: ${FCM_SECRET_STRING:#{null}}
+  secret-string: ${FCM_SECRET_STRING}
