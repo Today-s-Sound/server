@@ -65,6 +65,7 @@ jobs:
           DB_URL: ${{ secrets.DB_URL }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          FCM_JSON: ${{ secrets.FCM_JSON }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
@@ -107,6 +108,7 @@ jobs:
               -e DB_URL="${DB_URL}" \
               -e DB_USERNAME="${DB_USERNAME}" \
               -e DB_PASSWORD="${DB_PASSWORD}" \
+              -e FCM_SECRET_STRING="${FCM_JSON}" \
               ${IMAGE}
 
             # Health check (local) - try basic endpoint first
