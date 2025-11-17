@@ -16,5 +16,5 @@ logging:
     com.your.package: INFO
 
 fcm:
-  # Docker에서 넘겨준 값이 없으면 null
-  secret-string: ${FCM_JSON}
+  # Docker에서 넘겨준 값이 없으면 빈 문자열
+  secret-string: ${FCM_JSON:}

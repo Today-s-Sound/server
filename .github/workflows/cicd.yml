@@ -71,7 +71,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
-          envs: DOCKER_USERNAME,IMAGE_NAME,DB_URL,DB_USERNAME,DB_PASSWORD
+          envs: DOCKER_USERNAME,IMAGE_NAME,DB_URL,DB_USERNAME,DB_PASSWORD,FCM_JSON
           script: |
             set -e
 

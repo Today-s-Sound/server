@@ -11,5 +11,5 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
 
 fcm:
-  # Docker에서 넘겨준 값이 없으면 null
-  secret-string: ${FCM_SECRET_STRING}
+  # Docker에서 넘겨준 값이 없으면 빈 문자열
+  secret-string: ${FCM_JSON:}
