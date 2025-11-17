@@ -27,6 +27,12 @@ public class FCMConfig {
         try {
             InputStream serviceAccount;
 
+            log.info("🔍 FCM Secret String 상태: fcm={},null={}, blank={}, length={}", 
+                    fcmSecretString,
+                    fcmSecretString == null, 
+                    fcmSecretString != null && fcmSecretString.isBlank(),
+                    fcmSecretString != null ? fcmSecretString.length() : 0);
+            
             // 환경 변수(GitHub Secrets)가 존재하면 우선 사용 (Prod 환경)
             if (fcmSecretString != null && !fcmSecretString.isBlank()) {
                 log.info("🔑 Firebase 키를 [환경 변수]에서 로드합니다.");
