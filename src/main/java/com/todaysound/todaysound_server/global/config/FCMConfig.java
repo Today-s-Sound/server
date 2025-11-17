@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 public class FCMConfig {
 
     // application.yml을 통해 환경변수(FCM_SECRET_STRING) 값을 주입받음
-    @Value("${fcm.secret-string:#{null}}")
+    @Value("${fcm.secret-string}")
     private String fcmSecretString;
 
     @PostConstruct
