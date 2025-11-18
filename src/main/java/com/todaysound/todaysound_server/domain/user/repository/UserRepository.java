@@ -22,6 +22,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsBySecretFingerprint(String secretFingerprint);
 
     /**
+     * 고정 출력 지문(fingerprint)으로 사용자 조회
+     */
+    Optional<User> findBySecretFingerprint(String secretFingerprint);
+
+    /**
      * 활성 사용자만 조회
      */
     List<User> findByIsActiveTrue();
