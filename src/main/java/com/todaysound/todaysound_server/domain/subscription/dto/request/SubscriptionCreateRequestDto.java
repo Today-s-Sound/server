@@ -12,7 +12,12 @@ import java.util.List;
 public record SubscriptionCreateRequestDto(
         @NotBlank(message = "저장할 URL은 필수입니다.")
         String url,
-        List<String> keywords
+
+        List<String> keywords,
+
+        String alias,
+        
+        boolean isUrgent
 ) {
 }
 

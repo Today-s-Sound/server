@@ -53,7 +53,7 @@ public class SubscriptionCommandService {
                 .map(SubscriptionCreationResponseDto::from)
                 .orElseGet(() -> {
                     // 중복이 아닌 경우에만 새로 생성 및 저장
-                    Subscription subscription = subscriptionFactory.create(user, requestDto.url(), requestDto.keywords());
+                    Subscription subscription = subscriptionFactory.create(user, requestDto.url(), requestDto.keywords(), requestDto.alias(), requestDto.isUrgent());
                     Subscription savedSubscription = subscriptionRepository.save(subscription);
                     return SubscriptionCreationResponseDto.from(savedSubscription);
                 });

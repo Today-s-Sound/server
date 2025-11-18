@@ -18,6 +18,7 @@ public class AlarmController {
     private final AlarmQueryService alarmQueryService;
     private final SummaryCommandService summaryCommandService;
 
+    // 특정 사용자의, unread summary가 있는 구독들을 대상으로 요약을 전부(읽은 것 포함) 내려주는 API
     @GetMapping()
     public List<RecentAlarmResponse> getRecentAlarms(
             @ModelAttribute final PageRequestDTO pageRequest,
@@ -39,6 +40,7 @@ public class AlarmController {
 
         return alarmQueryService.getUnreadAlarmsForMain(pageRequest, userUuid, deviceSecret);
     }
+
 
     /**
      * Summary 읽음 처리

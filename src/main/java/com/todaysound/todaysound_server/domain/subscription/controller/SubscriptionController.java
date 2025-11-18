@@ -31,6 +31,7 @@ public class SubscriptionController {
     private final SubscriptionQueryService subscriptionQueryService;
     private final SubscriptionCommandService subscriptionCommandService;
 
+    // 사용자의 구독을 페이지네이션(한 페이지 size 만큼)해서 가져옴.
     @GetMapping()
     public List<SubscriptionResponse> getMySubscriptions(
             @ModelAttribute final PageRequestDTO pageRequest,
