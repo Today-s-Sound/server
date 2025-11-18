@@ -2,6 +2,7 @@ package com.todaysound.todaysound_server.domain.alarm.repository;
 
 import java.util.List;
 
+import com.todaysound.todaysound_server.domain.summary.entity.Summary;
 import com.todaysound.todaysound_server.global.exception.BaseException;
 import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -20,34 +21,43 @@ import static com.todaysound.todaysound_server.domain.summary.entity.QSummary.su
 @RequiredArgsConstructor
 public class AlarmDynamicRepositoryImpl implements AlarmDynamicRepository {
 
-    private final JPAQueryFactory queryFactory;
+        private final JPAQueryFactory queryFactory;
 
-    @Override
-    public List<Subscription> findSubscriptionWithUnreadSummaries(Long userId,
-            PageRequestDTO pageRequest) {
+        @Override
+        public List<Subscription> findSubscriptionWithUnreadSummaries(Long userId,
+                        PageRequestDTO pageRequest) {
 
-        return queryFactory
-                .selectFrom(subscription)
-                .distinct()
-                .leftJoin(subscription.summaries, summary).fetchJoin()
-                .where(
-                        subscription.user.id.eq(userId),
-                        hasUnReadSummary()  // 읽지 않은 요약이 있는 것만
-                )
-                .orderBy(
-                        subscription.isUrgent.desc(),
-                        subscription.updatedAt.desc(),
-                        subscription.id.desc()
-                )
-                .offset(pageRequest.page() * pageRequest.size())
-                .limit(pageRequest.size())
-                .fetch();
-    }
+                return queryFactory.selectFrom(subscription).distinct()
+                                .leftJoin(subscription.summaries, summary).fetchJoin()
+                                .where(subscription.user.id.eq(userId), hasUnReadSummary() // 읽지 않은
+                                                                                           // 요약이 있는
+                                                                                           // 것만
+                                )
+                                .orderBy(subscription.isUrgent.desc(),
+                                                subscription.updatedAt.desc(),
+                                                subscription.id.desc())
+                                .offset(pageRequest.page() * pageRequest.size())
+                                .limit(pageRequest.size()).fetch();
+        }
 
-    private BooleanExpression hasUnReadSummary() {
-        return JPAExpressions.selectOne().from(summary)
-                .where(summary.subscription.id.eq(subscription.id), summary.isRead.eq(false))
-                .exists();
-    }
+        @Override
+        public List<Summary> findUnreadSummariesWithSubscription(Long userId,
+                        PageRequestDTO pageRequest) {
+
+                return queryFactory.selectFrom(summary)
+                                .innerJoin(summary.subscription, subscription).fetchJoin()
+                                .where(subscription.user.id.eq(userId), summary.isRead.eq(false))
+                                .orderBy(subscription.isUrgent.desc(), summary.updatedAt.desc(),
+                                                summary.id.desc())
+                                .offset(pageRequest.page() * pageRequest.size())
+                                .limit(pageRequest.size()).fetch();
+        }
+
+        private BooleanExpression hasUnReadSummary() {
+                return JPAExpressions.selectOne().from(summary)
+                                .where(summary.subscription.id.eq(subscription.id),
+                                                summary.isRead.eq(false))
+                                .exists();
+        }
 
 }
