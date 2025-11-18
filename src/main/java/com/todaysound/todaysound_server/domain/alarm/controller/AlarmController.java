@@ -2,6 +2,7 @@ package com.todaysound.todaysound_server.domain.alarm.controller;
 
 import java.util.List;
 
+import com.todaysound.todaysound_server.domain.alarm.dto.request.SummaryReadRequestDto;
 import org.springframework.web.bind.annotation.*;
 import com.todaysound.todaysound_server.domain.alarm.dto.response.RecentAlarmResponse;
 import com.todaysound.todaysound_server.domain.alarm.dto.response.UnreadAlarmResponse;
@@ -29,8 +30,7 @@ public class AlarmController {
     }
 
     /**
-     * 메인화면용 읽지 않은 알람 조회
-     * - 읽지 않은 Summary만 포함하여 반환
+     * 메인화면용 읽지 않은 알람 조회 - 읽지 않은 Summary만 포함하여 반환
      */
     @GetMapping("/unread")
     public List<UnreadAlarmResponse> getUnreadAlarmsForMain(
@@ -43,15 +43,13 @@ public class AlarmController {
 
 
     /**
-     * Summary 읽음 처리
-     * - 프론트에서 사용자가 Summary를 읽었을 때 호출
+     * Summary 읽음 처리 - 프론트에서 사용자가 Summary를 읽었을 때 호출
      */
-    @PatchMapping("/summaries/{summaryId}/read")
-    public void markSummaryAsRead(
-            @PathVariable Long summaryId,
+    @PatchMapping("/summaries/read")
+    public void markSummaryAsRead(@RequestBody SummaryReadRequestDto summaryReadRequestDto,
             @RequestHeader("X-User-ID") String userUuid,
             @RequestHeader("X-Device-Secret") String deviceSecret) {
 
-        summaryCommandService.markSummaryAsRead(summaryId, userUuid, deviceSecret);
+        summaryCommandService.markSummaryAsRead(summaryReadRequestDto, userUuid, deviceSecret);
     }
 }
