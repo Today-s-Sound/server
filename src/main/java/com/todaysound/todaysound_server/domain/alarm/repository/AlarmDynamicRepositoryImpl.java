@@ -29,10 +29,7 @@ public class AlarmDynamicRepositoryImpl implements AlarmDynamicRepository {
 
                 return queryFactory.selectFrom(subscription).distinct()
                                 .leftJoin(subscription.summaries, summary).fetchJoin()
-                                .where(subscription.user.id.eq(userId), hasUnReadSummary() // 읽지 않은
-                                                                                           // 요약이 있는
-                                                                                           // 것만
-                                )
+                                .where(subscription.user.id.eq(userId), hasUnReadSummary())
                                 .orderBy(subscription.isUrgent.desc(),
                                                 subscription.updatedAt.desc(),
                                                 subscription.id.desc())
