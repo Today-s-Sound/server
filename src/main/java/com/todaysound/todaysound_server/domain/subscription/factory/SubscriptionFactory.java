@@ -23,16 +23,14 @@ public class SubscriptionFactory {
     /**
      * 구독 생성
      */
-    public Subscription create(User user, String url, List<String> keywords) {
+    public Subscription create(User user, String url, List<String> keywords, String alias, boolean isUrgent) {
         log.debug("구독 생성 시작: user={}, url={}, keywords={}", user.getUserId(), url, keywords);
-
-        String alias = deriveAlias(url);
 
         Subscription subscription = Subscription.builder()
                 .user(user)
                 .url(url)
                 .alias(alias)
-                .isUrgent(false)
+                .isUrgent(isUrgent)
                 .build();
 
         // 키워드가 있는 경우 처리

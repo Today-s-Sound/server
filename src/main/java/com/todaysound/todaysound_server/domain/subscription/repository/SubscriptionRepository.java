@@ -11,5 +11,5 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     boolean existsByUserAndUrl(User user, String url);
     
     Optional<Subscription> findByUserAndUrl(User user, String url);
-    
+
 }

@@ -36,6 +36,11 @@ public class Subscription extends BaseEntity {
     @Column(name = "alias", nullable = false)
     private String alias;
 
+    // 마지막으로 처리한 게시물의 site_post_id
+    @Builder.Default
+    @Column(name = "last_seen_post_id", nullable = false)
+    private String lastSeenPostId = "";
+
     @Builder.Default
     @Column(name = "is_urgent", nullable = false)
     private boolean isUrgent = false;
@@ -57,5 +62,9 @@ public class Subscription extends BaseEntity {
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Summary> summaries = new ArrayList<>();
+
+    public void updateLastSeenPostId(String lastSeenPostId) {
+        this.lastSeenPostId = lastSeenPostId;
+    }
 
 }
