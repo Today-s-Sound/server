@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/internal")
 @RequiredArgsConstructor
-public class InternalAlertController {
+public class InternalAlertController implements InternalAlertApi {
 
     private final SubscriptionRepository subscriptionRepository;
     private final SummaryRepository summaryRepository;

@@ -14,13 +14,14 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/alarms")
 @RequiredArgsConstructor
-public class AlarmController {
+public class AlarmController implements AlarmApi {
 
     private final AlarmQueryService alarmQueryService;
     private final SummaryCommandService summaryCommandService;
 
     // 특정 사용자의, unread summary가 있는 구독들을 대상으로 요약을 전부(읽은 것 포함) 내려주는 API
     @GetMapping()
+    @Override
     public List<RecentAlarmResponse> getRecentAlarms(
             @ModelAttribute final PageRequestDTO pageRequest,
             @RequestHeader("X-User-ID") String userUuid,
@@ -33,6 +34,7 @@ public class AlarmController {
      * 메인화면용 읽지 않은 알람 조회 - 읽지 않은 Summary만 포함하여 반환
      */
     @GetMapping("/unread")
+    @Override
     public List<UnreadAlarmResponse> getUnreadAlarmsForMain(
             @ModelAttribute final PageRequestDTO pageRequest,
             @RequestHeader("X-User-ID") String userUuid,
@@ -46,6 +48,7 @@ public class AlarmController {
      * Summary 읽음 처리 - 프론트에서 사용자가 Summary를 읽었을 때 호출
      */
     @PatchMapping("/summaries/read")
+    @Override
     public void markSummaryAsRead(@RequestBody SummaryReadRequestDto summaryReadRequestDto,
             @RequestHeader("X-User-ID") String userUuid,
             @RequestHeader("X-Device-Secret") String deviceSecret) {
