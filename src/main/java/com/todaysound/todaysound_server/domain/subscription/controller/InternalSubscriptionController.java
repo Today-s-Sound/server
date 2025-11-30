@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/internal")
 @RequiredArgsConstructor
-public class InternalSubscriptionController {
+public class InternalSubscriptionController implements InternalSubscriptionApi {
 
     private final SubscriptionRepository subscriptionRepository;
 

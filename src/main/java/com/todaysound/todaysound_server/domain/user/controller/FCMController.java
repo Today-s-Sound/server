@@ -4,16 +4,18 @@ import com.todaysound.todaysound_server.domain.user.dto.request.FCMNotificationR
 import com.todaysound.todaysound_server.domain.user.dto.response.FCMNotificationResponseDto;
 import com.todaysound.todaysound_server.domain.user.service.FCMService;
 import com.todaysound.todaysound_server.domain.user.service.UserQueryService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "FCM", description = "FCM 푸시 알림 API")
 @RestController
 @RequestMapping("/api/fcm")
 @RequiredArgsConstructor
-public class FCMController {
+public class FCMController implements FCMApi {
 
     private final FCMService fcmService;
     private final UserQueryService userQueryService;
