@@ -58,4 +58,18 @@ public class SubscriptionCommandService {
                     return SubscriptionCreationResponseDto.from(savedSubscription);
                 });
     }
+
+    public void alarmBlock(Long subscriptionId) {
+        Subscription subscription = subscriptionRepository.findById(subscriptionId).orElseThrow(
+                () -> BaseException.type(SubscriptionException.SUBSCRIPTION_NOT_FOUND));
+
+        subscription.alarmBlock();
+    }
+
+    public void alarmUnBlock(Long subscriptionId) {
+        Subscription subscription = subscriptionRepository.findById(subscriptionId).orElseThrow(
+                () -> BaseException.type(SubscriptionException.SUBSCRIPTION_NOT_FOUND));
+
+        subscription.alarmUnblock();
+    }
 }
