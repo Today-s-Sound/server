@@ -22,11 +22,18 @@ public class FeedDynamicRepositoryImpl implements FeedDynamicRepository {
     public List<Summary> findUnreadSummariesByUserId(Long userId, PageRequestDTO pageRequest) {
 
         return queryFactory.selectFrom(summary).innerJoin(summary.subscription, subscription)
-                .fetchJoin()
-                .where(subscription.user.id.eq(userId), summary.isRead.eq(false)
-                        )
+                .fetchJoin().where(subscription.user.id.eq(userId), summary.isRead.eq(false))
                 .orderBy(subscription.isUrgent.desc(), summary.updatedAt.desc(), summary.id.desc())
                 .offset(pageRequest.page() * pageRequest.size()).limit(pageRequest.size()).fetch();
+    }
+
+    @Override
+    public List<Summary> findUnreadSummariesByUserIdForHome(Long userId) {
+
+        return queryFactory.selectFrom(summary).innerJoin(summary.subscription, subscription)
+                .fetchJoin().where(subscription.user.id.eq(userId), summary.isRead.eq(false))
+                .orderBy(subscription.isUrgent.desc(), summary.updatedAt.desc(), summary.id.desc())
+                .fetch();
     }
 
 
