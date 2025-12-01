@@ -37,8 +37,9 @@ public class AlarmDynamicRepositoryImpl implements AlarmDynamicRepository {
                                 .limit(pageRequest.size()).fetch();
         }
 
+
         @Override
-        public List<Summary> findUnreadSummariesWithSubscription(Long userId,
+        public List<Summary> findUnreadSummariesAndIsAlarmEnabledByUserId(Long userId,
                         PageRequestDTO pageRequest) {
 
                 return queryFactory.selectFrom(summary)
@@ -49,6 +50,8 @@ public class AlarmDynamicRepositoryImpl implements AlarmDynamicRepository {
                                 .offset(pageRequest.page() * pageRequest.size())
                                 .limit(pageRequest.size()).fetch();
         }
+
+
 
         private BooleanExpression hasUnReadSummary() {
                 return JPAExpressions.selectOne().from(summary)

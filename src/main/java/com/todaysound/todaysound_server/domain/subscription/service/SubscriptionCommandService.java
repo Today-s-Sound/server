@@ -24,7 +24,8 @@ public class SubscriptionCommandService {
     private final SubscriptionValidator subscriptionValidator;
     private final HeaderAuthValidator headerAuthValidator;
 
-    public void deleteSubscription(final Long subscriptionId, final String userUuid, final String deviceSecret) {
+    public void deleteSubscription(final Long subscriptionId, final String userUuid,
+            final String deviceSecret) {
 
         // 헤더 인증 검증 및 사용자 획득
         User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
@@ -40,8 +41,7 @@ public class SubscriptionCommandService {
     }
 
     public SubscriptionCreationResponseDto createSubscription(final String headerUserUuid,
-                                                             final String headerDeviceSecret,
-                                                             final SubscriptionCreateRequestDto requestDto) {
+            final String headerDeviceSecret, final SubscriptionCreateRequestDto requestDto) {
         // 헤더 인증 검증 및 사용자 획득
         User user = headerAuthValidator.validateAndGetUser(headerUserUuid, headerDeviceSecret);
 
@@ -50,10 +50,10 @@ public class SubscriptionCommandService {
 
         // 중복 체크: 동일 URL이 이미 존재하면 기존 구독 반환 (저장하지 않음)
         return subscriptionRepository.findByUserAndUrl(user, requestDto.url())
-                .map(SubscriptionCreationResponseDto::from)
-                .orElseGet(() -> {
+                .map(SubscriptionCreationResponseDto::from).orElseGet(() -> {
                     // 중복이 아닌 경우에만 새로 생성 및 저장
-                    Subscription subscription = subscriptionFactory.create(user, requestDto.url(), requestDto.keywords(), requestDto.alias(), requestDto.isUrgent());
+                    Subscription subscription = subscriptionFactory.create(user, requestDto.url(),
+                            requestDto.keywords(), requestDto.alias(), requestDto.isUrgent());
                     Subscription savedSubscription = subscriptionRepository.save(subscription);
                     return SubscriptionCreationResponseDto.from(savedSubscription);
                 });
