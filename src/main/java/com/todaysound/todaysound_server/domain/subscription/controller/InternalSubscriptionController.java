@@ -40,7 +40,7 @@ public class InternalSubscriptionController implements InternalSubscriptionApi {
     @PatchMapping("/subscriptions/{id}/last_seen")
     @Transactional
     public void updateLastSeenPostId(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestBody UpdateLastSeenPostRequest request
     ) {
         Subscription subscription = subscriptionRepository.findById(id)

@@ -29,6 +29,12 @@ public class Summary extends BaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "post_url", nullable = false)
+    private String postUrl;
+
+    @Column(name = "post_date")
+    private String postDate;
+
     @Column(name = "is_read", nullable = false)
     private boolean isRead;
 
@@ -43,10 +49,15 @@ public class Summary extends BaseEntity {
     private Subscription subscription;
 
     // Summary 생성 팩토리 메서드
-    public static Summary create(String hash, String content, Subscription subscription) {
+    public static Summary create(String hash, String title, String content,
+            String postUrl, String postDate,
+            Subscription subscription) {
         Summary summary = new Summary();
         summary.hash = hash;
+        summary.title = title;
         summary.content = content;
+        summary.postUrl = postUrl;
+        summary.postDate = postDate;
         summary.isRead = false;
         summary.createdAt = LocalDateTime.now();
         summary.updatedAt = LocalDateTime.now();
