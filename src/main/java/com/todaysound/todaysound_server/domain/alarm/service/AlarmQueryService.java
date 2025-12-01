@@ -28,9 +28,10 @@ public class AlarmQueryService {
                 // 헤더 인증 검증 및 사용자 획득
                 User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
 
-                // userId로 모든 Subscription 조회 (모든 Summary 포함)
-                List<Summary> summaries = alarmRepository
-                                .findUnreadSummariesWithSubscription(user.getId(), pageRequest);
+                // 최근 알림은 읽지 않으면서 알림 활성화된 Summary만 조회
+                List<Summary> summaries =
+                                alarmRepository.findUnreadSummariesAndIsAlarmEnabledByUserId(
+                                                user.getId(), pageRequest);
 
                 return summaries.stream().map(RecentAlarmResponse::of).toList();
 

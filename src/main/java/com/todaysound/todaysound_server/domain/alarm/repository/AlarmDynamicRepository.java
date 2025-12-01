@@ -9,6 +9,7 @@ import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
 public interface AlarmDynamicRepository {
     List<Subscription> findSubscriptionWithUnreadSummaries(Long userId, PageRequestDTO pageRequest);
 
-     List<Summary> findUnreadSummariesWithSubscription(Long userId, PageRequestDTO pageRequest);
+    public List<Summary> findUnreadSummariesAndIsAlarmEnabledByUserId(Long userId,
+            PageRequestDTO pageRequest);
 
 }

@@ -19,7 +19,9 @@ public class AlarmController implements AlarmApi {
     private final AlarmQueryService alarmQueryService;
     private final SummaryCommandService summaryCommandService;
 
-    // 특정 사용자의, unread summary가 있는 구독들을 대상으로 요약을 전부(읽은 것 포함) 내려주는 API
+    /**
+     * 최근 알림 목록 조회
+     */
     @GetMapping()
     @Override
     public List<RecentAlarmResponse> getRecentAlarms(
@@ -29,6 +31,8 @@ public class AlarmController implements AlarmApi {
 
         return alarmQueryService.getRecentAlarms(pageRequest, userUuid, deviceSecret);
     }
+
+
 
     /**
      * 메인화면용 읽지 않은 알람 조회 - 읽지 않은 Summary만 포함하여 반환
