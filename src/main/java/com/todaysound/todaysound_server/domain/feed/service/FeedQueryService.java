@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
 import com.todaysound.todaysound_server.domain.feed.dto.response.FeedResponseDTO;
+import com.todaysound.todaysound_server.domain.feed.dto.response.HomeFeedResponse;
 import com.todaysound.todaysound_server.domain.feed.repository.FeedDynamicRepository;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.validator.HeaderAuthValidator;
@@ -28,6 +29,15 @@ public class FeedQueryService {
 
         return feedDynamicRepository.findUnreadSummariesByUserId(user.getId(), pageRequest).stream()
                 .map(FeedResponseDTO::of).toList();
+    }
+
+    public List<HomeFeedResponse> findFeedsForHome(final String userUuid,
+            final String deviceSecret) {
+
+        User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
+
+        return feedDynamicRepository.findUnreadSummariesByUserIdForHome(user.getId()).stream()
+                .map(HomeFeedResponse::of).toList();
     }
 
 
