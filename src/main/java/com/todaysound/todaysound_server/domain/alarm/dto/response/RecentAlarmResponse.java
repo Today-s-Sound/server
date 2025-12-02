@@ -8,7 +8,7 @@ public record RecentAlarmResponse(Long subscriptionId, String alias, String summ
 
     public static RecentAlarmResponse of(Summary summary) {
         return new RecentAlarmResponse(summary.getSubscription().getId(),
-                summary.getSubscription().getAlias(), summary.getContent(),
+                summary.getTitle(), summary.getContent(),
                 summary.getSubscription().getUrl(), TimeUtil.toRelativeTime(summary.getUpdatedAt()),
                 summary.getSubscription().isUrgent());
     }
