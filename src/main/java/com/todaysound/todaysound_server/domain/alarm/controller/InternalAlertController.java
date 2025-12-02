@@ -6,6 +6,7 @@ import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
 import com.todaysound.todaysound_server.global.exception.BaseException;
 import com.todaysound.todaysound_server.global.exception.CommonErrorCode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,18 +38,21 @@ public class InternalAlertController implements InternalAlertApi {
 
     @PostMapping("/alerts")
     public void createAlert(@RequestBody InternalAlertRequest request) {
-        Subscription subscription = subscriptionRepository.findById(request.subscription_id())
+        Subscription subscription = subscriptionRepository.findById(request.subscriptionId())
                 .orElseThrow(() -> BaseException.type(CommonErrorCode.ENTITY_NOT_FOUND));
 
-        // 간단한 소유자 검증 (user_id 가 다르면 거부)
-        if (!subscription.getUser().getId().equals(request.user_id())) {
+        // 간단한 소유자 검증 (userId 가 다르면 거부)
+        if (!subscription.getUser().getId().equals(request.userId())) {
             throw BaseException.type(CommonErrorCode.FORBIDDEN);
         }
 
-        // site_post_id 를 해시 키로 사용
+        // sitePostId 를 해시 키로 사용
         Summary summary = Summary.create(
-                request.site_post_id(),
-                request.content_summary(),
+                request.sitePostId(),
+                request.title(),
+                request.contentSummary(),
+                request.url(),
+                request.publishedAt(),
                 subscription
         );
 
@@ -56,14 +60,17 @@ public class InternalAlertController implements InternalAlertApi {
     }
 
     public record InternalAlertRequest(
-            Long user_id,
-            Long subscription_id,
-            String site_post_id,
-            String title,
-            String url,
-            String content_raw,
-            String content_summary,
-            boolean is_urgent
+            @JsonProperty("user_id") Long userId,
+            @JsonProperty("subscription_id") Long subscriptionId,
+            @JsonProperty("site_post_id") String sitePostId,
+            @JsonProperty("site_alias") String siteAlias,
+            @JsonProperty("title") String title,
+            @JsonProperty("url") String url,
+            @JsonProperty("published_at") String publishedAt,
+            @JsonProperty("content_raw") String contentRaw,
+            @JsonProperty("content_summary") String contentSummary,
+            @JsonProperty("is_urgent") boolean isUrgent,
+            @JsonProperty("keyword_matched") boolean keywordMatched
     ) {
     }
 }
