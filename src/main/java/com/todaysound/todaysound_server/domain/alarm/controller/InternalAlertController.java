@@ -6,6 +6,7 @@ import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
 import com.todaysound.todaysound_server.global.exception.BaseException;
 import com.todaysound.todaysound_server.global.exception.CommonErrorCode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,17 +60,17 @@ public class InternalAlertController implements InternalAlertApi {
     }
 
     public record InternalAlertRequest(
-            Long userId,
-            Long subscriptionId,
-            String sitePostId,
-            String siteAlias,
-            String title,
-            String url,
-            String publishedAt,
-            String contentRaw,
-            String contentSummary,
-            boolean isUrgent,
-            boolean keywordMatched
+            @JsonProperty("user_id") Long userId,
+            @JsonProperty("subscription_id") Long subscriptionId,
+            @JsonProperty("site_post_id") String sitePostId,
+            @JsonProperty("site_alias") String siteAlias,
+            @JsonProperty("title") String title,
+            @JsonProperty("url") String url,
+            @JsonProperty("published_at") String publishedAt,
+            @JsonProperty("content_raw") String contentRaw,
+            @JsonProperty("content_summary") String contentSummary,
+            @JsonProperty("is_urgent") boolean isUrgent,
+            @JsonProperty("keyword_matched") boolean keywordMatched
     ) {
     }
 }
