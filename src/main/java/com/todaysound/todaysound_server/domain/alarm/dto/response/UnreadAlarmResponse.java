@@ -37,7 +37,7 @@ public record UnreadAlarmResponse(
         return new UnreadAlarmResponse(
                 subscription.getId(),
                 subscription.getAlias(),
-                subscription.getUrl(),
+                subscription.getUrl().getLink(),
                 TimeUtil.toRelativeTime(subscription.getUpdatedAt()),
                 subscription.isUrgent(),
                 unreadSummaries.size(),

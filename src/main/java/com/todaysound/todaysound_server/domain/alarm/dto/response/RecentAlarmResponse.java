@@ -13,6 +13,7 @@ public record RecentAlarmResponse(
 ) {
 
     public static RecentAlarmResponse of(Summary summary) {
+
         return new RecentAlarmResponse(
                 summary.getSubscription().getId(),
                 summary.getTitle(),
