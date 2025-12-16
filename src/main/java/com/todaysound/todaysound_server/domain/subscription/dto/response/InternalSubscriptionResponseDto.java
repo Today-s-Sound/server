@@ -42,7 +42,7 @@ public record InternalSubscriptionResponseDto(
         return new InternalSubscriptionResponseDto(
                 subscription.getId(),
                 subscription.getUser().getId(),
-                subscription.getUrl(),
+                subscription.getUrl().getLink(),
                 subscription.getAlias(),
                 keyword,
                 subscription.isUrgent(),

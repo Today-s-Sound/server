@@ -1,5 +1,6 @@
 package com.todaysound.todaysound_server.domain.subscription.entity;
 
+import com.todaysound.todaysound_server.domain.url.entity.Url;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.summary.entity.Summary;
 import com.todaysound.todaysound_server.global.entity.BaseEntity;
@@ -30,9 +31,6 @@ public class Subscription extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "url", nullable = false)
-    private String url;
-
     @Column(name = "alias", nullable = false)
     private String alias;
 
@@ -55,6 +53,10 @@ public class Subscription extends BaseEntity {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "url_id", nullable = false)
+    private Url url;
 
     @Builder.Default
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)

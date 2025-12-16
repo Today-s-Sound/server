@@ -13,7 +13,7 @@ public record SubscriptionResponse(
 
     public static SubscriptionResponse of(Subscription subscription, List<Keyword> keywords) {
 
-        return new SubscriptionResponse(subscription.getId(), subscription.getUrl(),
+        return new SubscriptionResponse(subscription.getId(), subscription.getUrl().getLink(),
                 subscription.getAlias(), subscription.isUrgent(),
                 keywords.stream().map(KeywordResponse::of).toList());
     }
