@@ -48,6 +48,8 @@ public record UnreadAlarmResponse(
     public record UnreadSummaryResponse(
             @Schema(description = "요약 ID", example = "1")
             Long id,
+            @Schema(description = "원본 게시글 URL", example = "https://example.com/post/1")
+            String postUrl,
             @Schema(description = "요약 내용", example = "요약 내용...")
             String content,
             @Schema(description = "업데이트 시각")
@@ -56,6 +58,7 @@ public record UnreadAlarmResponse(
         public static UnreadSummaryResponse of(Summary summary) {
             return new UnreadSummaryResponse(
                     summary.getId(),
+                    summary.getPostUrl(),
                     summary.getContent(),
                     summary.getUpdatedAt()
             );
