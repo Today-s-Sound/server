@@ -217,6 +217,58 @@ public interface SubscriptionApi {
             )
     })
     KeywordListResponseDto getAllKeywords();
+
+    @Operation(
+            summary = "구독 알림 차단",
+            description = """
+                    구독 ID를 이용해 해당 구독의 알림을 차단합니다.
+                    """,
+            tags = {"Subscription"},
+            operationId = "alarmBlock"
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "구독 알림 차단 성공"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "구독을 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CustomErrorResponse.class)
+                    )
+            )
+    })
+    void alarmBlock(
+            @PathVariable Long subscriptionId
+    );
+
+    @Operation(
+            summary = "구독 알림 차단 해제",
+            description = """
+                    구독 ID를 이용해 해당 구독의 알림 차단을 해제합니다.
+                    """,
+            tags = {"Subscription"},
+            operationId = "alarmUnBlock"
+    )
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "구독 알림 차단 해제 성공"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "구독을 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CustomErrorResponse.class)
+                    )
+            )
+    })
+    void alarmUnBlock(
+            @PathVariable Long subscriptionId
+    );
 }
 
 
