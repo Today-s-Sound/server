@@ -43,7 +43,9 @@ public class FCMService {
         Notification notification = Notification.builder().setTitle(title).setBody(body).build();
 
         ApnsConfig apnsConfig = ApnsConfig.builder()
-                .setAps(Aps.builder().setSound("default").setBadge(1).build()).build();
+                .putHeader("apns-priority", "10")
+                .setAps(Aps.builder().setSound("default").setBadge(1).build())
+                .build();
 
         // 여러 토큰에 한 번에 보내는 MulticastMessage 구성
         MulticastMessage message = MulticastMessage.builder().setNotification(notification)
