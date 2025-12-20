@@ -57,4 +57,12 @@ public class UserCommandService {
         return UserIdResponseDto.from(user);
 
     }
+
+    public void withdraw(String deviceSecret) {
+
+        User user = userQueryService.findBySecretFingerprint(deviceSecret);
+
+        userRepository.delete(user);
+
+    }
 }
