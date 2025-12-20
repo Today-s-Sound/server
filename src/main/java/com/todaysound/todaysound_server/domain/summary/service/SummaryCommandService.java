@@ -2,6 +2,7 @@ package com.todaysound.todaysound_server.domain.summary.service;
 
 import com.todaysound.todaysound_server.domain.alarm.dto.request.SummaryReadRequestDto;
 import com.todaysound.todaysound_server.domain.summary.entity.Summary;
+import com.todaysound.todaysound_server.domain.summary.exception.SummaryException;
 import com.todaysound.todaysound_server.domain.summary.repository.SummaryRepository;
 import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.domain.user.entity.User;
@@ -49,5 +50,23 @@ public class SummaryCommandService {
 
         summaryRepository.saveAll(summaryList);
     }
+
+    public void deleteSummary(String UserUuid, String deviceSecret, Long summaryId) {
+
+        // 헤더 인증 검증 및 사용자 획득
+        User user = headerAuthValidator.validateAndGetUser(UserUuid, deviceSecret);
+
+        Summary summary = getSummaryById(summaryId);
+
+        summaryRepository.delete(summary);
+    }
+
+
+    private Summary getSummaryById(Long summaryId) {
+        return summaryRepository.findById(summaryId)
+                .orElseThrow(() -> BaseException.type(SummaryException.SUMMARY_NOT_FOUND));
+    }
+
+
 }
 

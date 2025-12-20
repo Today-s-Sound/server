@@ -38,6 +38,7 @@ public class SecurityConfig {
                         // 앱 공개 API
                         .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/api/alarms/**").permitAll()
+                        .requestMatchers("/api/summaries/**").permitAll()
                         .requestMatchers("/api/subscriptions/**").permitAll() // 구독 API 허용
                         .requestMatchers("/api/fcm/**").permitAll() // FCM API 허용 (테스트용)
                         .requestMatchers("/api/feeds/**").permitAll() // Feed API 허용

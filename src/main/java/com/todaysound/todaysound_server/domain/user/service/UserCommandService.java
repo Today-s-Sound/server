@@ -4,11 +4,9 @@ import com.todaysound.todaysound_server.domain.user.dto.request.UserSecretReques
 import com.todaysound.todaysound_server.domain.user.dto.response.UserIdResponseDto;
 import com.todaysound.todaysound_server.domain.user.entity.FCM_Token;
 import com.todaysound.todaysound_server.domain.user.entity.User;
-import com.todaysound.todaysound_server.domain.user.exception.AuthErrorCode;
 import com.todaysound.todaysound_server.domain.user.factory.UserFactory;
 import com.todaysound.todaysound_server.domain.user.repository.UserRepository;
-import com.todaysound.todaysound_server.domain.user.validator.UserValidator;
-import com.todaysound.todaysound_server.global.exception.BaseException;
+import com.todaysound.todaysound_server.domain.user.validator.HeaderAuthValidator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +24,7 @@ public class UserCommandService {
     private final UserRepository userRepository;
     private final UserFactory userFactory;
     private final UserQueryService userQueryService;
+    private final HeaderAuthValidator headerAuthValidator;
 
     public UserIdResponseDto anonymous(UserSecretRequestDto userSecretRequestDto) {
 
@@ -58,11 +57,10 @@ public class UserCommandService {
 
     }
 
-    public void withdraw(String deviceSecret) {
-
-        User user = userQueryService.findBySecretFingerprint(deviceSecret);
+    public void withdraw(String userUuid, String deviceSecret) {
+        // 헤더 인증 검증 및 사용자 획득
+        User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
 
         userRepository.delete(user);
-
     }
 }

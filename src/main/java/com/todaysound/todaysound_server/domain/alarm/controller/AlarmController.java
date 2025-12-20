@@ -59,4 +59,5 @@ public class AlarmController implements AlarmApi {
 
         summaryCommandService.markSummaryAsRead(summaryReadRequestDto, userUuid, deviceSecret);
     }
+
 }

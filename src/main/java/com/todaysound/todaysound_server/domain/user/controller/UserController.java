@@ -19,14 +19,17 @@ public class UserController implements UserApi {
 
     @Override
     @PostMapping("/anonymous")
-    public UserIdResponseDto anonymous(@Valid @RequestBody UserSecretRequestDto userSecretRequestDto) {
+    public UserIdResponseDto anonymous(
+            @Valid @RequestBody UserSecretRequestDto userSecretRequestDto) {
         return userCommandService.anonymous(userSecretRequestDto);
     }
 
-    @DeleteMapping("/withdraw/{deviceSecret}")
+    @Override
+    @DeleteMapping("/withdraw")
     @ResponseStatus(HttpStatus.OK)
-    public void withdraw(@Valid @PathVariable String deviceSecret) {
-        userCommandService.withdraw(deviceSecret);
+    public void withdraw(@RequestHeader("X-User-ID") String userUuid,
+            @RequestHeader("X-Device-Secret") String deviceSecret) {
+        userCommandService.withdraw(userUuid, deviceSecret);
     }
 
 }
