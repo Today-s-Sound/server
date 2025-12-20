@@ -7,7 +7,8 @@ import java.security.NoSuchAlgorithmException;
  * 암호화 관련 유틸리티 클래스
  */
 public class CryptoUtils {
-    
+
+
     /**
      * SHA-256 해시 생성
      * @param input 입력 문자열
