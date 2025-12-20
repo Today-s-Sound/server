@@ -44,7 +44,7 @@ public class AlarmDynamicRepositoryImpl implements AlarmDynamicRepository {
 
                 return queryFactory.selectFrom(summary)
                                 .innerJoin(summary.subscription, subscription).fetchJoin()
-                                .where(subscription.user.id.eq(userId), summary.isRead.eq(false))
+                                .where(subscription.user.id.eq(userId))
                                 .orderBy(subscription.isUrgent.desc(), summary.updatedAt.desc(),
                                                 summary.id.desc())
                                 .offset(pageRequest.page() * pageRequest.size())
