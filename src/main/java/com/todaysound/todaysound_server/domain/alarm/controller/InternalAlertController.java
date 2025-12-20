@@ -4,6 +4,8 @@ import com.todaysound.todaysound_server.domain.summary.entity.Summary;
 import com.todaysound.todaysound_server.domain.summary.repository.SummaryRepository;
 import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
+import com.todaysound.todaysound_server.domain.user.entity.User;
+import com.todaysound.todaysound_server.domain.user.service.FCMService;
 import com.todaysound.todaysound_server.global.exception.BaseException;
 import com.todaysound.todaysound_server.global.exception.CommonErrorCode;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -35,6 +37,7 @@ public class InternalAlertController implements InternalAlertApi {
 
     private final SubscriptionRepository subscriptionRepository;
     private final SummaryRepository summaryRepository;
+    private final FCMService fcmService;
 
     @PostMapping("/alerts")
     public void createAlert(@RequestBody InternalAlertRequest request) {
@@ -45,6 +48,14 @@ public class InternalAlertController implements InternalAlertApi {
         if (!subscription.getUser().getId().equals(request.userId())) {
             throw BaseException.type(CommonErrorCode.FORBIDDEN);
         }
+
+        User user = subscription.getUser();
+
+        fcmService.sendNotificationToUser(
+                user,
+                "새 알림: " + request.title(),
+                request.contentSummary()
+        );
 
         // sitePostId 를 해시 키로 사용
         Summary summary = Summary.create(
