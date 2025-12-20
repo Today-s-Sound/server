@@ -36,7 +36,7 @@ public class SecurityConfig {
                 // URL별 권한 설정
                 .authorizeHttpRequests(requests -> requests
                         // 앱 공개 API
-                        .requestMatchers("/api/users/anonymous").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/api/alarms/**").permitAll()
                         .requestMatchers("/api/subscriptions/**").permitAll() // 구독 API 허용
                         .requestMatchers("/api/fcm/**").permitAll() // FCM API 허용 (테스트용)
