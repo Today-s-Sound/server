@@ -7,7 +7,7 @@ import java.util.List;
 
 public record SubscriptionResponse(
 
-        Long id, String url, String alias, boolean isUrgent, List<KeywordResponse> keywords
+        Long id, String url, String alias, boolean isUrgent, boolean isAlarmEnabled, List<KeywordResponse> keywords
 
 ) {
 
@@ -15,6 +15,7 @@ public record SubscriptionResponse(
 
         return new SubscriptionResponse(subscription.getId(), subscription.getUrl().getLink(),
                 subscription.getAlias(), subscription.isUrgent(),
+                subscription.isAlarmEnabled(),
                 keywords.stream().map(KeywordResponse::of).toList());
     }
 
