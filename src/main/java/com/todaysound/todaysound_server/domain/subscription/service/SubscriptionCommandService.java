@@ -23,14 +23,13 @@ public class SubscriptionCommandService {
     private final SubscriptionFactory subscriptionFactory;
     private final HeaderAuthValidator headerAuthValidator;
 
-    public void deleteSubscription(final Long subscriptionId, final String userUuid,
-            final String deviceSecret) {
+    public void deleteSubscription(final Long subscriptionId, final String userUuid, final String deviceSecret) {
 
         // 헤더 인증 검증 및 사용자 획득
         User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
 
-        Subscription subscription = subscriptionRepository.findById(subscriptionId).orElseThrow(
-                () -> BaseException.type(SubscriptionException.SUBSCRIPTION_NOT_FOUND));
+        Subscription subscription = subscriptionRepository.findById(subscriptionId)
+                .orElseThrow(() -> BaseException.type(SubscriptionException.SUBSCRIPTION_NOT_FOUND));
 
         if (!subscription.getUser().getId().equals(user.getId())) {
             throw BaseException.type(SubscriptionException.SUBSCRIPTION_NOT_PERMISSION);
@@ -40,27 +39,28 @@ public class SubscriptionCommandService {
     }
 
     public SubscriptionCreationResponseDto createSubscription(final String headerUserUuid,
-            final String headerDeviceSecret, final SubscriptionCreateRequestDto requestDto) {
+                                                              final String headerDeviceSecret,
+                                                              final SubscriptionCreateRequestDto requestDto) {
         // 헤더 인증 검증 및 사용자 획득
         User user = headerAuthValidator.validateAndGetUser(headerUserUuid, headerDeviceSecret);
 
         // 구독 생성 및 저장
-        Subscription subscription = subscriptionFactory.create(user, requestDto.urlId(),
-                requestDto.keywordIds(), requestDto.alias(), requestDto.isUrgent());
+        Subscription subscription = subscriptionFactory.create(user, requestDto.urlId(), requestDto.keywordIds(),
+                requestDto.alias(), requestDto.isUrgent());
         Subscription savedSubscription = subscriptionRepository.save(subscription);
         return SubscriptionCreationResponseDto.from(savedSubscription);
     }
 
     public void alarmBlock(Long subscriptionId) {
-        Subscription subscription = subscriptionRepository.findById(subscriptionId).orElseThrow(
-                () -> BaseException.type(SubscriptionException.SUBSCRIPTION_NOT_FOUND));
+        Subscription subscription = subscriptionRepository.findById(subscriptionId)
+                .orElseThrow(() -> BaseException.type(SubscriptionException.SUBSCRIPTION_NOT_FOUND));
 
         subscription.alarmBlock();
     }
 
     public void alarmUnBlock(Long subscriptionId) {
-        Subscription subscription = subscriptionRepository.findById(subscriptionId).orElseThrow(
-                () -> BaseException.type(SubscriptionException.SUBSCRIPTION_NOT_FOUND));
+        Subscription subscription = subscriptionRepository.findById(subscriptionId)
+                .orElseThrow(() -> BaseException.type(SubscriptionException.SUBSCRIPTION_NOT_FOUND));
 
         subscription.alarmUnblock();
     }

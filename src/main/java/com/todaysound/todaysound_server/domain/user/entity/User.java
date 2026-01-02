@@ -83,11 +83,12 @@ public class User extends BaseEntity {
      *             orphanRemoval = true: 고아 객체(연관관계가 끊어진 객체) 자동 삭제 fetch = FetchType.LAZY: 지연 로딩으로
      *             성능 최적화
      */
+    @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,
             fetch = FetchType.LAZY)
     private List<Subscription> subscriptions = new ArrayList<>();
 
-
+    @Builder.Default
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FCM_Token> fcmTokenList = new ArrayList<>();
 

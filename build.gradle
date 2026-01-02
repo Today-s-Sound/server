@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.6'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.asciidoctor.jvm.convert' version '4.0.5'
 }
 
 group = 'com.todaysound'
@@ -18,6 +19,7 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	asciidoctorExt
 }
 
 repositories {
@@ -36,15 +38,59 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 
+
+    // RestDocs
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
 	// QueryDsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
-    implementation 'com.google.firebase:firebase-admin:9.2.0' // Firebase Admin SDK 추가
+    // Firebase Admin SDK
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+ext { // 전역 변수
+    snippetsDir = file("build/generated-snippets")
+}
+
+test { // test 실행 후 결과를 snippetsDir에 저장
+    outputs.dir snippetsDir
+
+    afterTest { desc, result ->
+        if (result.resultType == TestResult.ResultType.FAILURE) { // 테스트가 실패했다면?
+            println("🔴 FAILED TEST: " + desc.getDisplayName())  // 실패한 테스트 이름 출력
+            println("======================================")
+            result.exception?.printStackTrace()                  // 상세 에러 내용 출력
+            println("======================================")
+        }
+    }
+}
+
+asciidoctor { // adoc 문서 파일을 읽어서 HTML로 변환
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+
+    sources { // 특정 파일만 html로 만들
+        include('**/index.adoc')
+    }
+    baseDirFollowsSourceDir()
+    dependsOn test
+}
+
+bootJar { // 생성된 HTML 파일을 static/docs 폴더에 복사
+    dependsOn asciidoctor
+    from("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
+}
+
+
