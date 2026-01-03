@@ -87,8 +87,9 @@ jobs:
             FCM_JSON=${FCM_JSON}
             EOF
 
+            sudo docker-compose down
             sudo docker-compose pull app
-            sudo docker-compose up -d app
+            sudo docker-compose up -d
 
             # Health check (local) - try basic endpoint first
             echo "Waiting for app to start..." && sleep 45
