@@ -4,6 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import jakarta.annotation.PostConstruct;
+import java.util.Base64;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +37,11 @@ public class FCMConfig {
             // 환경 변수(GitHub Secrets)가 존재하면 우선 사용 (Prod 환경)
             if (fcmSecretString != null && !fcmSecretString.isBlank()) {
                 log.info("🔑 Firebase 키를 [환경 변수]에서 로드합니다.");
-                serviceAccount = new ByteArrayInputStream(fcmSecretString.getBytes(StandardCharsets.UTF_8));
+
+                byte[] decoded = Base64.getDecoder().decode(fcmSecretString);
+                String jsonString = new String(decoded, StandardCharsets.UTF_8);
+
+                serviceAccount = new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
             }
             else {
                 String path = "todaysound-68df8-firebase-adminsdk-fbsvc-6b2b6e6a71.json";
