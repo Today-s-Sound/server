@@ -49,7 +49,7 @@ public class SecurityConfig {
 
                         // 문서 및 헬스체크
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/docs/**").permitAll()
-                        .requestMatchers("/", "/actuator/health").permitAll()
+                        .requestMatchers("/", "/actuator/**").permitAll()
 
                         // 관리자 페이지
                         .requestMatchers("/admin/**").hasRole("ADMIN")
