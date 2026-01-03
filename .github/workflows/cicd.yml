@@ -77,7 +77,7 @@ jobs:
           script: |
             set -e
 
-            cd ~/todaysound
+            cd ~/todaysound-be
             
             cat > .env << EOF
             DOCKER_USERNAME=${DOCKER_USERNAME}
