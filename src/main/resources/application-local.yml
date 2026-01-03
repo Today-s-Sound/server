@@ -1,14 +1,9 @@
 spring:
   datasource:
-     url: ${DB_URL}
-     username: ${DB_USERNAME}
-     password: ${DB_PASSWORD}
-
-#    url: jdbc:mysql://localhost:3306/today_sound_local?serverTimezone=Asia/Seoul
-#    username: root
-#    password: 1234
-
-     driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL:jdbc:mysql://localhost:3306/today_sound_local?serverTimezone=Asia/Seoul}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:1234}
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -20,9 +15,26 @@ spring:
         show_sql: true
         generate_statistics: true
 
+# 로컬 개발용 로깅 설정
 logging:
   level:
-    org.hibernate.SQL: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    com.todaysound.todaysound_server: DEBUG
 
-swagger:
-  server-url: http://localhost:8080
+# SpringDoc (Swagger) 설정
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
