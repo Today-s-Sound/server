@@ -95,6 +95,8 @@ jobs:
             echo "Waiting for app to start..." && sleep 45
 
             # Show container status
+            APP_NAME="todaysound-server"
+            PORT=8080
             sudo docker ps -a | grep ${APP_NAME} || true
 
             # Try basic health check first (disable set -e for this section)
