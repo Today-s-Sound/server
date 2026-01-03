@@ -80,12 +80,12 @@
 
         <!-- 파일 출력 (백업/디버깅용) -->
         <appender name="FILE-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>./log/today-${BY_DATE}.log</file>
+            <file>/app/logs/app.log</file>
             <encoder>
                 <pattern>${FILE_LOG_PATTERN}</pattern>
             </encoder>
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-                <fileNamePattern>./log/history-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <fileNamePattern>/app/logs/history-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
                 <maxFileSize>100MB</maxFileSize>
                 <maxHistory>7</maxHistory>
                 <totalSizeCap>500MB</totalSizeCap>
