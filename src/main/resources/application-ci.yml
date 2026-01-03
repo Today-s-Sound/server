@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mysql:8.0:///test_container_test
+    username: root
+    password: password
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        use_sql_comments: false
+        jdbc:
+          batch_size: 10
+report-check-origin: fake-origin.com
+cors-allow-origins: http://localhost:3000

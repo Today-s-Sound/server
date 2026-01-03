@@ -1,11 +1,10 @@
-package com.todaysound.todaysound_server.spring.docs;
+package com.todaysound.todaysound_server.support;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaysound.todaysound_server.domain.subscription.controller.SubscriptionController;
 import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionCommandService;
 import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionQueryService;
-import com.todaysound.todaysound_server.support.RestDocsConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

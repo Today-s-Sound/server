@@ -14,7 +14,22 @@ logging:
   level:
     org.hibernate.SQL: INFO
     com.your.package: INFO
+  file:
+    name: logs/app.log  # 로그 파일 경로 및 이름
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 7
 
 fcm:
   # Docker에서 넘겨준 값이 없으면 빈 문자열
   secret-string: ${FCM_JSON:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info # 프로메테우스 엔드포인트 개방
+  metrics:
+    tags:
+      application: my-app-name

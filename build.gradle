@@ -30,6 +30,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Micrometer
+    implementation 'io.micrometer:micrometer-registry-prometheus' // Prometheus
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -51,6 +56,11 @@ dependencies {
 
     // Firebase Admin SDK
     implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+    // test containers
+    testImplementation 'org.testcontainers:mysql'
+    testImplementation 'org.testcontainers:jdbc'
+    testImplementation 'org.testcontainers:junit-jupiter'
 
 }
 

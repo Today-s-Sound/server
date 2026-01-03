@@ -12,9 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionCreateRequestDto;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponseDto;
-import com.todaysound.todaysound_server.spring.docs.RestDocsSupport;
+import com.todaysound.todaysound_server.support.RestDocsSupport;
 import java.util.List;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
