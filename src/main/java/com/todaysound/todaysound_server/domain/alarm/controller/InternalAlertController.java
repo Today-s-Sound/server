@@ -5,7 +5,7 @@ import com.todaysound.todaysound_server.domain.summary.repository.SummaryReposit
 import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
 import com.todaysound.todaysound_server.domain.user.entity.User;
-import com.todaysound.todaysound_server.domain.user.service.FCMService;
+import com.todaysound.todaysound_server.global.application.FCMService;
 import com.todaysound.todaysound_server.global.exception.BaseException;
 import com.todaysound.todaysound_server.global.exception.CommonErrorCode;
 import com.fasterxml.jackson.annotation.JsonProperty;

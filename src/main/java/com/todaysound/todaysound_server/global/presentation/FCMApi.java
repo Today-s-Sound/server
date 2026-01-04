@@ -1,4 +1,4 @@
-package com.todaysound.todaysound_server.domain.user.controller;
+package com.todaysound.todaysound_server.global.presentation;
 
 import com.todaysound.todaysound_server.domain.user.dto.request.FCMNotificationRequestDto;
 import com.todaysound.todaysound_server.domain.user.dto.response.FCMNotificationResponseDto;

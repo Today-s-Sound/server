@@ -1,17 +1,25 @@
-package com.todaysound.todaysound_server.domain.user.service;
+package com.todaysound.todaysound_server.global.application;
 
-import com.google.firebase.messaging.*;
+import com.google.firebase.messaging.ApnsConfig;
+import com.google.firebase.messaging.Aps;
+import com.google.firebase.messaging.BatchResponse;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.MessagingErrorCode;
+import com.google.firebase.messaging.MulticastMessage;
+import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.SendResponse;
 import com.todaysound.todaysound_server.domain.user.entity.FCM_Token;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.repository.FCMRepository;
+import com.todaysound.todaysound_server.domain.user.validator.HeaderAuthValidator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -19,6 +27,7 @@ import java.util.stream.Collectors;
 public class FCMService {
 
     private final FCMRepository fcmRepository;
+    private final HeaderAuthValidator headerAuthValidator;
 
     /**
      * (핵심 메소드) 특정 User에게 알림을 발송합니다.
@@ -112,5 +121,16 @@ public class FCMService {
             fcmRepository.deleteAllByFcmTokenIn(tokensToDelete);
             log.info("만료된 FCM 토큰 {}건을 DB에서 삭제했습니다.", tokensToDelete.size());
         }
+    }
+
+    @Transactional
+    public void updateFcmToken(String userUuid, String deviceSecret, String SFcmToken) {
+
+        User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
+
+        FCM_Token fcmToken = fcmRepository.findByUserId(user.getId());
+
+        fcmToken.update(SFcmToken);
+
     }
 }

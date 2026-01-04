@@ -1,12 +1,14 @@
-package com.todaysound.todaysound_server.domain.user.controller;
+package com.todaysound.todaysound_server.global.presentation;
 
 import com.todaysound.todaysound_server.domain.user.dto.request.FCMNotificationRequestDto;
 import com.todaysound.todaysound_server.domain.user.dto.response.FCMNotificationResponseDto;
-import com.todaysound.todaysound_server.domain.user.service.FCMService;
 import com.todaysound.todaysound_server.domain.user.service.UserQueryService;
+import com.todaysound.todaysound_server.global.application.FCMService;
+import com.todaysound.todaysound_server.global.dto.FCMUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,5 +33,14 @@ public class FCMController implements FCMApi {
 
         return FCMNotificationResponseDto.success();
     }
+
+    @PutMapping("")
+    public void updateFcmToken(@RequestHeader("X-User-ID") String userId,
+                               @RequestHeader("X-Device-Secret") String deviceSecret,
+                               @Valid @RequestBody FCMUpdateRequest request) {
+        fcmService.updateFcmToken(userId, deviceSecret, request.fcmToken());
+    }
+
+
 }
 

@@ -17,4 +17,10 @@ public record UserSecretRequestDto(
         @Size(min = 4, max = 256, message = "fcmToken은 4~256자여야 합니다.")
         String fcmToken
 ) {
+
+    public UserSecretRequestDto {
+        if (fcmToken == null) {
+            fcmToken = "dwqge12345fghij67890klmno";
+        }
+    }
 }

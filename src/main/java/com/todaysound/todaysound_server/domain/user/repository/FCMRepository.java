@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface FCMRepository extends JpaRepository<FCM_Token, Long> {
     List<FCM_Token> findByUser(User user);
+    FCM_Token findByUserId(Long userId);
     void deleteAllByFcmTokenIn(List<String> fcmTokens);
 }
