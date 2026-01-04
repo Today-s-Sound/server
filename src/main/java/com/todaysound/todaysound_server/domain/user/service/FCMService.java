@@ -7,6 +7,7 @@ import com.todaysound.todaysound_server.domain.user.repository.FCMRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class FCMService {
      * @param title 알림 제목
      * @param body 알림 본문
      */
+    @Transactional
     public void sendNotificationToUser(User user, String title, String body) {
 
         List<FCM_Token> devices = fcmRepository.findByUser(user);
