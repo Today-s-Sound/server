@@ -22,10 +22,10 @@ public class FCMService {
 
     /**
      * (핵심 메소드) 특정 User에게 알림을 발송합니다.
-     * 
-     * @param user 알림을 받을 User 엔티티
+     *
+     * @param user  알림을 받을 User 엔티티
      * @param title 알림 제목
-     * @param body 알림 본문
+     * @param body  알림 본문
      */
     @Transactional
     public void sendNotificationToUser(User user, String title, String body) {
@@ -38,28 +38,24 @@ public class FCMService {
         }
 
         // FCM 토큰 문자열만 추출
-        List<String> tokens =
-                devices.stream().map(FCM_Token::getFcmToken).collect(Collectors.toList());
+        List<String> tokens = devices.stream().map(FCM_Token::getFcmToken).collect(Collectors.toList());
 
         // 알림 메시지 내용 구성
         Notification notification = Notification.builder().setTitle(title).setBody(body).build();
 
-        ApnsConfig apnsConfig = ApnsConfig.builder()
-                .putHeader("apns-priority", "10")
-                .setAps(Aps.builder().setSound("default").setBadge(1).build())
-                .build();
+        ApnsConfig apnsConfig = ApnsConfig.builder().putHeader("apns-priority", "10")
+                .setAps(Aps.builder().setSound("default").setBadge(1).build()).build();
 
         // 여러 토큰에 한 번에 보내는 MulticastMessage 구성
-        MulticastMessage message = MulticastMessage.builder().setNotification(notification)
-                .setApnsConfig(apnsConfig).addAllTokens(tokens).build();
+        MulticastMessage message = MulticastMessage.builder().setNotification(notification).setApnsConfig(apnsConfig)
+                .addAllTokens(tokens).build();
 
         // FCM에 일괄 발송 요청
         BatchResponse response;
         try {
             response = FirebaseMessaging.getInstance().sendEachForMulticast(message);
 
-            log.info("총 {}건의 알림 발송 요청 성공. (성공: {}건, 실패: {}건)",
-                    response.getSuccessCount() + response.getFailureCount(),
+            log.info("총 {}건의 알림 발송 요청 성공. (성공: {}건, 실패: {}건)", response.getSuccessCount() + response.getFailureCount(),
                     response.getSuccessCount(), response.getFailureCount());
 
             if (response.getFailureCount() > 0) {
@@ -84,8 +80,23 @@ public class FCMService {
 
             // 발송 실패한 경우 처리
             if (!sendResponse.isSuccessful()) {
+
                 String failedToken = originalTokens.get(i);
-                MessagingErrorCode errorCode = sendResponse.getException().getMessagingErrorCode();
+                FirebaseMessagingException exception = sendResponse.getException();
+
+                MessagingErrorCode errorCode = exception.getMessagingErrorCode(); // Enum 값
+                String errorMessage = exception.getMessage(); // 실제 에러 내용
+
+                log.error("--------------------------------------------------");
+                log.error("[FCM 발송 실패 상세 로그]");
+                log.error("대상 토큰: {}", failedToken);
+                log.error("에러 코드: {}", errorCode);
+                log.error("에러 메시지: {}", errorMessage);
+
+                if (exception.getHttpResponse() != null) {
+                    log.error("HTTP 상태 코드: {}", exception.getHttpResponse().getStatusCode());
+                    log.error("HTTP 응답 본문: {}", exception.getHttpResponse().getContent());
+                }
 
                 if (errorCode == MessagingErrorCode.UNREGISTERED) {
                     log.warn("FCM 토큰 {}이(가) 만료(UNREGISTERED)되었습니다. DB 삭제 목록에 추가합니다.", failedToken);
