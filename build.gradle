@@ -35,6 +35,9 @@ dependencies {
     // Micrometer
     implementation 'io.micrometer:micrometer-registry-prometheus' // Prometheus
 
+    // 구조화된 JSON 로깅
+    implementation 'net.logstash.logback:logstash-logback-encoder:8.0'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'

@@ -4,32 +4,60 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
+    properties:
+      hibernate:
+        jdbc.batch_size: 20
+        order_inserts: true
+        order_updates: true
+        jdbc.batch_versioned_data: true
 
+# 로깅 설정은 logback-spring.xml에서 관리
+# 아래는 추가적인 런타임 오버라이드용
 logging:
   level:
-    org.hibernate.SQL: INFO
-    com.your.package: INFO
-  file:
-    name: logs/app.log  # 로그 파일 경로 및 이름
-  logback:
-    rollingpolicy:
-      max-file-size: 10MB
-      max-history: 7
+    # 애플리케이션 로그
+    com.todaysound.todaysound_server: INFO
+    # 외부 라이브러리 노이즈 감소
+    org.springframework: WARN
+    org.hibernate: WARN
+    com.zaxxer.hikari: WARN
 
+# FCM 설정
 fcm:
-  # Docker에서 넘겨준 값이 없으면 빈 문자열
   secret-string: ${FCM_JSON:}
 
+# SpringDoc (Swagger)
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+# Actuator 설정
 management:
   endpoints:
     web:
       exposure:
-        include: prometheus, health, info # 프로메테우스 엔드포인트 개방
+        include: prometheus, health, info
+  endpoint:
+    health:
+      show-details: never
   metrics:
     tags:
-      application: my-app-name
+      application: todaysound-server
+    export:
+      prometheus:
+        enabled: true

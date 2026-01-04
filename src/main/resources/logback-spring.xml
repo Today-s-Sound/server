@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <timestamp key="BY_DATE" datePattern="yyyy-MM-dd"/>
+    
+    <!-- ============================================ -->
+    <!-- 로그 패턴 정의 -->
+    <!-- ============================================ -->
+    
+    <!-- 로컬용: 컬러 + 가독성 좋은 텍스트 포맷 -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%magenta([%X{traceId:-NO_TRACE}]) %cyan([%X{userId:-}]) %yellow([%d{yyyy-MM-dd HH:mm:ss, Asia/Seoul}]) %green(%thread) %highlight(%-5level) %boldWhite([%logger{36}.%M:%L]) %n→ %msg%n"/>
+    
+    <!-- 파일용: 심플한 텍스트 포맷 -->
+    <property name="FILE_LOG_PATTERN"
+              value="[%X{traceId:-}] [%X{userId:-}] [%d{yyyy-MM-dd HH:mm:ss}] [%thread] %-5level [%logger{36}.%M:%L] - %msg%n"/>
+
+    <!-- ============================================ -->
+    <!-- 외부 라이브러리 로그 레벨 (노이즈 감소) -->
+    <!-- ============================================ -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.web" level="WARN"/>
+    <logger name="org.springframework.security" level="WARN"/>
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.hibernate.SQL" level="WARN"/>
+    <logger name="com.zaxxer.hikari" level="WARN"/>
+    <logger name="io.netty" level="WARN"/>
+    <logger name="org.apache.http" level="WARN"/>
+    
+    <!-- 애플리케이션 로그 -->
+    <logger name="com.todaysound.todaysound_server" level="INFO"/>
+
+    <!-- ============================================ -->
+    <!-- 로컬/개발 환경: 콘솔 출력 (컬러) -->
+    <!-- ============================================ -->
+    <springProfile name="local">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <!-- ============================================ -->
+    <!-- CI 환경: 최소 로그 -->
+    <!-- ============================================ -->
+    <springProfile name="ci">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <root level="WARN">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <!-- ============================================ -->
+    <!-- 운영 환경: JSON 콘솔 + 비동기 파일 -->
+    <!-- ============================================ -->
+    <springProfile name="prod">
+        
+        <!-- JSON 콘솔 출력 (Loki/Promtail 수집용) -->
+        <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <!-- MDC 필드 포함 -->
+                <includeMdcKeyName>traceId</includeMdcKeyName>
+                <includeMdcKeyName>userId</includeMdcKeyName>
+                <includeMdcKeyName>requestUri</includeMdcKeyName>
+                <includeMdcKeyName>httpMethod</includeMdcKeyName>
+                <!-- 마커 포함 (핵심 로그 필터링용) -->
+                <includeMarkers>true</includeMarkers>
+                <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</timestampPattern>
+            </encoder>
+        </appender>
+
+        <!-- 파일 출력 (백업/디버깅용) -->
+        <appender name="FILE-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>/app/logs/app.log</file>
+            <encoder>
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </encoder>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>/app/logs/history-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <maxFileSize>100MB</maxFileSize>
+                <maxHistory>7</maxHistory>
+                <totalSizeCap>500MB</totalSizeCap>
+            </rollingPolicy>
+        </appender>
+
+        <!-- 비동기 파일 Appender (성능 최적화) -->
+        <appender name="ASYNC-FILE" class="ch.qos.logback.classic.AsyncAppender">
+            <appender-ref ref="FILE-LOG"/>
+            <queueSize>8192</queueSize>
+            <discardingThreshold>1638</discardingThreshold>
+            <neverBlock>true</neverBlock>
+            <!-- WARN 이상만 파일에 기록 (용량 절약) -->
+            <includeCallerData>false</includeCallerData>
+        </appender>
+
+        <root level="INFO">
+            <!-- Loki 수집용: 모든 로그를 JSON으로 stdout -->
+            <appender-ref ref="JSON_CONSOLE"/>
+            <!-- 백업용: WARN 이상만 파일 저장 -->
+            <appender-ref ref="ASYNC-FILE"/>
+        </root>
+    </springProfile>
+</configuration>
