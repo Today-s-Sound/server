@@ -20,8 +20,6 @@ public record UnreadAlarmResponse(
         String url,
         @Schema(description = "상대 시간", example = "5분 전")
         String timeAgo,
-        @Schema(description = "긴급 여부", example = "true")
-        boolean isUrgent,
         @Schema(description = "읽지 않은 요약 개수", example = "3")
         int unreadCount,
         @Schema(description = "읽지 않은 요약 목록")
@@ -30,7 +28,7 @@ public record UnreadAlarmResponse(
     public static UnreadAlarmResponse of(Subscription subscription) {
         // 읽지 않은 Summary만 필터링
         List<Summary> unreadSummaries = subscription.getSummaries().stream()
-                .filter(summary -> !summary.isRead())
+                .filter(summary -> !summary.isKeywordMatched())
                 .sorted((s1, s2) -> s2.getUpdatedAt().compareTo(s1.getUpdatedAt())) // 최신순 정렬
                 .toList();
 
@@ -39,7 +37,6 @@ public record UnreadAlarmResponse(
                 subscription.getAlias(),
                 subscription.getUrl().getLink(),
                 TimeUtil.toRelativeTime(subscription.getUpdatedAt()),
-                subscription.isUrgent(),
                 unreadSummaries.size(),
                 unreadSummaries.stream().map(UnreadSummaryResponse::of).toList()
         );

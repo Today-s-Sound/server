@@ -23,21 +23,20 @@ public class FeedQueryService {
     private final HeaderAuthValidator headerAuthValidator;
 
     public List<FeedResponseDTO> findFeeds(final String userUuid, final String deviceSecret,
-            final PageRequestDTO pageRequest) {
+                                           final PageRequestDTO pageRequest) {
 
         User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
 
-        return feedDynamicRepository.findUnreadSummariesByUserId(user.getId(), pageRequest).stream()
+        return feedDynamicRepository.findFeeds(user.getId(), pageRequest).stream()
                 .map(FeedResponseDTO::of).toList();
     }
 
-    public List<HomeFeedResponse> findFeedsForHome(final String userUuid,
-            final String deviceSecret) {
+    public List<HomeFeedResponse> findFeedsForHome(final String userUuid, final String deviceSecret) {
 
         User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
 
-        return feedDynamicRepository.findUnreadSummariesByUserIdForHome(user.getId()).stream()
-                .map(HomeFeedResponse::of).toList();
+        return feedDynamicRepository.findFeedsForHome(user.getId()).stream().map(HomeFeedResponse::of)
+                .toList();
     }
 
 

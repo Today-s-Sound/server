@@ -42,10 +42,6 @@ public class Subscription extends BaseEntity {
     @Column(name = "last_seen_post_id", nullable = false)
     private String lastSeenPostId = "";
 
-    @Builder.Default
-    @Column(name = "is_urgent", nullable = false)
-    private boolean isUrgent = false;
-
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

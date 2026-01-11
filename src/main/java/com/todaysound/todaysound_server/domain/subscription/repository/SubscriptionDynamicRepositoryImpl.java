@@ -31,7 +31,6 @@ public class SubscriptionDynamicRepositoryImpl implements SubscriptionDynamicRep
                 .leftJoin(subscriptionKeyword.keyword, keyword).fetchJoin()
                 .where(subscription.user.id.eq(userId))
                 .orderBy(
-                        subscription.isUrgent.desc(),
                         subscription.createdAt.desc(),
                         subscription.id.desc()
                 )
@@ -41,39 +40,4 @@ public class SubscriptionDynamicRepositoryImpl implements SubscriptionDynamicRep
 
 	}
 
-	private List<Long> fetchSubscriptionIds(Long userId, Long page, Integer size) {
-        return queryFactory.select(subscription.id)
-                .from(subscription)
-                .where(subscription.user.id.eq(userId))
-                .orderBy(
-                        subscription.isUrgent.desc(),
-                        subscription.createdAt.desc(),
-                        subscription.id.desc()
-                )
-                .offset(page * size)
-                .limit(size)
-                .fetch();
-	}
-
-
-	private BooleanExpression getPaginationConditions(Long cursor) {
-		if (cursor == null) {
-			return null;
-		}
-		
-//		LocalDateTime cursorCreatedAt = getCursorCreatedAt(cursor);
-//		if (cursorCreatedAt == null) {
-//			return null;
-//		}
-		
-		return subscription.id.lt(cursor);
-	}
-
-//	private LocalDateTime getCursorCreatedAt(final Long cursor) {
-//		if (cursor == null) {
-//			return null;
-//		}
-//		return queryFactory.select(subscription.createdAt).from(subscription)
-//				.where(subscription.id.eq(cursor)).fetchFirst();
-//	}
 }

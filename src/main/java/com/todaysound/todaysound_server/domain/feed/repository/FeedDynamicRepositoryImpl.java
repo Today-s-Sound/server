@@ -11,7 +11,6 @@ import static com.todaysound.todaysound_server.domain.summary.entity.QSummary.su
 import static com.todaysound.todaysound_server.domain.subscription.entity.QSubscription.subscription;
 
 
-
 @Repository
 @RequiredArgsConstructor
 public class FeedDynamicRepositoryImpl implements FeedDynamicRepository {
@@ -19,21 +18,18 @@ public class FeedDynamicRepositoryImpl implements FeedDynamicRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Summary> findUnreadSummariesByUserId(Long userId, PageRequestDTO pageRequest) {
+    public List<Summary> findFeeds(Long userId, PageRequestDTO pageRequest) {
 
-        return queryFactory.selectFrom(summary).innerJoin(summary.subscription, subscription)
-                .fetchJoin().where(subscription.user.id.eq(userId), summary.isRead.eq(false))
-                .orderBy(subscription.isUrgent.desc(), summary.updatedAt.desc(), summary.id.desc())
+        return queryFactory.selectFrom(summary).innerJoin(summary.subscription, subscription).fetchJoin()
+                .where(subscription.user.id.eq(userId)).orderBy(summary.updatedAt.desc(), summary.id.desc())
                 .offset(pageRequest.page() * pageRequest.size()).limit(pageRequest.size()).fetch();
     }
 
     @Override
-    public List<Summary> findUnreadSummariesByUserIdForHome(Long userId) {
+    public List<Summary> findFeedsForHome(Long userId) {
 
-        return queryFactory.selectFrom(summary).innerJoin(summary.subscription, subscription)
-                .fetchJoin().where(subscription.user.id.eq(userId), summary.isRead.eq(false))
-                .orderBy(subscription.isUrgent.desc(), summary.updatedAt.desc(), summary.id.desc())
-                .fetch();
+        return queryFactory.selectFrom(summary).innerJoin(summary.subscription, subscription).fetchJoin()
+                .where(subscription.user.id.eq(userId)).orderBy(summary.updatedAt.desc(), summary.id.desc()).fetch();
     }
 
 

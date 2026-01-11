@@ -46,7 +46,7 @@ public class SubscriptionCommandService {
 
         // 구독 생성 및 저장
         Subscription subscription = subscriptionFactory.create(user, requestDto.urlId(), requestDto.keywordIds(),
-                requestDto.alias(), requestDto.isUrgent());
+                requestDto.alias());
         Subscription savedSubscription = subscriptionRepository.save(subscription);
         return SubscriptionCreationResponseDto.from(savedSubscription);
     }

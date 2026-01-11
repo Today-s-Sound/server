@@ -26,7 +26,6 @@ public record InternalSubscriptionResponseDto(
         String site_url,
         String site_alias,
         String keyword,
-        boolean urgent,
         String last_seen_post_id
 ) {
 
@@ -45,7 +44,6 @@ public record InternalSubscriptionResponseDto(
                 subscription.getUrl().getLink(),
                 subscription.getAlias(),
                 keyword,
-                subscription.isUrgent(),
                 lastSeenPostId
         );
     }

@@ -10,7 +10,6 @@ public record RecentAlarmResponse(
         String summaryContent,
         String postUrl,
         String timeAgo,
-        boolean isUrgent,
         boolean isRead
 ) {
 
@@ -23,8 +22,7 @@ public record RecentAlarmResponse(
                 summary.getContent(),
                 summary.getPostUrl(),
                 TimeUtil.toRelativeTime(summary.getUpdatedAt()),
-                summary.getSubscription().isUrgent(),
-                summary.isRead()
+                summary.isKeywordMatched()
 
         );
     }

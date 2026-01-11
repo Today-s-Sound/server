@@ -16,14 +16,6 @@ public interface SummaryRepository extends JpaRepository<Summary, Long> {
      */
     Optional<Summary> findById(Long id);
 
-    /**
-     * Subscription에 속한 모든 Summary 조회
-     */
-    List<Summary> findBySubscription(Subscription subscription);
 
-    /**
-     * Subscription에 속한 읽지 않은 Summary 조회
-     */
-    List<Summary> findBySubscriptionAndIsReadFalse(Subscription subscription);
 }
 
