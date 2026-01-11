@@ -35,8 +35,8 @@ public class Summary extends BaseEntity {
     @Column(name = "post_date")
     private String postDate;
 
-    @Column(name = "is_read", nullable = false)
-    private boolean isRead;
+    @Column(name = "is_keyword_matched", nullable = false)
+    private boolean isKeywordMatched;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -58,7 +58,7 @@ public class Summary extends BaseEntity {
         summary.content = content;
         summary.postUrl = postUrl;
         summary.postDate = postDate;
-        summary.isRead = false;
+        summary.isKeywordMatched = false;
         summary.createdAt = LocalDateTime.now();
         summary.updatedAt = LocalDateTime.now();
         summary.subscription = subscription;
@@ -67,7 +67,7 @@ public class Summary extends BaseEntity {
 
     // Summary를 읽음 처리
     public void markAsRead() {
-        this.isRead = true;
+        this.isKeywordMatched = true;
         this.updatedAt = LocalDateTime.now();
     }
 

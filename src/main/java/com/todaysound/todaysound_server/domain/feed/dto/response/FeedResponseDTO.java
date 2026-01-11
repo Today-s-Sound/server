@@ -9,10 +9,8 @@ public record FeedResponseDTO(
         String summaryTitle,
         String summaryContent,
         String postUrl,
-        String timeAgo,
-        boolean isUrgent
+        String timeAgo
 ) {
-
     public static FeedResponseDTO of(Summary summary) {
         return new FeedResponseDTO(
                 summary.getSubscription().getId(),
@@ -20,8 +18,7 @@ public record FeedResponseDTO(
                 summary.getTitle(),
                 summary.getContent(),
                 summary.getPostUrl(),
-                TimeUtil.toRelativeTime(summary.getUpdatedAt()),
-                summary.getSubscription().isUrgent()
+                TimeUtil.toRelativeTime(summary.getUpdatedAt())
         );
     }
 

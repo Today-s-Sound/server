@@ -9,8 +9,8 @@ import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
 
 public interface FeedDynamicRepository {
 
-    public List<Summary> findUnreadSummariesByUserId(Long userId, PageRequestDTO pageRequest);
+    List<Summary> findFeeds(Long userId, PageRequestDTO pageRequest);
 
-    public List<Summary> findUnreadSummariesByUserIdForHome(Long userId);
+    List<Summary> findFeedsForHome(Long userId);
 
 }
