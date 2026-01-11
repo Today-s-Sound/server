@@ -74,6 +74,7 @@ public class InternalAlertController implements InternalAlertApi {
                 request.contentSummary(),
                 request.url(),
                 request.publishedAt(),
+                request.keywordMatched,
                 subscription
         );
 

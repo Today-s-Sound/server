@@ -50,7 +50,7 @@ public class Summary extends BaseEntity {
 
     // Summary 생성 팩토리 메서드
     public static Summary create(String hash, String title, String content,
-            String postUrl, String postDate,
+            String postUrl, String postDate, boolean isKeywordMatched,
             Subscription subscription) {
         Summary summary = new Summary();
         summary.hash = hash;
@@ -58,7 +58,7 @@ public class Summary extends BaseEntity {
         summary.content = content;
         summary.postUrl = postUrl;
         summary.postDate = postDate;
-        summary.isKeywordMatched = false;
+        summary.isKeywordMatched = isKeywordMatched;
         summary.createdAt = LocalDateTime.now();
         summary.updatedAt = LocalDateTime.now();
         summary.subscription = subscription;
