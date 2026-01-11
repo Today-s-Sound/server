@@ -2,7 +2,9 @@ name: TodaySound Server CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - dev
   workflow_dispatch:
 
 env:
@@ -20,7 +22,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -36,7 +38,9 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build Spring Boot app (skip tests)
-        run: ./gradlew clean bootJar -x test
+        run: ./gradlew clean bootJar -x test -x asciidoctor
+        env:
+          SPRING_PROFILES_ACTIVE: ci
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -63,56 +67,40 @@ jobs:
           DB_URL: ${{ secrets.DB_URL }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          FCM_JSON: ${{ secrets.FCM_JSON }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
-          envs: DOCKER_USERNAME,IMAGE_NAME,DB_URL,DB_USERNAME,DB_PASSWORD
+          envs: DOCKER_USERNAME,IMAGE_NAME,DB_URL,DB_USERNAME,DB_PASSWORD,FCM_JSON
           script: |
             set -e
 
-            # Variables
-            IMAGE="${DOCKER_USERNAME}/${IMAGE_NAME}:latest"
-            APP_NAME="todaysound-server"
-            NET_NAME="todaysound-net"
-            PORT=8080
-
-            # Install Docker if not present
-            if ! command -v docker &> /dev/null; then
-              curl -fsSL https://get.docker.com -o get-docker.sh
-              sudo sh get-docker.sh
-              sudo usermod -aG docker $USER
-            fi
+            cd ~/todaysound-be
             
-            # Start Docker service
-            sudo systemctl daemon-reload || true
-            sudo systemctl start docker
-            sudo systemctl enable docker
+            cat > .env << EOF
+            DOCKER_USERNAME=${DOCKER_USERNAME}
+            DB_URL=${DB_URL}
+            DB_USERNAME=${DB_USERNAME}
+            DB_PASSWORD=${DB_PASSWORD}
+            FCM_JSON=${FCM_JSON}
+            EOF
 
-            # Docker setup
-            sudo docker network inspect ${NET_NAME} >/dev/null 2>&1 || sudo docker network create ${NET_NAME}
-            sudo docker pull ${IMAGE}
+            sudo docker-compose down
+            sudo docker-compose pull app
+            sudo docker-compose up -d
 
-            # Run or replace container
-            sudo docker rm -f ${APP_NAME} || true
-            sudo docker run -d \
-              --name ${APP_NAME} \
-              --restart unless-stopped \
-              --network ${NET_NAME} \
-              -p 127.0.0.1:${PORT}:8080 \
-              -e SPRING_PROFILES_ACTIVE=prod \
-              -e DB_URL="${DB_URL}" \
-              -e DB_USERNAME="${DB_USERNAME}" \
-              -e DB_PASSWORD="${DB_PASSWORD}" \
-              ${IMAGE}
-
+            docker image prune -f
+            
             # Health check (local) - try basic endpoint first
             echo "Waiting for app to start..." && sleep 45
-            
+
             # Show container status
+            APP_NAME="todaysound-server"
+            PORT=8080
             sudo docker ps -a | grep ${APP_NAME} || true
-            
+
             # Try basic health check first (disable set -e for this section)
             set +e
             HEALTH_CHECK_PASSED=false
@@ -128,7 +116,7 @@ jobs:
               fi
             done
             set -e
-            
+
             if [ "$HEALTH_CHECK_PASSED" = "false" ]; then
               echo "Health check failed after 15 attempts"
               sudo docker logs ${APP_NAME} --tail 50 || true
@@ -137,4 +125,3 @@ jobs:
 
             # Optional domain health check (non-blocking)
             curl -f http://today-sound.com/ || echo "Domain check failed, but continuing..."
-

@@ -9,3 +9,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+
+fcm:
+  # Docker에서 넘겨준 값이 없으면 빈 문자열
+  secret-string: ${FCM_JSON:}

@@ -1,5 +1,6 @@
 package com.todaysound.todaysound_server.domain.subscription.entity;
 
+import com.todaysound.todaysound_server.domain.url.entity.Url;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.summary.entity.Summary;
 import com.todaysound.todaysound_server.global.entity.BaseEntity;
@@ -30,11 +31,16 @@ public class Subscription extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "url", nullable = false)
-    private String url;
-
     @Column(name = "alias", nullable = false)
     private String alias;
+
+    @Column(name = "is_alarm_enabled", nullable = false)
+    private boolean isAlarmEnabled;
+
+    // 마지막으로 처리한 게시물의 site_post_id
+    @Builder.Default
+    @Column(name = "last_seen_post_id", nullable = false)
+    private String lastSeenPostId = "";
 
     @Builder.Default
     @Column(name = "is_urgent", nullable = false)
@@ -48,6 +54,10 @@ public class Subscription extends BaseEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "url_id", nullable = false)
+    private Url url;
+
     @Builder.Default
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, orphanRemoval = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -58,4 +68,15 @@ public class Subscription extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Summary> summaries = new ArrayList<>();
 
+    public void updateLastSeenPostId(String lastSeenPostId) {
+        this.lastSeenPostId = lastSeenPostId;
+    }
+
+    public void alarmBlock() {
+        this.isAlarmEnabled = false;
+    }
+
+    public void alarmUnblock() {
+        this.isAlarmEnabled = true;
+    }
 }

@@ -8,8 +8,8 @@ import java.util.Optional;
 
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long>, SubscriptionDynamicRepository {
 
-    boolean existsByUserAndUrl(User user, String url);
+//    boolean existsByUserAndUrl(User user, String url);
     
-    Optional<Subscription> findByUserAndUrl(User user, String url);
-    
+//    Optional<Subscription> findByUserAndUrl(User user, String url);
+
 }
