@@ -65,6 +65,10 @@ dependencies {
     testImplementation 'org.testcontainers:jdbc'
     testImplementation 'org.testcontainers:junit-jupiter'
 
+    // flyway
+    implementation 'org.flywaydb:flyway-core:11.20.1'
+    implementation 'org.flywaydb:flyway-mysql'
+
 }
 
 tasks.named('test') {
