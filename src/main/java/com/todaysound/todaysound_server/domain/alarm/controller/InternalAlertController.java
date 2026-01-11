@@ -52,10 +52,17 @@ public class InternalAlertController implements InternalAlertApi {
         // 알림이 활성화된 구독에 대해서만 푸시 전송
         if (subscription.isAlarmEnabled()) {
             User user = subscription.getUser();
+            String prefix;
+
+            if(request.keywordMatched == true) {
+                prefix = "[" + request.siteAlias + "]";
+            } else {
+                prefix = "[긴급/" + request.siteAlias + "]";
+            }
 
             fcmService.sendNotificationToUser(
                     user,
-                    "새 알림: " + request.title(),
+                    prefix + request.title(),
                     request.contentSummary()
             );
         }
