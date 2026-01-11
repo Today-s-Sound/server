@@ -23,11 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
  *   "user_id": 10,
  *   "subscription_id": 1,
  *   "site_post_id": "12345",
- *   "title": "게시글 제목",
+ *   "title": "게시글 제목",    
  *   "url": "https://...",
  *   "content_raw": "...원문...",
  *   "content_summary": "...요약...",
- *   "is_urgent": true
+ *   "keyword_matched": true
  * }
  */
 @RestController
@@ -49,13 +49,16 @@ public class InternalAlertController implements InternalAlertApi {
             throw BaseException.type(CommonErrorCode.FORBIDDEN);
         }
 
-        User user = subscription.getUser();
+        // 알림이 활성화된 구독에 대해서만 푸시 전송
+        if (subscription.isAlarmEnabled()) {
+            User user = subscription.getUser();
 
-        fcmService.sendNotificationToUser(
-                user,
-                "새 알림: " + request.title(),
-                request.contentSummary()
-        );
+            fcmService.sendNotificationToUser(
+                    user,
+                    "새 알림: " + request.title(),
+                    request.contentSummary()
+            );
+        }
 
         // sitePostId 를 해시 키로 사용
         Summary summary = Summary.create(
@@ -80,7 +83,6 @@ public class InternalAlertController implements InternalAlertApi {
             @JsonProperty("published_at") String publishedAt,
             @JsonProperty("content_raw") String contentRaw,
             @JsonProperty("content_summary") String contentSummary,
-            @JsonProperty("is_urgent") boolean isUrgent,
             @JsonProperty("keyword_matched") boolean keywordMatched
     ) {
     }

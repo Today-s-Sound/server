@@ -15,7 +15,7 @@ public record SubscriptionCreateRequestDto(
 
         String alias,
 
-        boolean isUrgent) {
+        boolean isAlarmEnabled) {
 }
 
 

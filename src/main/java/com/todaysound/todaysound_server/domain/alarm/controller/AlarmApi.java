@@ -1,20 +1,16 @@
 package com.todaysound.todaysound_server.domain.alarm.controller;
 
-import com.todaysound.todaysound_server.domain.alarm.dto.request.SummaryReadRequestDto;
 import com.todaysound.todaysound_server.domain.alarm.dto.response.RecentAlarmResponse;
-import com.todaysound.todaysound_server.domain.alarm.dto.response.UnreadAlarmResponse;
 import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
 import com.todaysound.todaysound_server.global.exception.CustomErrorResponse;
 import com.todaysound.todaysound_server.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
@@ -49,8 +45,7 @@ public interface AlarmApi {
                                                         "subscriptionId": 1,
                                                         "alias": "동국대 SW 융합교육원",
                                                         "summaryContent": "요약된 알림 내용...",
-                                                        "timeAgo": "5분 전",
-                                                        "urgent": true
+                                                        "timeAgo": "5분 전"
                                                     }
                                                 ]
                                             }

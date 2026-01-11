@@ -53,7 +53,7 @@ public interface SubscriptionApi {
                                                         "id": 1,
                                                         "url": "https://example.com",
                                                         "alias": "예시 사이트",
-                                                        "urgent": true,
+                                                        "isAlarmEnabled": true,
                                                         "keywords": [
                                                             {
                                                                 "id": 1,
@@ -149,7 +149,7 @@ public interface SubscriptionApi {
     @Operation(
             summary = "구독 생성",
             description = """
-                    새로운 사이트 URL과 키워드, 별칭, 긴급 여부를 기반으로 구독을 생성합니다.
+                    새로운 사이트 URL과 키워드, 별칭을 기반으로 구독을 생성합니다.
                     """,
             tags = {"Subscription"},
             operationId = "createSubscription"

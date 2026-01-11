@@ -8,7 +8,6 @@ import com.todaysound.todaysound_server.domain.subscription.repository.Subscript
 import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionCreateRequestDto;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponseDto;
 import com.todaysound.todaysound_server.domain.subscription.factory.SubscriptionFactory;
-import com.todaysound.todaysound_server.domain.subscription.validator.SubscriptionValidator;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.validator.HeaderAuthValidator;
 import com.todaysound.todaysound_server.global.exception.BaseException;
@@ -45,8 +44,13 @@ public class SubscriptionCommandService {
         User user = headerAuthValidator.validateAndGetUser(headerUserUuid, headerDeviceSecret);
 
         // 구독 생성 및 저장
-        Subscription subscription = subscriptionFactory.create(user, requestDto.urlId(), requestDto.keywordIds(),
-                requestDto.alias());
+        Subscription subscription = subscriptionFactory.create(
+                user,
+                requestDto.urlId(),
+                requestDto.keywordIds(),
+                requestDto.alias(),
+                requestDto.isAlarmEnabled()
+        );
         Subscription savedSubscription = subscriptionRepository.save(subscription);
         return SubscriptionCreationResponseDto.from(savedSubscription);
     }

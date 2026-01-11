@@ -16,7 +16,7 @@ public interface InternalAlertApi {
             summary = "알림 생성 (크롤러용)",
             description = """
                     크롤러가 새로운 게시글을 감지했을 때 알림을 생성하기 위한 엔드포인트입니다.
-                    user_id, subscription_id, site_post_id, title, url, content_raw, content_summary, is_urgent 정보를 전달합니다.
+                    user_id, subscription_id, site_post_id, title, url, content_raw, content_summary, keyword_matched 정보를 전달합니다.
                     """,
             tags = {"InternalAlert"},
             operationId = "createInternalAlert"
