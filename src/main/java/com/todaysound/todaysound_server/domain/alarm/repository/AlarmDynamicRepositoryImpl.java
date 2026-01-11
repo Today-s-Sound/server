@@ -27,9 +27,9 @@ public class AlarmDynamicRepositoryImpl implements AlarmDynamicRepository {
     public List<Summary> findAlarms(Long userId, PageRequestDTO pageRequest) {
 
         return queryFactory.selectFrom(summary).innerJoin(summary.subscription, subscription).fetchJoin()
-                .where(subscription.user.id.eq(userId), subscription.isAlarmEnabled.eq(true),
-                        summary.isKeywordMatched.eq(true)).orderBy(summary.updatedAt.desc(), summary.id.desc())
-                .offset(pageRequest.page() * pageRequest.size()).limit(pageRequest.size()).fetch();
+                .where(subscription.user.id.eq(userId), subscription.isAlarmEnabled.eq(true))
+                .orderBy(summary.updatedAt.desc(), summary.id.desc()).offset(pageRequest.page() * pageRequest.size())
+                .limit(pageRequest.size()).fetch();
     }
 
 

@@ -75,4 +75,23 @@ public class Subscription extends BaseEntity {
     public void alarmUnblock() {
         this.isAlarmEnabled = true;
     }
+
+    public void updateAlias(String alias) {
+        if (alias != null) {
+            this.alias = alias;
+        }
+    }
+
+    public void updateIsAlarmEnabled(Boolean alarmEnabled) {
+        if (alarmEnabled != null) {
+            this.isAlarmEnabled = alarmEnabled;
+        }
+    }
+
+    public void updateKeywords(List<Keyword> keywords) {
+        // orphanRemoval = true로 기존 키워드 삭제
+        this.subscriptionKeywords.clear();
+
+        keywords.forEach(keyword -> this.subscriptionKeywords.add(SubscriptionKeyword.of(this, keyword)));
+    }
 }

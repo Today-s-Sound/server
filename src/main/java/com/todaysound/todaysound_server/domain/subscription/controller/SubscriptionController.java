@@ -1,6 +1,7 @@
 package com.todaysound.todaysound_server.domain.subscription.controller;
 
 import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionCreateRequestDto;
+import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionUpdateRequest;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.KeywordListResponseDto;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponseDto;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse;
@@ -55,17 +56,12 @@ public class SubscriptionController implements SubscriptionApi {
         return subscriptionQueryService.getAllKeywords();
     }
 
-    @PatchMapping("/{subscriptionId}/alarm/block")
-    @ResponseStatus(HttpStatus.OK)
-    public void alarmBlock(@PathVariable Long subscriptionId) {
-
-        subscriptionCommandService.alarmBlock(subscriptionId);
-    }
-
-    @PatchMapping("/{subscriptionId}/alarm/unblock")
-    @ResponseStatus(HttpStatus.OK)
-    public void alarmUnBlock(@PathVariable Long subscriptionId) {
-
-        subscriptionCommandService.alarmUnBlock(subscriptionId);
+    @PatchMapping("/{subscriptionId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateSubscription(@PathVariable Long subscriptionId,
+                                   @RequestBody @Valid SubscriptionUpdateRequest request,
+                                   @RequestHeader("X-User-ID") String userUuid,
+                                   @RequestHeader("X-Device-Secret") String deviceSecret) {
+        subscriptionCommandService.updateSubscription(subscriptionId, userUuid, deviceSecret, request);
     }
 }

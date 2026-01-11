@@ -10,7 +10,7 @@ public record RecentAlarmResponse(
         String summaryContent,
         String postUrl,
         String timeAgo,
-        boolean isRead
+        boolean isKeywordMatched
 ) {
 
     public static RecentAlarmResponse of(Summary summary) {

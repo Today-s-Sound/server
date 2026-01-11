@@ -67,8 +67,7 @@ public class SubscriptionFactory {
         // SubscriptionKeyword 생성
         List<SubscriptionKeyword> subscriptionKeywords = new ArrayList<>();
         for (Keyword keyword : keywords) {
-            SubscriptionKeyword subscriptionKeyword = SubscriptionKeyword.builder()
-                    .subscription(subscription).keyword(keyword).build();
+            SubscriptionKeyword subscriptionKeyword = SubscriptionKeyword.of(subscription, keyword);
             subscriptionKeywords.add(subscriptionKeyword);
         }
 
