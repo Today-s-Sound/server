@@ -37,6 +37,8 @@ jobs:
         run: ./gradlew compileJava compileTestJava
 
       - name: Run Tests
+        env:
+          SPRING_PROFILES_ACTIVE: ci
         run: ./gradlew test
 
       - name: Publish Test Results
