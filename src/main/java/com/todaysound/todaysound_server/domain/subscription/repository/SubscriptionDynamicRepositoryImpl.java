@@ -1,28 +1,23 @@
 package com.todaysound.todaysound_server.domain.subscription.repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import static com.todaysound.todaysound_server.domain.subscription.entity.QKeyword.keyword;
+import static com.todaysound.todaysound_server.domain.subscription.entity.QSubscription.subscription;
+import static com.todaysound.todaysound_server.domain.subscription.entity.QSubscriptionKeyword.subscriptionKeyword;
 
-import org.springframework.stereotype.Repository;
-
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
-
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-
-import static com.todaysound.todaysound_server.domain.subscription.entity.QSubscription.subscription;
-import static com.todaysound.todaysound_server.domain.subscription.entity.QKeyword.keyword;
-import static com.todaysound.todaysound_server.domain.subscription.entity.QSubscriptionKeyword.subscriptionKeyword;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
 public class SubscriptionDynamicRepositoryImpl implements SubscriptionDynamicRepository {
 
-	private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
-	@Override
-	public List<Subscription> findByUserId(Long userId, Long page, Integer size) {
+    @Override
+    public List<Subscription> findByUserId(Long userId, Long page, Integer size) {
 
         return queryFactory
                 .selectFrom(subscription)
@@ -38,6 +33,6 @@ public class SubscriptionDynamicRepositoryImpl implements SubscriptionDynamicRep
                 .limit(size)
                 .fetch();
 
-	}
+    }
 
 }

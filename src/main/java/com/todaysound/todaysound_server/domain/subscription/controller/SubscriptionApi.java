@@ -1,8 +1,8 @@
 package com.todaysound.todaysound_server.domain.subscription.controller;
 
-import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionCreateRequestDto;
-import com.todaysound.todaysound_server.domain.subscription.dto.response.KeywordListResponseDto;
-import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponseDto;
+import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionCreateRequest;
+import com.todaysound.todaysound_server.domain.subscription.dto.response.KeywordListResponse;
+import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponse;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse;
 import com.todaysound.todaysound_server.global.dto.PageRequest;
 import com.todaysound.todaysound_server.global.exception.CustomErrorResponse;
@@ -15,12 +15,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-
-import java.util.List;
 
 @Tag(name = "Subscription", description = "사용자 구독 관리 API")
 public interface SubscriptionApi {
@@ -192,8 +191,8 @@ public interface SubscriptionApi {
                     )
             )
     })
-    SubscriptionCreationResponseDto createSubscription(
-            @RequestBody @Valid SubscriptionCreateRequestDto subscriptionCreateRequestDto,
+    SubscriptionCreationResponse createSubscription(
+            @RequestBody @Valid SubscriptionCreateRequest subscriptionCreateRequest,
             @RequestHeader("X-User-ID") String userUuid,
             @RequestHeader("X-Device-Secret") String deviceSecret
     );
@@ -212,11 +211,11 @@ public interface SubscriptionApi {
                     description = "키워드 목록 조회 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = KeywordListResponseDto.class))
+                            array = @ArraySchema(schema = @Schema(implementation = KeywordListResponse.class))
                     )
             )
     })
-    KeywordListResponseDto getAllKeywords();
+    KeywordListResponse getAllKeywords();
 
 }
 

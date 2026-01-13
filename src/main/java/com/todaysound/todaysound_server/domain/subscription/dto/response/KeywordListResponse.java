@@ -2,21 +2,20 @@ package com.todaysound.todaysound_server.domain.subscription.dto.response;
 
 import com.todaysound.todaysound_server.domain.subscription.entity.Keyword;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.util.List;
 
 /**
  * 키워드 목록 조회 응답 DTO
  */
-public record KeywordListResponseDto(
+public record KeywordListResponse(
         @Schema(description = "키워드 목록")
         List<KeywordItem> keywords
 ) {
-    public static KeywordListResponseDto from(List<Keyword> keywords) {
+    public static KeywordListResponse from(List<Keyword> keywords) {
         List<KeywordItem> items = keywords.stream()
                 .map(KeywordItem::from)
                 .toList();
-        return new KeywordListResponseDto(items);
+        return new KeywordListResponse(items);
     }
 
     public record KeywordItem(
