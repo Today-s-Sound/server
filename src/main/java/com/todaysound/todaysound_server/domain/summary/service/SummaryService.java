@@ -1,28 +1,23 @@
 package com.todaysound.todaysound_server.domain.summary.service;
 
-import com.todaysound.todaysound_server.domain.alarm.dto.request.SummaryReadRequestDto;
+import static com.todaysound.todaysound_server.global.utils.LogMarkers.BUSINESS;
+
 import com.todaysound.todaysound_server.domain.summary.entity.Summary;
 import com.todaysound.todaysound_server.domain.summary.exception.SummaryException;
 import com.todaysound.todaysound_server.domain.summary.repository.SummaryRepository;
-import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.validator.HeaderAuthValidator;
 import com.todaysound.todaysound_server.global.exception.BaseException;
-import com.todaysound.todaysound_server.global.exception.CommonErrorCode;
-import com.todaysound.todaysound_server.global.utils.LogMarkers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.todaysound.todaysound_server.global.utils.LogMarkers.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class SummaryCommandService {
+public class SummaryService {
 
     private final SummaryRepository summaryRepository;
     private final HeaderAuthValidator headerAuthValidator;

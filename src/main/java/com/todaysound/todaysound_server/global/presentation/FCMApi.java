@@ -1,7 +1,7 @@
 package com.todaysound.todaysound_server.global.presentation;
 
-import com.todaysound.todaysound_server.domain.user.dto.request.FCMNotificationRequestDto;
-import com.todaysound.todaysound_server.domain.user.dto.response.FCMNotificationResponseDto;
+import com.todaysound.todaysound_server.domain.user.dto.request.FCMNotificationRequest;
+import com.todaysound.todaysound_server.domain.user.dto.response.FCMNotificationResponse;
 import com.todaysound.todaysound_server.global.exception.CustomErrorResponse;
 import com.todaysound.todaysound_server.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,8 +46,8 @@ public interface FCMApi {
                         "message": "인증이 필요합니다."
                     }
                     """)))})
-    FCMNotificationResponseDto sendNotification(@RequestHeader("X-User-ID") String userId,
-                                                @Valid @RequestBody FCMNotificationRequestDto requestDto);
+    FCMNotificationResponse sendNotification(@RequestHeader("X-User-ID") String userId,
+                                             @Valid @RequestBody FCMNotificationRequest requestDto);
 }
 
 

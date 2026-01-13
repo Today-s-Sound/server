@@ -1,0 +1,9 @@
+[[feed-list]]
+=== 피드 목록 조회
+
+operation::feed-query-controller-test/피드_목록을_조회합니다[snippets='http-request,query-parameters,http-response,response-fields']
+
+[[home-feed-list]]
+=== 홈 피드 목록 조회
+
+operation::feed-query-controller-test/홈_피드_목록을_조회합니다[snippets='http-request,http-response,response-fields']

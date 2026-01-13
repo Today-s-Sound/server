@@ -42,7 +42,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/subscriptions/**").permitAll() // 구독 API 허용
                         .requestMatchers("/api/fcm/**").permitAll() // FCM API 허용 (테스트용)
                         .requestMatchers("/api/feeds/**").permitAll() // Feed API 허용
-                        .requestMatchers("/api/urls/**").permitAll() // Url API 허용                                       
+                        .requestMatchers("/api/urls/**")
+                        .permitAll() // Url API 허용
 
                         // 크롤러 전용 내부 API (로컬/내부 네트워크에서만 접근한다고 가정)
                         .requestMatchers("/internal/**").permitAll()

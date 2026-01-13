@@ -1,7 +1,7 @@
 name: Fix template
 description: 무언가를 수정할 때 쓰는 템플릿
 title: "🐛 [Fix] "
-labels: ["🐛bug"]
+labels: [ "🐛bug" ]
 
 body:
   - type: dropdown

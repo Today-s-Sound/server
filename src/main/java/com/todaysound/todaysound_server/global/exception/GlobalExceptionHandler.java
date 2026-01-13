@@ -1,5 +1,8 @@
 package com.todaysound.todaysound_server.global.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -7,10 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
-
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
@@ -70,7 +69,8 @@ public class GlobalExceptionHandler {
     위의 핸들러들로 처리되지 않은 모든 RuntimeException
      */
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<CustomErrorResponse> handleUnexpectedException(RuntimeException e, HttpServletRequest request) {
+    public ResponseEntity<CustomErrorResponse> handleUnexpectedException(RuntimeException e,
+                                                                         HttpServletRequest request) {
         log.error("Unexpected error occurred", e);
         log.error("Request info: {} {}", request.getMethod(), request.getRequestURI());
 

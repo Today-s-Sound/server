@@ -11,6 +11,7 @@ public class CryptoUtils {
 
     /**
      * SHA-256 해시 생성
+     *
      * @param input 입력 문자열
      * @return SHA-256 해시값 (64자리 hex 문자열)
      */
@@ -27,9 +28,10 @@ public class CryptoUtils {
             throw new IllegalStateException("SHA-256 not available", e);
         }
     }
-    
+
     /**
      * MD5 해시 생성 (필요시 사용)
+     *
      * @param input 입력 문자열
      * @return MD5 해시값 (32자리 hex 문자열)
      */

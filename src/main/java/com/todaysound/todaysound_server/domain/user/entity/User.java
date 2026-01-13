@@ -2,11 +2,23 @@ package com.todaysound.todaysound_server.domain.user.entity;
 
 import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.global.entity.BaseEntity;
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -23,7 +35,7 @@ public class User extends BaseEntity {
 
     /**
      * 기본 키는 BaseEntity에서 상속받음
-     * 
+     *
      * @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
      */
 
@@ -42,8 +54,7 @@ public class User extends BaseEntity {
     private String hashedSecret;
 
     /**
-     * 중복 검사용 지문 (고정 출력 해시: 예, SHA-256) - BCrypt는 솔트로 인해 매번 값이 달라 중복 비교에 부적합 - fingerprint는 유니크 인덱스로
-     * 중복을 방지하는 용도로 사용
+     * 중복 검사용 지문 (고정 출력 해시: 예, SHA-256) - BCrypt는 솔트로 인해 매번 값이 달라 중복 비교에 부적합 - fingerprint는 유니크 인덱스로 중복을 방지하는 용도로 사용
      */
     @Column(name = "secret_fingerprint", nullable = false, unique = true, length = 64)
     private String secretFingerprint;
@@ -66,22 +77,20 @@ public class User extends BaseEntity {
 
     /**
      * 평문 시크릿 (비영속 필드)
-     * 
+     *
      * @Transient로 JPA가 DB에 저장하지 않도록 설정 생성 시에만 사용하고 저장 후에는 null 처리
      */
     @Transient
     private String plainSecret;
 
-
     /********************************* 연관관계 매핑 *********************************/
 
     /**
      * 사용자의 구독 목록
-     * 
-     * @OneToMany: 1:N 관계, User 1개가 여러 Subscription을 가질 수 있음 mappedBy = "user": Subscription 엔티티의
-     *             user 필드가 연관관계의 주인 cascade = CascadeType.ALL: User 삭제 시 관련 Subscription도 함께 삭제
-     *             orphanRemoval = true: 고아 객체(연관관계가 끊어진 객체) 자동 삭제 fetch = FetchType.LAZY: 지연 로딩으로
-     *             성능 최적화
+     *
+     * @OneToMany: 1:N 관계, User 1개가 여러 Subscription을 가질 수 있음 mappedBy = "user": Subscription 엔티티의 user 필드가 연관관계의 주인
+     * cascade = CascadeType.ALL: User 삭제 시 관련 Subscription도 함께 삭제 orphanRemoval = true: 고아 객체(연관관계가 끊어진 객체) 자동 삭제 fetch
+     * = FetchType.LAZY: 지연 로딩으로 성능 최적화
      */
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,
@@ -91,7 +100,6 @@ public class User extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FCM_Token> fcmTokenList = new ArrayList<>();
-
 
     /********************************* 생성 메서드 *********************************/
 

@@ -8,11 +8,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -50,8 +49,8 @@ public class Summary extends BaseEntity {
 
     // Summary 생성 팩토리 메서드
     public static Summary create(String hash, String title, String content,
-            String postUrl, String postDate, boolean isKeywordMatched,
-            Subscription subscription) {
+                                 String postUrl, String postDate, boolean isKeywordMatched,
+                                 Subscription subscription) {
         Summary summary = new Summary();
         summary.hash = hash;
         summary.title = title;
