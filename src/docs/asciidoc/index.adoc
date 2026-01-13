@@ -33,3 +33,8 @@ include::api/url/url.adoc[]
 == Summary API
 
 include::api/summary/summary.adoc[]
+
+[[User-API]]
+== User API
+
+include::api/user/user.adoc[]

@@ -12,6 +12,8 @@ import com.todaysound.todaysound_server.domain.summary.controller.SummaryControl
 import com.todaysound.todaysound_server.domain.summary.service.SummaryService;
 import com.todaysound.todaysound_server.domain.url.controller.UrlController;
 import com.todaysound.todaysound_server.domain.url.service.UrlQueryService;
+import com.todaysound.todaysound_server.domain.user.controller.UserController;
+import com.todaysound.todaysound_server.domain.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,7 +24,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = {FeedController.class, AlarmQueryController.class, SubscriptionController.class,
-        UrlController.class, SummaryController.class})
+        UrlController.class, SummaryController.class, UserController.class})
 @Import({RestDocsConfig.class,})
 @AutoConfigureRestDocs
 @AutoConfigureMockMvc(addFilters = false)
@@ -55,4 +57,6 @@ public class DocumentationTestSupport {
     @MockitoBean
     protected SummaryService summaryService;
 
+    @MockitoBean
+    protected UserService userService;
 }
