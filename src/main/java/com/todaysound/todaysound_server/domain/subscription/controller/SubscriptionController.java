@@ -7,7 +7,7 @@ import com.todaysound.todaysound_server.domain.subscription.dto.response.Subscri
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse;
 import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionCommandService;
 import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionQueryService;
-import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
+import com.todaysound.todaysound_server.global.dto.PageRequest;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class SubscriptionController implements SubscriptionApi {
 
     // 사용자의 구독을 페이지네이션(한 페이지 size 만큼)해서 가져옴.
     @GetMapping()
-    public List<SubscriptionResponse> getMySubscriptions(@ModelAttribute final PageRequestDTO pageRequest,
+    public List<SubscriptionResponse> getMySubscriptions(@ModelAttribute final PageRequest pageRequest,
                                                          @RequestHeader("X-User-ID") String userUuid,
                                                          @RequestHeader("X-Device-Secret") String deviceSecret) {
 

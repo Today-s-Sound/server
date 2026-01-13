@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import com.todaysound.todaysound_server.domain.alarm.dto.response.RecentAlarmResponse;
 import com.todaysound.todaysound_server.domain.alarm.service.AlarmQueryService;
 import com.todaysound.todaysound_server.domain.summary.service.SummaryCommandService;
-import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
+import com.todaysound.todaysound_server.global.dto.PageRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,7 +23,7 @@ public class AlarmQueryController implements AlarmApi {
     @GetMapping()
     @Override
     public List<RecentAlarmResponse> getRecentAlarms(
-            @ModelAttribute final PageRequestDTO pageRequest,
+            @ModelAttribute final PageRequest pageRequest,
             @RequestHeader("X-User-ID") String userUuid,
             @RequestHeader("X-Device-Secret") String deviceSecret) {
 
