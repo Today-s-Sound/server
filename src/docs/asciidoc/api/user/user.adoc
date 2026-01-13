@@ -1,0 +1,6 @@
+[[user-withdraw]]
+=== 회원 탈퇴
+
+operation::user-controller-test/익명_사용자를_등록한다[snippets='http-request,http-response,response-fields']
+
+operation::user-controller-test/회원을_탈퇴한다[snippets='http-request,request-headers,http-response,response-fields']

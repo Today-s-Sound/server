@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.todaysound'
-version = '0.0.1-SNAPSHOT' 
+version = '0.0.1-SNAPSHOT'
 description = 'Demo project for Spring Boot'
 
 java {
@@ -107,6 +107,18 @@ asciidoctor { // adoc 문서 파일을 읽어서 HTML로 변환
     baseDirFollowsSourceDir()
     dependsOn test
 }
+
+tasks.register('copyDocument', Copy) { // 8
+    dependsOn asciidoctor
+
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
+}
+
 
 bootJar { // 생성된 HTML 파일을 static/docs 폴더에 복사
     dependsOn asciidoctor
