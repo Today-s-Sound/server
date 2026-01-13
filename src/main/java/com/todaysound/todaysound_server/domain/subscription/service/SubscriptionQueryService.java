@@ -11,7 +11,7 @@ import com.todaysound.todaysound_server.domain.subscription.repository.KeywordRe
 import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.validator.HeaderAuthValidator;
-import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
+import com.todaysound.todaysound_server.global.dto.PageRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -23,7 +23,7 @@ public class SubscriptionQueryService {
         private final KeywordRepository keywordRepository;
         private final HeaderAuthValidator headerAuthValidator;
 
-        public List<SubscriptionResponse> getMySubscriptions(final PageRequestDTO pageRequest,
+        public List<SubscriptionResponse> getMySubscriptions(final PageRequest pageRequest,
                         final String userUuid, final String deviceSecret) {
 
                 // 헤더 인증 검증 및 사용자 획득

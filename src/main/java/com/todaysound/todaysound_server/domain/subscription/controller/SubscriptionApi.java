@@ -4,7 +4,7 @@ import com.todaysound.todaysound_server.domain.subscription.dto.request.Subscrip
 import com.todaysound.todaysound_server.domain.subscription.dto.response.KeywordListResponseDto;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponseDto;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse;
-import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
+import com.todaysound.todaysound_server.global.dto.PageRequest;
 import com.todaysound.todaysound_server.global.exception.CustomErrorResponse;
 import com.todaysound.todaysound_server.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -105,7 +105,7 @@ public interface SubscriptionApi {
             )
     })
     List<SubscriptionResponse> getMySubscriptions(
-            @ModelAttribute PageRequestDTO pageRequest,
+            @ModelAttribute PageRequest pageRequest,
             @RequestHeader("X-User-ID") String userUuid,
             @RequestHeader("X-Device-Secret") String deviceSecret
     );
