@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 public class AlarmQueryController implements AlarmApi {
 
     private final AlarmQueryService alarmQueryService;
-    private final SummaryCommandService summaryCommandService;
 
     /**
      * 최근 알림 목록 조회

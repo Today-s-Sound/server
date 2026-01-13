@@ -1,14 +1,11 @@
-package com.todaysound.todaysound_server.domain.feed.controller;
+package com.todaysound.todaysound_server.query.feed.presentation;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willReturn;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -21,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.ResultActions;
 
-class FeedControllerTest extends DocumentationTestSupport {
+class FeedQueryControllerTest extends DocumentationTestSupport {
 
 
     @Test
@@ -48,14 +45,14 @@ class FeedControllerTest extends DocumentationTestSupport {
         result.andExpect(status().isOk()).andDo(restDocsHandler.document(
                 queryParameters(parameterWithName("page").description("페이지 번호 (0부터 시작)"),
                         parameterWithName("size").description("페이지 크기")),
-                responseFields(fieldWithPath("errorCode").description("응답 코드"),
-                        fieldWithPath("message").description("응답 메시지"), fieldWithPath("result").description("피드 목록"),
-                        fieldWithPath("result[].subscriptionId").description("구독 ID"),
-                        fieldWithPath("result[].alias").description("구독 별칭"),
-                        fieldWithPath("result[].summaryTitle").description("요약 제목"),
-                        fieldWithPath("result[].summaryContent").description("요약 내용"),
-                        fieldWithPath("result[].postUrl").description("연결 url"),
-                        fieldWithPath("result[].timeAgo").description("피드 작성 후 경과 시간"))));
+                    responseFields(fieldWithPath("errorCode").description("응답 코드"),
+                            fieldWithPath("message").description("응답 메시지"), fieldWithPath("result").description("피드 목록"),
+                            fieldWithPath("result[].subscriptionId").description("구독 ID"),
+                            fieldWithPath("result[].alias").description("구독 별칭"),
+                            fieldWithPath("result[].summaryTitle").description("요약 제목"),
+                            fieldWithPath("result[].summaryContent").description("요약 내용"),
+                            fieldWithPath("result[].postUrl").description("연결 url"),
+                            fieldWithPath("result[].timeAgo").description("피드 작성 후 경과 시간"))));
     }
 
 

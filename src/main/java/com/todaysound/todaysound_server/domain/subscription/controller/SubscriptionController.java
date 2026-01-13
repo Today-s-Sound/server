@@ -5,7 +5,7 @@ import com.todaysound.todaysound_server.domain.subscription.dto.request.Subscrip
 import com.todaysound.todaysound_server.domain.subscription.dto.response.KeywordListResponseDto;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponseDto;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse;
-import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionCommandService;
+import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionService;
 import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionQueryService;
 import com.todaysound.todaysound_server.global.dto.PageRequest;
 
@@ -23,7 +23,7 @@ import java.util.List;
 public class SubscriptionController implements SubscriptionApi {
 
     private final SubscriptionQueryService subscriptionQueryService;
-    private final SubscriptionCommandService subscriptionCommandService;
+    private final SubscriptionService subscriptionCommandService;
 
     // 사용자의 구독을 페이지네이션(한 페이지 size 만큼)해서 가져옴.
     @GetMapping()

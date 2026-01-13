@@ -1,0 +1,4 @@
+[[url-list]]
+=== URL 목록 조회
+
+operation::url-query-controller-test/url목록을_조회한다[snippets='http-request,http-response,response-fields']

@@ -4,8 +4,6 @@ import com.todaysound.todaysound_server.domain.subscription.dto.request.Subscrip
 import com.todaysound.todaysound_server.domain.subscription.entity.Keyword;
 import com.todaysound.todaysound_server.domain.subscription.exception.KeywordException;
 import com.todaysound.todaysound_server.domain.subscription.repository.KeywordRepository;
-import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionKeywordRepository;
-import com.todaysound.todaysound_server.global.exception.CommonErrorCode;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class SubscriptionCommandService {
+public class SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
     private final KeywordRepository keywordRepository;
