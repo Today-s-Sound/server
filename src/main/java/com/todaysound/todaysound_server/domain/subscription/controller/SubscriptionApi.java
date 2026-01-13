@@ -53,7 +53,7 @@ public interface SubscriptionApi {
                                                         "id": 1,
                                                         "url": "https://example.com",
                                                         "alias": "예시 사이트",
-                                                        "urgent": true,
+                                                        "isAlarmEnabled": true,
                                                         "keywords": [
                                                             {
                                                                 "id": 1,
@@ -149,7 +149,7 @@ public interface SubscriptionApi {
     @Operation(
             summary = "구독 생성",
             description = """
-                    새로운 사이트 URL과 키워드, 별칭, 긴급 여부를 기반으로 구독을 생성합니다.
+                    새로운 사이트 URL과 키워드, 별칭을 기반으로 구독을 생성합니다.
                     """,
             tags = {"Subscription"},
             operationId = "createSubscription"
@@ -218,57 +218,6 @@ public interface SubscriptionApi {
     })
     KeywordListResponseDto getAllKeywords();
 
-    @Operation(
-            summary = "구독 알림 차단",
-            description = """
-                    구독 ID를 이용해 해당 구독의 알림을 차단합니다.
-                    """,
-            tags = {"Subscription"},
-            operationId = "alarmBlock"
-    )
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
-                    description = "구독 알림 차단 성공"
-            ),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "404",
-                    description = "구독을 찾을 수 없음",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = CustomErrorResponse.class)
-                    )
-            )
-    })
-    void alarmBlock(
-            @PathVariable Long subscriptionId
-    );
-
-    @Operation(
-            summary = "구독 알림 차단 해제",
-            description = """
-                    구독 ID를 이용해 해당 구독의 알림 차단을 해제합니다.
-                    """,
-            tags = {"Subscription"},
-            operationId = "alarmUnBlock"
-    )
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
-                    description = "구독 알림 차단 해제 성공"
-            ),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "404",
-                    description = "구독을 찾을 수 없음",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = CustomErrorResponse.class)
-                    )
-            )
-    })
-    void alarmUnBlock(
-            @PathVariable Long subscriptionId
-    );
 }
 
 

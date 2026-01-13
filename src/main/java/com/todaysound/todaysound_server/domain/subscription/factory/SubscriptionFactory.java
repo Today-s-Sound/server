@@ -28,7 +28,7 @@ public class SubscriptionFactory {
      * 구독 생성
      */
     public Subscription create(User user, Long urlId, List<Long> keywordIds, String alias,
-            boolean isUrgent) {
+            boolean isAlarmEnabled) {
         log.debug("구독 생성 시작: user={}, urlId={}, keywordIds={}", user.getUserId(), urlId,
                 keywordIds);
 
@@ -36,8 +36,12 @@ public class SubscriptionFactory {
         Url url = urlRepository.findById(urlId)
                 .orElseThrow(() -> BaseException.type(CommonErrorCode.ENTITY_NOT_FOUND));
 
-        Subscription subscription =
-                Subscription.builder().user(user).url(url).alias(alias).isUrgent(isUrgent).build();
+        Subscription subscription = Subscription.builder()
+                .user(user)
+                .url(url)
+                .alias(alias)
+                .isAlarmEnabled(isAlarmEnabled)
+                .build();
 
         // 키워드가 있는 경우 처리
         if (keywordIds != null && !keywordIds.isEmpty()) {
@@ -63,8 +67,7 @@ public class SubscriptionFactory {
         // SubscriptionKeyword 생성
         List<SubscriptionKeyword> subscriptionKeywords = new ArrayList<>();
         for (Keyword keyword : keywords) {
-            SubscriptionKeyword subscriptionKeyword = SubscriptionKeyword.builder()
-                    .subscription(subscription).keyword(keyword).build();
+            SubscriptionKeyword subscriptionKeyword = SubscriptionKeyword.of(subscription, keyword);
             subscriptionKeywords.add(subscriptionKeyword);
         }
 

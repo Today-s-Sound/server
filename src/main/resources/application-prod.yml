@@ -10,10 +10,13 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
+  flyway:
+    baseline-version: 1
+    baseline-on-migrate: true
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
@@ -58,6 +61,6 @@ management:
   metrics:
     tags:
       application: todaysound-server
-    export:
-      prometheus:
-        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true

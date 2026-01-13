@@ -21,43 +21,16 @@ import static com.todaysound.todaysound_server.domain.summary.entity.QSummary.su
 @RequiredArgsConstructor
 public class AlarmDynamicRepositoryImpl implements AlarmDynamicRepository {
 
-        private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
-        @Override
-        public List<Subscription> findSubscriptionWithUnreadSummaries(Long userId,
-                        PageRequestDTO pageRequest) {
+    @Override
+    public List<Summary> findAlarms(Long userId, PageRequestDTO pageRequest) {
 
-                return queryFactory.selectFrom(subscription).distinct()
-                                .leftJoin(subscription.summaries, summary).fetchJoin()
-                                .where(subscription.user.id.eq(userId), hasUnReadSummary())
-                                .orderBy(subscription.isUrgent.desc(),
-                                                subscription.updatedAt.desc(),
-                                                subscription.id.desc())
-                                .offset(pageRequest.page() * pageRequest.size())
-                                .limit(pageRequest.size()).fetch();
-        }
+        return queryFactory.selectFrom(summary).innerJoin(summary.subscription, subscription).fetchJoin()
+                .where(subscription.user.id.eq(userId), subscription.isAlarmEnabled.eq(true))
+                .orderBy(summary.updatedAt.desc(), summary.id.desc()).offset(pageRequest.page() * pageRequest.size())
+                .limit(pageRequest.size()).fetch();
+    }
 
-
-        @Override
-        public List<Summary> findUnreadSummariesAndIsAlarmEnabledByUserId(Long userId,
-                        PageRequestDTO pageRequest) {
-
-                return queryFactory.selectFrom(summary)
-                                .innerJoin(summary.subscription, subscription).fetchJoin()
-                                .where(subscription.user.id.eq(userId))
-                                .orderBy(subscription.isUrgent.desc(), summary.updatedAt.desc(),
-                                                summary.id.desc())
-                                .offset(pageRequest.page() * pageRequest.size())
-                                .limit(pageRequest.size()).fetch();
-        }
-
-
-
-        private BooleanExpression hasUnReadSummary() {
-                return JPAExpressions.selectOne().from(summary)
-                                .where(summary.subscription.id.eq(subscription.id),
-                                                summary.isRead.eq(false))
-                                .exists();
-        }
 
 }

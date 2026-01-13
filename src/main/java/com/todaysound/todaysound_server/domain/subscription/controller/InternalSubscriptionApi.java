@@ -2,7 +2,6 @@ package com.todaysound.todaysound_server.domain.subscription.controller;
 
 import com.todaysound.todaysound_server.domain.subscription.dto.response.InternalSubscriptionResponseDto;
 import com.todaysound.todaysound_server.global.exception.CustomErrorResponse;
-import com.todaysound.todaysound_server.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,7 +21,7 @@ public interface InternalSubscriptionApi {
             summary = "모든 구독 정보 조회 (크롤러용)",
             description = """
                     크롤러에서 사용하기 위한 모든 구독 정보를 단순 JSON 형태로 반환합니다.
-                    각 구독에는 사용자 ID, 사이트 URL, 별칭, 키워드, 긴급 여부, 마지막으로 본 게시글 ID가 포함됩니다.
+                    각 구독에는 사용자 ID, 사이트 URL, 별칭, 키워드, 마지막으로 본 게시글 ID가 포함됩니다.
                     """,
             tags = {"InternalSubscription"},
             operationId = "getInternalSubscriptions"
@@ -44,7 +43,6 @@ public interface InternalSubscriptionApi {
                                                     "site_url": "https://sw.dongguk.edu/board/list.do?id=S181",
                                                     "site_alias": "동국대 SW공지",
                                                     "keyword": "장학",
-                                                    "urgent": true,
                                                     "last_seen_post_id": "12345"
                                                 }
                                             ]

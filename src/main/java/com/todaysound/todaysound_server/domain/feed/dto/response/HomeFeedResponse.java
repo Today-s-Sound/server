@@ -9,8 +9,7 @@ public record HomeFeedResponse(
         String summaryTitle,
         String summaryContent,
         String postUrl,
-        String timeAgo,
-        boolean isUrgent
+        String timeAgo
 ) {
 
     public static HomeFeedResponse of(Summary summary) {
@@ -20,8 +19,7 @@ public record HomeFeedResponse(
                 summary.getTitle(),
                 summary.getContent(),
                 summary.getPostUrl(),
-                TimeUtil.toRelativeTime(summary.getUpdatedAt()),
-                summary.getSubscription().isUrgent()
+                TimeUtil.toRelativeTime(summary.getUpdatedAt())
         );
     }
 

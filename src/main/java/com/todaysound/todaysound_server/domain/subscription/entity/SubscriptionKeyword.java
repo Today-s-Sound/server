@@ -14,18 +14,20 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @Table(name = "subscriptions_keywords")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SubscriptionKeyword extends BaseEntity {
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "subscription_id", nullable = false)
-  private Subscription subscription;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id", nullable = false)
+    private Subscription subscription;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "keyword_id", nullable = false)
-  private Keyword keyword;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "keyword_id", nullable = false)
+    private Keyword keyword;
 
+    public static SubscriptionKeyword of(Subscription subscription, Keyword keyword) {
+        return new SubscriptionKeyword(subscription, keyword);
+    }
 }

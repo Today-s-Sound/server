@@ -15,7 +15,6 @@ import java.util.List;
  *     "site_url": "https://sw.dongguk.edu/board/list.do?id=S181",
  *     "site_alias": "동국대 SW공지",
  *     "keyword": "장학",
- *     "urgent": true,
  *     "last_seen_post_id": "12345"
  *   }
  * ]
@@ -26,7 +25,6 @@ public record InternalSubscriptionResponseDto(
         String site_url,
         String site_alias,
         String keyword,
-        boolean urgent,
         String last_seen_post_id
 ) {
 
@@ -45,7 +43,6 @@ public record InternalSubscriptionResponseDto(
                 subscription.getUrl().getLink(),
                 subscription.getAlias(),
                 keyword,
-                subscription.isUrgent(),
                 lastSeenPostId
         );
     }
