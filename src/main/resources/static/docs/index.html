@@ -513,49 +513,48 @@ Host: localhost:8080
 </div>
 <div class="sect3">
 <h4 id="subscription-create_request_fields"><a class="link" href="#subscription-create_request_fields">Request fields</a></h4>
-<div class="literalblock">
-<div class="content">
-<pre>|===
-|Path|Type|Optional|Description</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>|`+urlId+`
-|`+Number+`
-|
-|구독할 URL의 ID</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>|`+keywordIds+`
-|`+Array+`
-|O
-|구독에 연관된 키워드 ID 리스트</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>|`+alias+`
-|`+String+`
-|
-|구독 별칭</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>|`+isAlarmEnabled+`
-|`+Boolean+`
-|
-|알림 여부</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>|===</pre>
-</div>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Optional</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>urlId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">구독할 URL의 ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>keywordIds</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">구독에 연관된 키워드 ID 리스트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alias</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">구독 별칭</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isAlarmEnabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">알림 여부</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="subscription-create_http_response"><a class="link" href="#subscription-create_http_response">HTTP response</a></h4>
@@ -577,8 +576,6 @@ Content-Length: 89
 </div>
 <div class="sect3">
 <h4 id="subscription-create_response_fields"><a class="link" href="#subscription-create_response_fields">Response fields</a></h4>
-<div class="sect3">
-<h4 id="_response_fields"><a class="link" href="#_response_fields">Response Fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -615,7 +612,6 @@ Content-Length: 89
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 </div>
 <div class="sect2">
@@ -695,8 +691,6 @@ Content-Length: 492
 </div>
 <div class="sect3">
 <h4 id="subscription-list_response_fields"><a class="link" href="#subscription-list_response_fields">Response fields</a></h4>
-<div class="sect3">
-<h4 id="_response_fields"><a class="link" href="#_response_fields">Response Fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -765,7 +759,6 @@ Content-Length: 492
 </table>
 </div>
 </div>
-</div>
 <div class="sect2">
 <h3 id="subscription-update"><a class="link" href="#subscription-update">구독 수정</a></h3>
 <div class="sect3">
@@ -811,41 +804,42 @@ Host: localhost:8080
 </div>
 <div class="sect3">
 <h4 id="subscription-update_request_fields"><a class="link" href="#subscription-update_request_fields">Request fields</a></h4>
-<div class="literalblock">
-<div class="content">
-<pre>|===
-|Path|Type|Optional|Description</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>|`+keywordIds+`
-|`+Array+`
-|O
-|변경할 키워드 ID 리스트</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>|`+alias+`
-|`+String+`
-|O
-|변경할 구독 별칭</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>|`+isAlarmEnabled+`
-|`+Boolean+`
-|O
-|알림 활성화 여부</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>|===</pre>
-</div>
-</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Optional</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>keywordIds</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 키워드 ID 리스트</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>alias</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">변경할 구독 별칭</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isAlarmEnabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boolean</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">알림 활성화 여부</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="subscription-update_http_response"><a class="link" href="#subscription-update_http_response">HTTP response</a></h4>
@@ -909,8 +903,6 @@ Content-Length: 63
 </div>
 <div class="sect3">
 <h4 id="subscription-delete_response_fields"><a class="link" href="#subscription-delete_response_fields">Response fields</a></h4>
-<div class="sect3">
-<h4 id="_response_fields"><a class="link" href="#_response_fields">Response Fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -942,7 +934,6 @@ Content-Length: 63
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 </div>
 <div class="sect2">
@@ -987,8 +978,6 @@ Content-Length: 227
 </div>
 <div class="sect3">
 <h4 id="keyword-list_response_fields"><a class="link" href="#keyword-list_response_fields">Response fields</a></h4>
-<div class="sect3">
-<h4 id="_response_fields"><a class="link" href="#_response_fields">Response Fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1035,7 +1024,6 @@ Content-Length: 227
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 </div>
 </div>
@@ -1120,8 +1108,6 @@ Content-Length: 698
 </div>
 <div class="sect3">
 <h4 id="feed-list_response_fields"><a class="link" href="#feed-list_response_fields">Response fields</a></h4>
-<div class="sect3">
-<h4 id="_response_fields"><a class="link" href="#_response_fields">Response Fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1183,7 +1169,6 @@ Content-Length: 698
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 </div>
 <div class="sect2">
@@ -1238,8 +1223,6 @@ Content-Length: 698
 </div>
 <div class="sect3">
 <h4 id="home-feed-list_response_fields"><a class="link" href="#home-feed-list_response_fields">Response fields</a></h4>
-<div class="sect3">
-<h4 id="_response_fields"><a class="link" href="#_response_fields">Response Fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1301,7 +1284,6 @@ Content-Length: 698
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 </div>
 </div>
@@ -1389,8 +1371,6 @@ Content-Length: 692
 </div>
 <div class="sect3">
 <h4 id="alarm-list_response_fields"><a class="link" href="#alarm-list_response_fields">Response fields</a></h4>
-<div class="sect3">
-<h4 id="_response_fields"><a class="link" href="#_response_fields">Response Fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1461,7 +1441,6 @@ Content-Length: 692
 </div>
 </div>
 </div>
-</div>
 <div class="sect1">
 <h2 id="Url-API"><a class="link" href="#Url-API">URL API</a></h2>
 <div class="sectionbody">
@@ -1498,8 +1477,6 @@ Content-Length: 151
 </div>
 <div class="sect3">
 <h4 id="url-list_response_fields"><a class="link" href="#url-list_response_fields">Response fields</a></h4>
-<div class="sect3">
-<h4 id="_response_fields"><a class="link" href="#_response_fields">Response Fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1546,7 +1523,6 @@ Content-Length: 151
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 </div>
 </div>
@@ -1607,8 +1583,6 @@ Content-Length: 63
 </div>
 <div class="sect3">
 <h4 id="summary-delete_response_fields"><a class="link" href="#summary-delete_response_fields">Response fields</a></h4>
-<div class="sect3">
-<h4 id="_response_fields"><a class="link" href="#_response_fields">Response Fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1640,7 +1614,6 @@ Content-Length: 63
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 </div>
 </div>
@@ -1687,8 +1660,6 @@ Content-Length: 101
 </div>
 <div class="sect3">
 <h4 id="user-withdraw_response_fields"><a class="link" href="#user-withdraw_response_fields">Response fields</a></h4>
-<div class="sect3">
-<h4 id="_response_fields"><a class="link" href="#_response_fields">Response Fields</a></h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -1725,7 +1696,6 @@ Content-Length: 101
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 <div class="sect3">
 <h4 id="user-withdraw_http_request"><a class="link" href="#user-withdraw_http_request">HTTP request</a></h4>
@@ -1782,7 +1752,7 @@ Host: localhost:8080</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2026-01-13 22:59:43 +0900
+Last updated 2026-01-13 23:23:52 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
