@@ -1,4 +1,7 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/today_sound_local?serverTimezone=Asia/Seoul}
     username: ${DB_USERNAME:root}
@@ -11,13 +14,19 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
         show_sql: true
         generate_statistics: true
 
+# FCM 설정
+fcm:
+  secret-string: ${FCM_JSON:}
+
 # 로컬 개발용 로깅 설정
 logging:
   level:
+    org.flywaydb: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     com.todaysound.todaysound_server: DEBUG
