@@ -22,7 +22,7 @@ class SummaryControllerTest extends DocumentationTestSupport {
         // given
         Long summaryId = 1L;
 
-        doNothing().when(summaryCommandService).deleteSummary(anyString(), anyString(), anyLong());
+        doNothing().when(summaryService).deleteSummary(anyString(), anyString(), anyLong());
 
         // when then
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/summaries/{summaryId}", summaryId)

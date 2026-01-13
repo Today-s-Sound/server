@@ -6,10 +6,10 @@ import com.todaysound.todaysound_server.domain.alarm.service.AlarmQueryService;
 import com.todaysound.todaysound_server.domain.feed.controller.FeedController;
 import com.todaysound.todaysound_server.domain.feed.service.FeedQueryService;
 import com.todaysound.todaysound_server.domain.subscription.controller.SubscriptionController;
-import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionService;
 import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionQueryService;
+import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionService;
 import com.todaysound.todaysound_server.domain.summary.controller.SummaryController;
-import com.todaysound.todaysound_server.domain.summary.service.SummaryCommandService;
+import com.todaysound.todaysound_server.domain.summary.service.SummaryService;
 import com.todaysound.todaysound_server.domain.url.controller.UrlController;
 import com.todaysound.todaysound_server.domain.url.service.UrlQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +47,12 @@ public class DocumentationTestSupport {
     protected SubscriptionQueryService subscriptionQueryService;
 
     @MockitoBean
-    protected SubscriptionService subscriptionCommandService;
+    protected SubscriptionService subscriptionService;
 
     @MockitoBean
     protected UrlQueryService urlQueryService;
 
     @MockitoBean
-    protected SummaryCommandService summaryCommandService;
+    protected SummaryService summaryService;
 
 }

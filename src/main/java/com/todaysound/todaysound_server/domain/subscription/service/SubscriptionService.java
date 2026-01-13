@@ -1,22 +1,22 @@
 package com.todaysound.todaysound_server.domain.subscription.service;
 
+import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionCreateRequest;
 import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionUpdateRequest;
+import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponse;
 import com.todaysound.todaysound_server.domain.subscription.entity.Keyword;
-import com.todaysound.todaysound_server.domain.subscription.exception.KeywordException;
-import com.todaysound.todaysound_server.domain.subscription.repository.KeywordRepository;
-import java.util.List;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
+import com.todaysound.todaysound_server.domain.subscription.exception.KeywordException;
 import com.todaysound.todaysound_server.domain.subscription.exception.SubscriptionException;
-import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
-import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionCreateRequestDto;
-import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponseDto;
 import com.todaysound.todaysound_server.domain.subscription.factory.SubscriptionFactory;
+import com.todaysound.todaysound_server.domain.subscription.repository.KeywordRepository;
+import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.validator.HeaderAuthValidator;
 import com.todaysound.todaysound_server.global.exception.BaseException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -43,9 +43,9 @@ public class SubscriptionService {
         subscriptionRepository.deleteById(subscriptionId);
     }
 
-    public SubscriptionCreationResponseDto createSubscription(final String headerUserUuid,
-                                                              final String headerDeviceSecret,
-                                                              final SubscriptionCreateRequestDto requestDto) {
+    public SubscriptionCreationResponse createSubscription(final String headerUserUuid,
+                                                           final String headerDeviceSecret,
+                                                           final SubscriptionCreateRequest requestDto) {
         // 헤더 인증 검증 및 사용자 획득
         User user = headerAuthValidator.validateAndGetUser(headerUserUuid, headerDeviceSecret);
 
@@ -58,10 +58,11 @@ public class SubscriptionService {
                 requestDto.isAlarmEnabled()
         );
         Subscription savedSubscription = subscriptionRepository.save(subscription);
-        return SubscriptionCreationResponseDto.from(savedSubscription);
+        return SubscriptionCreationResponse.from(savedSubscription);
     }
 
-    public void updateSubscription(Long subscriptionId, String userUuid, String deviceSecret, SubscriptionUpdateRequest request) {
+    public void updateSubscription(Long subscriptionId, String userUuid, String deviceSecret,
+                                   SubscriptionUpdateRequest request) {
 
         // 헤더 인증 검증 및 사용자 획득
         User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);

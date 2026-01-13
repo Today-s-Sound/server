@@ -1,47 +1,45 @@
 package com.todaysound.todaysound_server.domain.user.service;
 
-import com.todaysound.todaysound_server.domain.user.dto.request.UserSecretRequestDto;
-import com.todaysound.todaysound_server.domain.user.dto.response.UserIdResponseDto;
+import com.todaysound.todaysound_server.domain.user.dto.request.UserSecretRequest;
+import com.todaysound.todaysound_server.domain.user.dto.response.UserIdResponse;
 import com.todaysound.todaysound_server.domain.user.entity.FCM_Token;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.factory.UserFactory;
 import com.todaysound.todaysound_server.domain.user.repository.UserRepository;
 import com.todaysound.todaysound_server.domain.user.validator.HeaderAuthValidator;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserCommandService {
+public class UserService {
 
     private final UserRepository userRepository;
     private final UserFactory userFactory;
     private final UserQueryService userQueryService;
     private final HeaderAuthValidator headerAuthValidator;
 
-    public UserIdResponseDto anonymous(UserSecretRequestDto userSecretRequestDto) {
+    public UserIdResponse anonymous(UserSecretRequest userSecretRequest) {
 
         log.info("Anonymous user command received");
         boolean secretExists =
-                userQueryService.existsBySecretFingerprint(userSecretRequestDto.deviceSecret());
+                userQueryService.existsBySecretFingerprint(userSecretRequest.deviceSecret());
 
         User user;
 
         if (!secretExists) {
             log.info("User secret does not exist, creating new user");
-            log.info("fcmToken: {}", userSecretRequestDto.fcmToken());
+            log.info("fcmToken: {}", userSecretRequest.fcmToken());
 
-            User newUser = userFactory.createAnonymousUser(userSecretRequestDto);
+            User newUser = userFactory.createAnonymousUser(userSecretRequest);
 
-            FCM_Token fcmToken = FCM_Token.builder().fcmToken(userSecretRequestDto.fcmToken())
-                    .model(userSecretRequestDto.model()).user(newUser).build();
+            FCM_Token fcmToken = FCM_Token.builder().fcmToken(userSecretRequest.fcmToken())
+                    .model(userSecretRequest.model()).user(newUser).build();
 
             newUser.addFcmToken(fcmToken);
 
@@ -50,10 +48,10 @@ public class UserCommandService {
             user.clearPlainSecret();
         } else {
             log.info("User secret exists, returning existing user");
-            user = userQueryService.findBySecretFingerprint(userSecretRequestDto.deviceSecret());
+            user = userQueryService.findBySecretFingerprint(userSecretRequest.deviceSecret());
         }
 
-        return UserIdResponseDto.from(user);
+        return UserIdResponse.from(user);
 
     }
 

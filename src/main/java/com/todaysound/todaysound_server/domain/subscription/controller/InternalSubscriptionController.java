@@ -1,10 +1,11 @@
 package com.todaysound.todaysound_server.domain.subscription.controller;
 
-import com.todaysound.todaysound_server.domain.subscription.dto.response.InternalSubscriptionResponseDto;
+import com.todaysound.todaysound_server.domain.subscription.dto.response.InternalSubscriptionResponse;
 import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
 import com.todaysound.todaysound_server.global.exception.BaseException;
 import com.todaysound.todaysound_server.global.exception.CommonErrorCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/internal")
@@ -27,10 +26,10 @@ public class InternalSubscriptionController implements InternalSubscriptionApi {
      * 크롤러용: 모든 구독 정보를 단순 JSON 형태로 반환
      */
     @GetMapping("/subscriptions")
-    public List<InternalSubscriptionResponseDto> getSubscriptions() {
+    public List<InternalSubscriptionResponse> getSubscriptions() {
         List<Subscription> subscriptions = subscriptionRepository.findAll();
         return subscriptions.stream()
-                .map(InternalSubscriptionResponseDto::from)
+                .map(InternalSubscriptionResponse::from)
                 .toList();
     }
 

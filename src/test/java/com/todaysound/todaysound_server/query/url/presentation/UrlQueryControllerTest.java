@@ -6,7 +6,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.todaysound.todaysound_server.domain.url.dto.response.UrlResponseDto;
+import com.todaysound.todaysound_server.domain.url.dto.response.UrlResponse;
 import com.todaysound.todaysound_server.support.DocumentationTestSupport;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -18,9 +18,9 @@ class UrlQueryControllerTest extends DocumentationTestSupport {
     @Test
     void URL목록을_조회한다() throws Exception {
         // given
-        UrlResponseDto response = new UrlResponseDto(1L, "https://todaysound.com", "Today's Sound");
+        UrlResponse response = new UrlResponse(1L, "https://todaysound.com", "Today's Sound");
 
-        List<UrlResponseDto> responseList = List.of(response);
+        List<UrlResponse> responseList = List.of(response);
 
         given(urlQueryService.getUrls()).willReturn(responseList);
 

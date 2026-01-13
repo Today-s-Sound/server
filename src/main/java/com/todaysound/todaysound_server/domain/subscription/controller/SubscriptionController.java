@@ -1,21 +1,28 @@
 package com.todaysound.todaysound_server.domain.subscription.controller;
 
-import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionCreateRequestDto;
+import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionCreateRequest;
 import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionUpdateRequest;
-import com.todaysound.todaysound_server.domain.subscription.dto.response.KeywordListResponseDto;
-import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponseDto;
+import com.todaysound.todaysound_server.domain.subscription.dto.response.KeywordListResponse;
+import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponse;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse;
-import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionService;
 import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionQueryService;
+import com.todaysound.todaysound_server.domain.subscription.service.SubscriptionService;
 import com.todaysound.todaysound_server.global.dto.PageRequest;
-
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
-
-import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/subscriptions")
@@ -23,7 +30,7 @@ import java.util.List;
 public class SubscriptionController implements SubscriptionApi {
 
     private final SubscriptionQueryService subscriptionQueryService;
-    private final SubscriptionService subscriptionCommandService;
+    private final SubscriptionService subscriptionService;
 
     // 사용자의 구독을 페이지네이션(한 페이지 size 만큼)해서 가져옴.
     @GetMapping()
@@ -38,21 +45,21 @@ public class SubscriptionController implements SubscriptionApi {
     public void deleteSubscription(@PathVariable Long subscriptionId, @RequestHeader("X-User-ID") String userUuid,
                                    @RequestHeader("X-Device-Secret") String deviceSecret) {
 
-        subscriptionCommandService.deleteSubscription(subscriptionId, userUuid, deviceSecret);
+        subscriptionService.deleteSubscription(subscriptionId, userUuid, deviceSecret);
     }
 
     @PostMapping()
-    public SubscriptionCreationResponseDto createSubscription(
-            @RequestBody @Valid SubscriptionCreateRequestDto subscriptionCreateRequestDto,
+    public SubscriptionCreationResponse createSubscription(
+            @RequestBody @Valid SubscriptionCreateRequest subscriptionCreateRequest,
             @RequestHeader("X-User-ID") String userUuid, @RequestHeader("X-Device-Secret") String deviceSecret) {
-        return subscriptionCommandService.createSubscription(userUuid, deviceSecret, subscriptionCreateRequestDto);
+        return subscriptionService.createSubscription(userUuid, deviceSecret, subscriptionCreateRequest);
     }
 
     /**
      * 저장된 모든 키워드 목록 조회
      */
     @GetMapping("/keywords")
-    public KeywordListResponseDto getAllKeywords() {
+    public KeywordListResponse getAllKeywords() {
         return subscriptionQueryService.getAllKeywords();
     }
 
@@ -62,6 +69,6 @@ public class SubscriptionController implements SubscriptionApi {
                                    @RequestBody @Valid SubscriptionUpdateRequest request,
                                    @RequestHeader("X-User-ID") String userUuid,
                                    @RequestHeader("X-Device-Secret") String deviceSecret) {
-        subscriptionCommandService.updateSubscription(subscriptionId, userUuid, deviceSecret, request);
+        subscriptionService.updateSubscription(subscriptionId, userUuid, deviceSecret, request);
     }
 }

@@ -1,6 +1,6 @@
 package com.todaysound.todaysound_server.domain.url.controller;
 
-import com.todaysound.todaysound_server.domain.url.dto.response.UrlResponseDto;
+import com.todaysound.todaysound_server.domain.url.dto.response.UrlResponse;
 import com.todaysound.todaysound_server.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 import java.util.List;
 
 @Tag(name = "Url", description = "URL 관리 API")
@@ -30,7 +29,7 @@ public interface UrlApi {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ApiResponse.class),
-                            array = @ArraySchema(schema = @Schema(implementation = UrlResponseDto.class)),
+                            array = @ArraySchema(schema = @Schema(implementation = UrlResponse.class)),
                             examples = @ExampleObject(
                                     name = "URL 목록 조회 성공 예시",
                                     value = """
@@ -50,6 +49,6 @@ public interface UrlApi {
                     )
             )
     })
-    List<UrlResponseDto> getUrls();
+    List<UrlResponse> getUrls();
 }
 

@@ -1,10 +1,8 @@
 package com.todaysound.todaysound_server.query.alarm.presentation;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willReturn;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -15,7 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.todaysound.todaysound_server.domain.alarm.dto.response.RecentAlarmResponse;
 import com.todaysound.todaysound_server.support.DocumentationTestSupport;
 import java.util.List;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -49,7 +46,7 @@ class AlarmQueryControllerTest extends DocumentationTestSupport {
                         parameterWithName("size").description("페이지 크기")),
                 responseFields(fieldWithPath("errorCode").description("응답 코드"),
                         fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                        fieldWithPath("result").type(JsonFieldType.ARRAY).description("피드 목록"),
+                        fieldWithPath("result").type(JsonFieldType.ARRAY).description("알림 목록"),
                         fieldWithPath("result[].subscriptionId").type(JsonFieldType.NUMBER).description("구독 ID"),
                         fieldWithPath("result[].summaryId").type(JsonFieldType.NUMBER).description("요약 ID"),
                         fieldWithPath("result[].alias").type(JsonFieldType.STRING).description("구독 별칭"),

@@ -10,7 +10,8 @@ import org.springframework.http.HttpStatus;
 public enum SummaryException implements ErrorCode {
 
 
-    SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND, "SUMMARY401_1", "유효하지 않은 SUMMARY ID 입니다."),;
+    SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND, "SUMMARY401_1", "유효하지 않은 SUMMARY ID 입니다."),
+    ;
 
     private final HttpStatus status;
     private final String errorCode;

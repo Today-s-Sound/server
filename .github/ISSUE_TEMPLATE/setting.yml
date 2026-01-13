@@ -1,7 +1,7 @@
 name: Setting Template
 description: 환경 설정, 의존성 관리 등 세팅 관련 작업을 위한 템플릿
 title: "⚙️ [Setting] "
-labels: ["⚙️setting"]
+labels: [ "⚙️setting" ]
 
 body:
   - type: input

@@ -16,11 +16,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionCreateRequestDto;
+import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionCreateRequest;
 import com.todaysound.todaysound_server.domain.subscription.dto.request.SubscriptionUpdateRequest;
-import com.todaysound.todaysound_server.domain.subscription.dto.response.KeywordListResponseDto;
-import com.todaysound.todaysound_server.domain.subscription.dto.response.KeywordListResponseDto.KeywordItem;
-import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponseDto;
+import com.todaysound.todaysound_server.domain.subscription.dto.response.KeywordListResponse;
+import com.todaysound.todaysound_server.domain.subscription.dto.response.KeywordListResponse.KeywordItem;
+import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionCreationResponse;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse;
 import com.todaysound.todaysound_server.domain.subscription.dto.response.SubscriptionResponse.KeywordResponse;
 import com.todaysound.todaysound_server.support.DocumentationTestSupport;
@@ -37,11 +37,11 @@ public class SubscriptionControllerTest extends DocumentationTestSupport {
     @Test
     void 신규_구독을_등록한다() throws Exception {
         // given
-        SubscriptionCreateRequestDto request = new SubscriptionCreateRequestDto(1L, List.of(1L, 2L), "넓은마을", true);
+        SubscriptionCreateRequest request = new SubscriptionCreateRequest(1L, List.of(1L, 2L), "넓은마을", true);
 
-        given(subscriptionCommandService.createSubscription(anyString(), anyString(),
-                any(SubscriptionCreateRequestDto.class))).willReturn(
-                SubscriptionCreationResponseDto.builder().subscriptionId(1L).build());
+        given(subscriptionService.createSubscription(anyString(), anyString(),
+                any(SubscriptionCreateRequest.class))).willReturn(
+                SubscriptionCreationResponse.builder().subscriptionId(1L).build());
 
         // when then
         ResultActions result = mockMvc.perform(
@@ -96,7 +96,7 @@ public class SubscriptionControllerTest extends DocumentationTestSupport {
         //given
         Long subscriptionId = 1L;
 
-        doNothing().when(subscriptionCommandService).deleteSubscription(anyLong(), anyString(), anyString());
+        doNothing().when(subscriptionService).deleteSubscription(anyLong(), anyString(), anyString());
 
         //when then
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/subscriptions/{subscriptionId}", subscriptionId)
@@ -111,7 +111,7 @@ public class SubscriptionControllerTest extends DocumentationTestSupport {
     @Test
     void 키워드_목록을_조회한다() throws Exception {
         //given
-        KeywordListResponseDto response = new KeywordListResponseDto(
+        KeywordListResponse response = new KeywordListResponse(
                 List.of(new KeywordItem(1L, "AI"), new KeywordItem(2L, "개발"), new KeywordItem(3L, "뉴스")));
 
         given(subscriptionQueryService.getAllKeywords()).willReturn(response);
@@ -134,7 +134,7 @@ public class SubscriptionControllerTest extends DocumentationTestSupport {
         Long subscriptionId = 1L;
         SubscriptionUpdateRequest request = new SubscriptionUpdateRequest(List.of(1L, 2L), "수정된 별칭", true);
 
-        doNothing().when(subscriptionCommandService)
+        doNothing().when(subscriptionService)
                 .updateSubscription(anyLong(), anyString(), anyString(), any(SubscriptionUpdateRequest.class));
 
         //when then

@@ -13,7 +13,7 @@ public class UserValidator {
     private final UserQueryService userQueryService;
 
     public void validateUniqueSecret(String deviceSecret) {
-        if(userQueryService.existsBySecretFingerprint(deviceSecret)){
+        if (userQueryService.existsBySecretFingerprint(deviceSecret)) {
             throw BaseException.type(AuthErrorCode.DEVICE_SECRET_ALREADY_EXISTED);
         }
     }

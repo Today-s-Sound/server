@@ -9,12 +9,11 @@ import com.todaysound.todaysound_server.domain.url.repository.UrlRepository;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.global.exception.BaseException;
 import com.todaysound.todaysound_server.global.exception.CommonErrorCode;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @Slf4j
@@ -28,7 +27,7 @@ public class SubscriptionFactory {
      * 구독 생성
      */
     public Subscription create(User user, Long urlId, List<Long> keywordIds, String alias,
-            boolean isAlarmEnabled) {
+                               boolean isAlarmEnabled) {
         log.debug("구독 생성 시작: user={}, urlId={}, keywordIds={}", user.getUserId(), urlId,
                 keywordIds);
 
@@ -60,7 +59,7 @@ public class SubscriptionFactory {
      * 키워드 ID 리스트로 SubscriptionKeyword 생성
      */
     private List<SubscriptionKeyword> createSubscriptionKeywordsFromIds(Subscription subscription,
-            List<Long> keywordIds) {
+                                                                        List<Long> keywordIds) {
         // 키워드 ID로 키워드 조회
         List<Keyword> keywords = keywordRepository.findAllById(keywordIds);
 
