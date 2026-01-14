@@ -93,8 +93,7 @@ public class User extends BaseEntity {
      * = FetchType.LAZY: 지연 로딩으로 성능 최적화
      */
     @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,
-            fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Subscription> subscriptions = new ArrayList<>();
 
     @Builder.Default
@@ -161,5 +160,27 @@ public class User extends BaseEntity {
     public void addFcmToken(FCM_Token fcmToken) {
         // FCM_Token의 user 필드는 builder에서 이미 설정되어야 함
         this.fcmTokenList.add(fcmToken);
+    }
+
+    @Builder
+    private User(String userId, String hashedSecret, String secretFingerprint, UserType userType, boolean isActive,
+                 String plainSecret) {
+        this.userId = userId;
+        this.hashedSecret = hashedSecret;
+        this.secretFingerprint = secretFingerprint;
+        this.userType = userType;
+        this.isActive = isActive;
+        this.plainSecret = plainSecret;
+    }
+
+    public static User create(String userId, String hashedSecret, String secretFingerprint, UserType userType,
+                              boolean isActive, String plainSecret) {
+        return User.builder().userId(userId)
+                .hashedSecret(hashedSecret)
+                .secretFingerprint(secretFingerprint)
+                .userType(userType)
+                .isActive(isActive)
+                .plainSecret(plainSecret)
+                .build();
     }
 }

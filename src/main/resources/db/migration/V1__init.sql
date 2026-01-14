@@ -77,7 +77,7 @@ create table summaries
     content         varchar(255) not null,
     created_at      datetime(6)  not null,
     hash_tag        varchar(255) not null,
-    is_read         bit    d      not null,
+    is_read         bit          not null,
     post_date       varchar(255) null,
     post_url        varchar(255) not null,
     title           varchar(255) not null,

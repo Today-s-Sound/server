@@ -100,4 +100,17 @@ public class Subscription extends BaseEntity {
 
         keywords.forEach(keyword -> this.subscriptionKeywords.add(SubscriptionKeyword.of(this, keyword)));
     }
+
+    @Builder
+    private Subscription(Url url, boolean isAlarmEnabled, String alias, User user, String lastSeenPostId) {
+        this.url = url;
+        this.isAlarmEnabled = isAlarmEnabled;
+        this.alias = alias;
+        this.user = user;
+        this.lastSeenPostId = lastSeenPostId;
+    }
+
+    public static Subscription create(Url url,boolean isAlarmEnabled, String alias, User user) {
+        return Subscription.builder().url(url).isAlarmEnabled(isAlarmEnabled).alias(alias).user(user).build();
+    }
 }
