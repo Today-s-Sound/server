@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,4 +21,13 @@ public class Url extends BaseEntity {
     @Column
     String title;
 
+    @Builder
+    private Url(String link, String title) {
+        this.link = link;
+        this.title = title;
+    }
+
+    public static Url create(String link, String title) {
+        return Url.builder().link(link).title(title).build();
+    }
 }

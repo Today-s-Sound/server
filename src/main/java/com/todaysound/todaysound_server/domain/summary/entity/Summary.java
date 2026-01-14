@@ -64,10 +64,4 @@ public class Summary extends BaseEntity {
         return summary;
     }
 
-    // Summary를 읽음 처리
-    public void markAsRead() {
-        this.isKeywordMatched = true;
-        this.updatedAt = LocalDateTime.now();
-    }
-
 }

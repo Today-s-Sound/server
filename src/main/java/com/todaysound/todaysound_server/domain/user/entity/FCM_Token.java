@@ -7,17 +7,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @Table(name = "fcm_tokens")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class FCM_Token extends BaseEntity {
 
     @ManyToOne
@@ -32,5 +29,16 @@ public class FCM_Token extends BaseEntity {
 
     public void update(String sFcmToken) {
         this.fcmToken = sFcmToken;
+    }
+
+    @Builder
+    private FCM_Token(User user, String fcmToken, String model) {
+        this.user = user;
+        this.fcmToken = fcmToken;
+        this.model = model;
+    }
+
+    public static FCM_Token create(User user, String fcmToken, String model) {
+        return FCM_Token.builder().user(user).fcmToken(fcmToken).model(model).build();
     }
 }

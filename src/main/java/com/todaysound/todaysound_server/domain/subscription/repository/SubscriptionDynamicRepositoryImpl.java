@@ -17,7 +17,7 @@ public class SubscriptionDynamicRepositoryImpl implements SubscriptionDynamicRep
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Subscription> findByUserId(Long userId, Long page, Integer size) {
+    public List<Subscription> findByUserId(Long userId, Integer page, Integer size) {
 
         return queryFactory
                 .selectFrom(subscription)
