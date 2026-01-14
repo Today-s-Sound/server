@@ -1,3 +1,21 @@
+create table flyway_schema_history
+(
+    installed_rank int                                 not null
+        primary key,
+    version        varchar(50)                         null,
+    description    varchar(200)                        not null,
+    type           varchar(20)                         not null,
+    script         varchar(1000)                       not null,
+    checksum       int                                 null,
+    installed_by   varchar(100)                        not null,
+    installed_on   timestamp default CURRENT_TIMESTAMP not null,
+    execution_time int                                 not null,
+    success        tinyint(1)                          not null
+);
+
+create index flyway_schema_history_s_idx
+    on flyway_schema_history (success);
+
 create table keywords
 (
     id   bigint auto_increment
@@ -46,7 +64,6 @@ create table subscriptions
     alias             varchar(255) not null,
     created_at        datetime(6)  not null,
     is_alarm_enabled  bit          not null,
-    is_urgent         bit          not null,
     last_seen_post_id varchar(255) not null,
     updated_at        datetime(6)  not null,
     url_id            bigint       not null,
@@ -72,17 +89,17 @@ create table subscriptions_keywords
 
 create table summaries
 (
-    id              bigint auto_increment
+    id                 bigint auto_increment
         primary key,
-    content         varchar(255) not null,
-    created_at      datetime(6)  not null,
-    hash_tag        varchar(255) not null,
-    is_read         bit          not null,
-    post_date       varchar(255) null,
-    post_url        varchar(255) not null,
-    title           varchar(255) not null,
-    updated_at      datetime(6)  not null,
-    subscription_id bigint       not null,
+    content            text             not null,
+    created_at         datetime(6)      not null,
+    hash_tag           varchar(255)     not null,
+    post_date          varchar(255)     null,
+    post_url           varchar(255)     not null,
+    title              varchar(255)     not null,
+    updated_at         datetime(6)      not null,
+    subscription_id    bigint           not null,
+    is_keyword_matched bit default b'0' not null,
     constraint FKij0n0t6mdwys3yjgn1wxcqgbe
         foreign key (subscription_id) references subscriptions (id)
             on delete cascade
