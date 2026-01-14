@@ -37,7 +37,7 @@ class SummaryCleanupSchedulerTest extends ServiceTestSupport {
     private SummaryCleanupScheduler summaryCleanupScheduler;
 
     @Test
-    void _7일_지난로직은_삭제한다() {
+    void _7일_지난_요약은_삭제한다() {
         // given
         Url url = Url.create("http://example.com", "Example Site");
         urlRepository.save(url);
@@ -45,7 +45,7 @@ class SummaryCleanupSchedulerTest extends ServiceTestSupport {
         User user = User.create("userId1", "hashedSecret", "fingerPrint", UserType.USER, true, "plainSecret");
         userRepository.save(user);
 
-        Subscription subscription = Subscription.create(url, true, "alias", user);
+        Subscription subscription = Subscription.create(url, true, "alias", user, "lastSeenPostId");
         subscriptionRepository.save(subscription);
 
         Summary oldSummary = Summary.create("hash", "title", "content", "postUrl", "postDate", true, subscription);
