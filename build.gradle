@@ -108,11 +108,11 @@ tasks.register('copyDocument', Copy) { // 8
     dependsOn asciidoctor
 
     from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
+    into file("docs")
 }
 
 asciidoctor.doFirst {
-    delete file('src/main/resources/static/docs')
+    delete file('docs')
 }
 
 
