@@ -180,6 +180,8 @@ public class User extends BaseEntity {
         this.isActive = isActive;
         this.plainSecret = plainSecret;
         this.fcmTokenList = fcmTokenList;
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
     }
 
     public static User createAnonymous(String userId, String hashedSecret, String secretFingerprint, UserType userType,
