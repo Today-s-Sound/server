@@ -23,10 +23,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Builder
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class User extends BaseEntity {
 
     // ********************************* static final 상수 필드 *********************************/
@@ -69,7 +67,6 @@ public class User extends BaseEntity {
     /**
      * 사용자 활성 상태 기본값 true, 탈퇴 시 false로 변경
      */
-    @Builder.Default
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
@@ -92,12 +89,9 @@ public class User extends BaseEntity {
      * cascade = CascadeType.ALL: User 삭제 시 관련 Subscription도 함께 삭제 orphanRemoval = true: 고아 객체(연관관계가 끊어진 객체) 자동 삭제 fetch
      * = FetchType.LAZY: 지연 로딩으로 성능 최적화
      */
-    @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,
-            fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Subscription> subscriptions = new ArrayList<>();
 
-    @Builder.Default
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FCM_Token> fcmTokenList = new ArrayList<>();
 
@@ -161,5 +155,41 @@ public class User extends BaseEntity {
     public void addFcmToken(FCM_Token fcmToken) {
         // FCM_Token의 user 필드는 builder에서 이미 설정되어야 함
         this.fcmTokenList.add(fcmToken);
+    }
+
+    @Builder
+    private User(String userId, String hashedSecret, String secretFingerprint, UserType userType, boolean isActive,
+                 String plainSecret, List<FCM_Token> fcmTokenList) {
+        this.userId = userId;
+        this.hashedSecret = hashedSecret;
+        this.secretFingerprint = secretFingerprint;
+        this.userType = userType;
+        this.isActive = isActive;
+        this.plainSecret = plainSecret;
+        this.fcmTokenList = fcmTokenList;
+    }
+
+    public static User createAnonymous(String userId, String hashedSecret, String secretFingerprint, UserType userType,
+                              boolean isActive, String plainSecret, List<FCM_Token> fcmTokenList) {
+        return User.builder().userId(userId)
+                .hashedSecret(hashedSecret)
+                .secretFingerprint(secretFingerprint)
+                .userType(userType)
+                .isActive(isActive)
+                .plainSecret(plainSecret)
+                .fcmTokenList(fcmTokenList)
+                .build();
+    }
+
+    public static User create(String userId, String hashedSecret, String secretFingerprint, UserType userType,
+                              boolean isActive, String plainSecret) {
+        return User.builder().userId(userId)
+                .hashedSecret(hashedSecret)
+                .secretFingerprint(secretFingerprint)
+                .userType(userType)
+                .isActive(isActive)
+                .plainSecret(plainSecret)
+                .fcmTokenList(new ArrayList<>())
+                .build();
     }
 }

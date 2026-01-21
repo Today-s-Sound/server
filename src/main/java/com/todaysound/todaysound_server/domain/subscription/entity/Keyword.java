@@ -16,16 +16,13 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @Table(name = "keywords")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Keyword extends BaseEntity {
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Builder.Default
     @OneToMany(mappedBy = "keyword", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubscriptionKeyword> subscriptions = new ArrayList<>();
 

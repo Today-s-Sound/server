@@ -32,11 +32,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-    // TestContainer
-    testImplementation "org.testcontainers:testcontainers:1.19.3"
-    testImplementation "org.testcontainers:junit-jupiter:1.19.3"
-    testImplementation "org.testcontainers:mysql:1.19.3"
-
     // Micrometer
     implementation 'io.micrometer:micrometer-registry-prometheus' // Prometheus
 
@@ -66,6 +61,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 
     // test containers
+    testImplementation "org.testcontainers:testcontainers"
     testImplementation 'org.testcontainers:mysql'
     testImplementation 'org.testcontainers:jdbc'
     testImplementation 'org.testcontainers:junit-jupiter'
@@ -112,11 +108,11 @@ tasks.register('copyDocument', Copy) { // 8
     dependsOn asciidoctor
 
     from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
+    into file("docs")
 }
 
 asciidoctor.doFirst {
-    delete file('src/main/resources/static/docs')
+    delete file('docs')
 }
 
 

@@ -27,8 +27,7 @@ public class UserService {
     public UserIdResponse anonymous(UserSecretRequest userSecretRequest) {
 
         log.info("Anonymous user command received");
-        boolean secretExists =
-                userQueryService.existsBySecretFingerprint(userSecretRequest.deviceSecret());
+        boolean secretExists = userQueryService.existsBySecretFingerprint(userSecretRequest.deviceSecret());
 
         User user;
 
@@ -38,8 +37,7 @@ public class UserService {
 
             User newUser = userFactory.createAnonymousUser(userSecretRequest);
 
-            FCM_Token fcmToken = FCM_Token.builder().fcmToken(userSecretRequest.fcmToken())
-                    .model(userSecretRequest.model()).user(newUser).build();
+            FCM_Token fcmToken = FCM_Token.create(newUser, userSecretRequest.fcmToken(), userSecretRequest.model());
 
             newUser.addFcmToken(fcmToken);
 

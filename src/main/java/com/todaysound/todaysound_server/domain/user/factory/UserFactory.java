@@ -23,8 +23,7 @@ public class UserFactory {
     public User createAnonymousUser(UserSecretRequest userSecretRequest) {
 
         // 배포시 로깅은 제거
-        log.debug("익명 사용자 생성 시작: deviceSecret={}",
-                userSecretRequest.deviceSecret().substring(0, 8) + "...");
+        log.debug("익명 사용자 생성 시작: deviceSecret={}", userSecretRequest.deviceSecret().substring(0, 8) + "...");
 
         // UUID 생성
         String userId = UUID.randomUUID().toString();
@@ -35,12 +34,8 @@ public class UserFactory {
         // 중복 검사용 fingerprint 생성 (SHA-256)
         String secretFingerprint = CryptoUtils.sha256(userSecretRequest.deviceSecret());
 
-        // User 엔티티 생성
-        User user = User.builder().userId(userId).hashedSecret(hashedSecret)
-                .secretFingerprint(secretFingerprint).userType(UserType.ANONYMOUS).isActive(true)
-                .plainSecret(userSecretRequest.deviceSecret()) // 생성 시에만 설정
-                .fcmTokenList(new ArrayList<>()) // 빌더 사용 시 명시적으로 초기화
-                .build();
+        User user = User.createAnonymous(userId, hashedSecret, secretFingerprint, UserType.ANONYMOUS, true,
+                userSecretRequest.deviceSecret(), new ArrayList<>());
 
         log.debug("익명 사용자 생성 완료: userId={}", userId);
 
