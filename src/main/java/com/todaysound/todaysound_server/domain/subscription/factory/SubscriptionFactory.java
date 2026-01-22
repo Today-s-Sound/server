@@ -40,6 +40,7 @@ public class SubscriptionFactory {
                 .url(url)
                 .alias(alias)
                 .isAlarmEnabled(isAlarmEnabled)
+                .lastSeenPostId("")
                 .build();
 
         // 키워드가 있는 경우 처리
