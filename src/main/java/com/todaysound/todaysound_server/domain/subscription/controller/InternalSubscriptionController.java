@@ -26,6 +26,7 @@ public class InternalSubscriptionController implements InternalSubscriptionApi {
      * 크롤러용: 모든 구독 정보를 단순 JSON 형태로 반환
      */
     @GetMapping("/subscriptions")
+    @Transactional(readOnly = true)
     public List<InternalSubscriptionResponse> getSubscriptions() {
         List<Subscription> subscriptions = subscriptionRepository.findAll();
         return subscriptions.stream()
