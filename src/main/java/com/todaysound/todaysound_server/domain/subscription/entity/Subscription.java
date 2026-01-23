@@ -44,6 +44,10 @@ public class Subscription extends BaseEntity {
     @Column(name = "last_seen_post_id", nullable = false)
     private String lastSeenPostId;
 
+    // 마지막으로 isAlarmEnabled를 수정한 순간
+    @Column(name = "last_alarm_toggle_at", nullable = true)
+    private LocalDateTime lastAlarmToggleAt;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -83,8 +87,9 @@ public class Subscription extends BaseEntity {
     }
 
     public void updateIsAlarmEnabled(Boolean alarmEnabled) {
-        if (alarmEnabled != null) {
+        if (alarmEnabled != null && this.isAlarmEnabled != alarmEnabled) {
             this.isAlarmEnabled = alarmEnabled;
+            this.lastAlarmToggleAt = LocalDateTime.now();
         }
     }
 

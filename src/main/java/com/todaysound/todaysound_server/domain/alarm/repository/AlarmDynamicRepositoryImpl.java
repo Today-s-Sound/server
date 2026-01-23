@@ -20,9 +20,17 @@ public class AlarmDynamicRepositoryImpl implements AlarmDynamicRepository {
     @Override
     public List<Summary> findAlarms(Long userId, PageRequest pageRequest) {
 
-        return queryFactory.selectFrom(summary).innerJoin(summary.subscription, subscription).fetchJoin()
-                .where(subscription.user.id.eq(userId), subscription.isAlarmEnabled.eq(true))
-                .orderBy(summary.updatedAt.desc(), summary.id.desc()).offset(pageRequest.page() * pageRequest.size())
+        // 알람을 바꿨을 때 그 때를 기억해서 그 전에 목록은 안보이는게 맞다
+        return queryFactory.selectFrom(summary)
+                .innerJoin(summary.subscription, subscription).fetchJoin()
+                .where(
+                        subscription.user.id.eq(userId),
+                        subscription.isAlarmEnabled.eq(true),
+                        subscription.lastAlarmToggleAt.isNull()
+                                .or(summary.createdAt.goe(subscription.lastAlarmToggleAt))
+                )
+                .orderBy(summary.updatedAt.desc(), summary.id.desc())
+                .offset(pageRequest.page() * pageRequest.size())
                 .limit(pageRequest.size()).fetch();
     }
 
