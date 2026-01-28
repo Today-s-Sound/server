@@ -11,13 +11,17 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: true
-        show_sql: true
         generate_statistics: true
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+      logging: slf4j
 
 # FCM 설정
 fcm:
@@ -47,3 +51,7 @@ management:
   endpoint:
     health:
       show-details: always
+  tracing:
+    enabled: true           # Tracing 기능 활성화 (기본 true)
+    sampling:
+      probability: 1.0      # 로컬 테스트를 위해 모든 요청을 추적하도록 1.0(100%) 설정

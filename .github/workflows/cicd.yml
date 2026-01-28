@@ -68,12 +68,14 @@ jobs:
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           FCM_JSON: ${{ secrets.FCM_JSON }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
-          envs: DOCKER_USERNAME,IMAGE_NAME,DB_URL,DB_USERNAME,DB_PASSWORD,FCM_JSON
+          envs: DOCKER_USERNAME,IMAGE_NAME,DB_URL,DB_USERNAME,DB_PASSWORD,FCM_JSON, SENTRY_DSN, SENTRY_AUTH_TOKEN
           script: |
             set -e
 
@@ -85,6 +87,8 @@ jobs:
             DB_USERNAME=${DB_USERNAME}
             DB_PASSWORD=${DB_PASSWORD}
             FCM_JSON=${FCM_JSON}
+            SENTRY_DSN=${SENTRY_DSN}
+            SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
             EOF
 
             sudo docker-compose down

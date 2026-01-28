@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.5.6'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.asciidoctor.jvm.convert' version '4.0.5'
+    id "io.sentry.jvm.gradle" version "6.0.0"
 }
 
 group = 'com.todaysound'
@@ -31,6 +32,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+
+    // 1. Sentry
+    implementation platform('io.sentry:sentry-bom:8.31.0')
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta'
+    implementation 'io.sentry:sentry-logback'
 
     // P6Spy Spring Boot Starter
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.1'
@@ -129,4 +136,13 @@ bootJar { // 생성된 HTML 파일을 static/docs 폴더에 복사
     }
 }
 
+sentry {
+    // 소스 코드를 센트리에 업로드하여 에러 발생 시 코드 문맥을 보여줍니다.
+    includeSourceContext = true
+
+    org = "todaysound"
+    projectName = "java-spring-boot"
+
+    authToken = System.getenv("SENTRY_AUTH_TOKEN")
+}
 

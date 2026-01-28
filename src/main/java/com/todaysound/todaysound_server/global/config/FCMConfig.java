@@ -43,7 +43,6 @@ public class FCMConfig {
                     log.error("❌ 디코딩된 데이터가 올바른 JSON 형식이 아닙니다!");
                 }
 
-                log.info("🔑 디코딩된 Firebase 키 JSON : {}", jsonString);
 
                 serviceAccount =
                         new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
