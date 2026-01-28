@@ -9,6 +9,10 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
+import static com.todaysound.todaysound_server.global.utils.LogMarkers.CRITICAL;
+import static com.todaysound.todaysound_server.global.utils.LogMarkers.EXTERNAL_API;
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -27,20 +31,20 @@ public class FCMConfig {
         try {
             InputStream serviceAccount;
 
-            log.info("🔍 FCM Secret String 상태: fcm={},null={}, blank={}, length={}",
-                    fcmSecretString, fcmSecretString == null,
-                    fcmSecretString != null && fcmSecretString.isBlank(),
-                    fcmSecretString != null ? fcmSecretString.length() : 0);
+            log.info("FCM Secret String 상태 확인 {} {} {}",
+                    kv("isNull", fcmSecretString == null),
+                    kv("isBlank", fcmSecretString != null && fcmSecretString.isBlank()),
+                    kv("length", fcmSecretString != null ? fcmSecretString.length() : 0));
 
             // 환경 변수(GitHub Secrets)가 존재하면 우선 사용 (Prod 환경)
             if (fcmSecretString != null && !fcmSecretString.isBlank()) {
-                log.info("🔑 Firebase 키를 [환경 변수]에서 로드합니다.");
+                log.info("Firebase 키를 환경 변수에서 로드합니다 {}", kv("source", "env"));
 
                 byte[] decoded = Base64.getDecoder().decode(fcmSecretString);
                 String jsonString = new String(decoded, StandardCharsets.UTF_8);
 
                 if (!jsonString.trim().startsWith("{")) {
-                    log.error("❌ 디코딩된 데이터가 올바른 JSON 형식이 아닙니다!");
+                    log.error(CRITICAL, "디코딩된 데이터가 올바른 JSON 형식이 아닙니다");
                 }
 
 
@@ -56,12 +60,12 @@ public class FCMConfig {
 
                 if (FirebaseApp.getApps().isEmpty()) {
                     FirebaseApp.initializeApp(options);
-                    log.info("✅ Firebase Admin SDK가 성공적으로 초기화되었습니다. (환경 변수에서 로드)");
+                    log.info(EXTERNAL_API, "Firebase Admin SDK 초기화 완료 {}", kv("source", "env"));
                 } else {
-                    log.info("ℹ️ Firebase Admin SDK가 이미 초기화되어 있습니다.");
+                    log.info(EXTERNAL_API, "Firebase Admin SDK 이미 초기화됨 {}", kv("source", "env"));
                 }
             } else {
-                log.info("🔑 Firebase 키를 [로컬 파일]에서 로드합니다.");
+                log.info("Firebase 키를 로컬 파일에서 로드합니다 {}", kv("source", "local"));
                 ClassPathResource resource = new ClassPathResource(
                         "todaysound-68df8-firebase-adminsdk-fbsvc-6b2b6e6a71.json");
                 serviceAccount = resource.getInputStream();
@@ -71,14 +75,14 @@ public class FCMConfig {
 
                 if (FirebaseApp.getApps().isEmpty()) {
                     FirebaseApp.initializeApp(options);
-                    log.info("✅ Firebase Admin SDK가 성공적으로 초기화되었습니다. (로컬 파일에서 로드)");
+                    log.info(EXTERNAL_API, "Firebase Admin SDK 초기화 완료 {}", kv("source", "local"));
                 } else {
-                    log.info("ℹ️ Firebase Admin SDK가 이미 초기화되어 있습니다.");
+                    log.info(EXTERNAL_API, "Firebase Admin SDK 이미 초기화됨 {}", kv("source", "local"));
                 }
             }
 
         } catch (Exception e) {
-            log.error("❌ Firebase Admin SDK 초기화 실패", e);
+            log.error(CRITICAL, "Firebase Admin SDK 초기화 실패 {}", kv("exception", e.getMessage()), e);
         }
 
     }

@@ -7,6 +7,9 @@ import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.factory.UserFactory;
 import com.todaysound.todaysound_server.domain.user.repository.UserRepository;
 import com.todaysound.todaysound_server.domain.user.validator.HeaderAuthValidator;
+import static com.todaysound.todaysound_server.global.utils.LogMarkers.AUTH;
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,14 +29,13 @@ public class UserService {
 
     public UserIdResponse anonymous(UserSecretRequest userSecretRequest) {
 
-        log.info("Anonymous user command received");
+        log.info(AUTH, "익명 사용자 인증 요청 수신");
         boolean secretExists = userQueryService.existsBySecretFingerprint(userSecretRequest.deviceSecret());
 
         User user;
 
         if (!secretExists) {
-            log.info("User secret does not exist, creating new user");
-            log.info("fcmToken: {}", userSecretRequest.fcmToken());
+            log.info(AUTH, "신규 사용자 생성 시작");
 
             User newUser = userFactory.createAnonymousUser(userSecretRequest);
 
@@ -43,9 +45,11 @@ public class UserService {
 
             user = userRepository.save(newUser);
 
+            log.info(AUTH, "신규 사용자 생성 완료 {}", kv("userId", user.getId()));
+
             user.clearPlainSecret();
         } else {
-            log.info("User secret exists, returning existing user");
+            log.info(AUTH, "기존 사용자 인증 완료");
             user = userQueryService.findBySecretFingerprint(userSecretRequest.deviceSecret());
         }
 
@@ -58,5 +62,7 @@ public class UserService {
         User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
 
         userRepository.delete(user);
+
+        log.info(AUTH, "회원 탈퇴 완료 {}", kv("userId", user.getId()));
     }
 }
