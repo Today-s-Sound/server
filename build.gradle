@@ -32,8 +32,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-    // Micrometer
+    // P6Spy Spring Boot Starter
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.1'
+
+    // Micrometer Metrics
     implementation 'io.micrometer:micrometer-registry-prometheus' // Prometheus
+
+    // Micrometer Tracing - traceId/spanId 자동 생성
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
 
     // 구조화된 JSON 로깅
     implementation 'net.logstash.logback:logstash-logback-encoder:8.0'
