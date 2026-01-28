@@ -9,6 +9,9 @@ import com.google.firebase.messaging.MessagingErrorCode;
 import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.SendResponse;
+import static com.todaysound.todaysound_server.global.utils.LogMarkers.EXTERNAL_API;
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
 import com.todaysound.todaysound_server.domain.user.entity.FCM_Token;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.repository.FCMRepository;
@@ -42,7 +45,7 @@ public class FCMService {
         List<FCM_Token> devices = fcmRepository.findByUser(user);
 
         if (devices.isEmpty()) {
-            log.warn("알림을 보낼 기기(토큰)가 없습니다. (User ID: {})", user.getId());
+            log.warn(EXTERNAL_API, "알림을 보낼 기기 토큰 없음 {}", kv("userId", user.getId()));
             return;
         }
 
@@ -64,15 +67,19 @@ public class FCMService {
         try {
             response = FirebaseMessaging.getInstance().sendEachForMulticast(message);
 
-            log.info("총 {}건의 알림 발송 요청 성공. (성공: {}건, 실패: {}건)", response.getSuccessCount() + response.getFailureCount(),
-                    response.getSuccessCount(), response.getFailureCount());
+            log.info(EXTERNAL_API, "FCM 알림 발송 완료 {} {} {}",
+                    kv("total", response.getSuccessCount() + response.getFailureCount()),
+                    kv("success", response.getSuccessCount()),
+                    kv("failure", response.getFailureCount()));
 
             if (response.getFailureCount() > 0) {
                 handleFailedTokens(response, tokens);
             }
 
         } catch (FirebaseMessagingException e) {
-            log.error("FCM Multicast 발송 실패", e);
+            log.error(EXTERNAL_API, "FCM Multicast 발송 실패 {} {}",
+                    kv("userId", user.getId()),
+                    kv("errorMessage", e.getMessage()), e);
         }
     }
 
@@ -96,22 +103,19 @@ public class FCMService {
                 MessagingErrorCode errorCode = exception.getMessagingErrorCode(); // Enum 값
                 String errorMessage = exception.getMessage(); // 실제 에러 내용
 
-                log.error("--------------------------------------------------");
-                log.error("[FCM 발송 실패 상세 로그]");
-                log.error("대상 토큰: {}", failedToken);
-                log.error("에러 코드: {}", errorCode);
-                log.error("에러 메시지: {}", errorMessage);
+                String maskedToken = maskToken(failedToken);
+                int httpStatus = exception.getHttpResponse() != null
+                        ? exception.getHttpResponse().getStatusCode() : 0;
 
-                if (exception.getHttpResponse() != null) {
-                    log.error("HTTP 상태 코드: {}", exception.getHttpResponse().getStatusCode());
-                    log.error("HTTP 응답 본문: {}", exception.getHttpResponse().getContent());
-                }
+                log.error(EXTERNAL_API, "FCM 발송 실패 {} {} {} {}",
+                        kv("token", maskedToken),
+                        kv("errorCode", errorCode),
+                        kv("errorMessage", errorMessage),
+                        kv("httpStatus", httpStatus));
 
                 if (errorCode == MessagingErrorCode.UNREGISTERED) {
-                    log.warn("FCM 토큰 {}이(가) 만료(UNREGISTERED)되었습니다. DB 삭제 목록에 추가합니다.", failedToken);
+                    log.warn(EXTERNAL_API, "만료된 FCM 토큰 삭제 대상 추가 {}", kv("token", maskedToken));
                     tokensToDelete.add(failedToken);
-                } else {
-                    log.warn("FCM 토큰 {} 발송 실패. (에러 코드: {})", failedToken, errorCode);
                 }
             }
         }
@@ -119,8 +123,15 @@ public class FCMService {
         // 삭제할 토큰이 있다면 DB에서 일괄 삭제
         if (!tokensToDelete.isEmpty()) {
             fcmRepository.deleteAllByFcmTokenIn(tokensToDelete);
-            log.info("만료된 FCM 토큰 {}건을 DB에서 삭제했습니다.", tokensToDelete.size());
+            log.info(EXTERNAL_API, "만료된 FCM 토큰 DB 삭제 완료 {}", kv("deletedCount", tokensToDelete.size()));
         }
+    }
+
+    private static String maskToken(String token) {
+        if (token == null || token.length() <= 8) {
+            return "****";
+        }
+        return token.substring(0, 8) + "****";
     }
 
     @Transactional

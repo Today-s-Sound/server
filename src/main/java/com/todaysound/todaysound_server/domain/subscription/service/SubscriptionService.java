@@ -12,12 +12,17 @@ import com.todaysound.todaysound_server.domain.subscription.repository.KeywordRe
 import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.validator.HeaderAuthValidator;
+import static com.todaysound.todaysound_server.global.utils.LogMarkers.BUSINESS;
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
 import com.todaysound.todaysound_server.global.exception.BaseException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -41,6 +46,10 @@ public class SubscriptionService {
         }
 
         subscriptionRepository.deleteById(subscriptionId);
+
+        log.info(BUSINESS, "구독 삭제 완료 {} {}",
+                kv("subscriptionId", subscriptionId),
+                kv("userId", user.getId()));
     }
 
     public SubscriptionCreationResponse createSubscription(final String headerUserUuid,
@@ -58,6 +67,12 @@ public class SubscriptionService {
                 requestDto.isAlarmEnabled()
         );
         Subscription savedSubscription = subscriptionRepository.save(subscription);
+
+        log.info(BUSINESS, "구독 생성 완료 {} {} {}",
+                kv("subscriptionId", savedSubscription.getId()),
+                kv("userId", user.getId()),
+                kv("urlId", requestDto.urlId()));
+
         return SubscriptionCreationResponse.from(savedSubscription);
     }
 
@@ -87,5 +102,8 @@ public class SubscriptionService {
         subscription.updateAlias(request.alias());
         subscription.updateIsAlarmEnabled(request.isAlarmEnabled());
 
+        log.info(BUSINESS, "구독 수정 완료 {} {}",
+                kv("subscriptionId", subscriptionId),
+                kv("userId", user.getId()));
     }
 }
