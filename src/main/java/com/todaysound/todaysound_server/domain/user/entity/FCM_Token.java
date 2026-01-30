@@ -27,8 +27,8 @@ public class FCM_Token extends BaseEntity {
     @Column(name = "model", nullable = false, length = 100)
     private String model;
 
-    public void update(String sFcmToken) {
-        this.fcmToken = sFcmToken;
+    public void updateToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     @Builder
