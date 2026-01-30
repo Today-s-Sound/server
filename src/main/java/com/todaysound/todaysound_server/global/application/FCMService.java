@@ -146,7 +146,7 @@ public class FCMService {
             fcmRepository.save(newToken);
         } else {
             FCM_Token existingToken = FCM_Tokens.get(0);
-            if (!existingToken.equals(requestToken)) {
+            if (!existingToken.getFcmToken().equals(requestToken)) {
                 existingToken.updateToken(requestToken);
             }
         }
