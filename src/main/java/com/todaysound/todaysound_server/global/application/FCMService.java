@@ -3,7 +3,6 @@ package com.todaysound.todaysound_server.global.application;
 import com.google.firebase.messaging.ApnsConfig;
 import com.google.firebase.messaging.Aps;
 import com.google.firebase.messaging.BatchResponse;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.MessagingErrorCode;
 import com.google.firebase.messaging.MulticastMessage;
@@ -31,6 +30,7 @@ public class FCMService {
 
     private final FCMRepository fcmRepository;
     private final HeaderAuthValidator headerAuthValidator;
+    private final FirebaseMessagingClient firebaseMessagingClient;
 
     /**
      * (핵심 메소드) 특정 User에게 알림을 발송합니다.
@@ -65,7 +65,7 @@ public class FCMService {
         // FCM에 일괄 발송 요청
         BatchResponse response;
         try {
-            response = FirebaseMessaging.getInstance().sendEachForMulticast(message);
+            response = firebaseMessagingClient.sendEachForMulticast(message);
 
             log.info(EXTERNAL_API, "FCM 알림 발송 완료 {} {} {}",
                     kv("total", response.getSuccessCount() + response.getFailureCount()),
@@ -135,13 +135,40 @@ public class FCMService {
     }
 
     @Transactional
-    public void updateFcmToken(String userUuid, String deviceSecret, String SFcmToken) {
+    public void updateFcmToken(String userUuid, String deviceSecret, String requestToken) {
 
         User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
 
-        FCM_Token fcmToken = fcmRepository.findByUserId(user.getId());
+        List<FCM_Token> FCM_Tokens = fcmRepository.findByUser(user);
 
-        fcmToken.update(SFcmToken);
+        if(FCM_Tokens.isEmpty()){
+            FCM_Token newToken = FCM_Token.create(user, requestToken, "unknown");
+            fcmRepository.save(newToken);
+        } else {
+            FCM_Token existingToken = FCM_Tokens.get(0);
+            if (!existingToken.getFcmToken().equals(requestToken)) {
+                existingToken.updateToken(requestToken);
+            }
+        }
 
     }
+
+    @Transactional
+    public void updateFcmTokenV2(String userUuid, String deviceSecret, String requestToken, String model) {
+
+        User user = headerAuthValidator.validateAndGetUser(userUuid, deviceSecret);
+
+        List<FCM_Token> fcmTokens = fcmRepository.findByUser(user);
+
+        if (fcmTokens.isEmpty()) {
+            FCM_Token newToken = FCM_Token.create(user, requestToken, model);
+            fcmRepository.save(newToken);
+        } else {
+            FCM_Token existingToken = fcmTokens.get(0);
+            if (!existingToken.getFcmToken().equals(requestToken)) {
+                existingToken.updateToken(requestToken);
+            }
+        }
+    }
+
 }
