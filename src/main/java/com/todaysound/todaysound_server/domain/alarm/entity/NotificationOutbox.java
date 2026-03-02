@@ -59,6 +59,13 @@ public class NotificationOutbox extends BaseEntity {
     }
 
     /**
+     * 탈퇴 사용자 등 재시도 없이 즉시 실패 처리할 때 사용한다.
+     */
+    public void markAsFailed() {
+        this.status = OutboxStatus.FAILED;
+    }
+
+    /**
      * 재시도 횟수를 증가시키고, maxRetry 초과 시 FAILED 로 전환한다.
      */
     public void incrementRetry(int maxRetry) {
