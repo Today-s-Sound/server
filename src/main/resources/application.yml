@@ -1,19 +1,27 @@
 spring:
   profiles:
     active: local
-
-  config:
-    import: optional:file:.env[.properties]
-
   jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
 
-fcm:
-  # Docker에서 넘겨준 값이 없으면 빈 문자열
-  secret-string: ${FCM_JSON:}
+server:
+  port: 8080
 
-logging:
-  level:
-    org.flywaydb: DEBUG
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+    import: application-local.yml
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: application-prod.yml

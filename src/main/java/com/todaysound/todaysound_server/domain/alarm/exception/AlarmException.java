@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum AlarmException implements ErrorCode {
 
-    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "ALARM401_1", "유효하지 않은 ALARM ID 입니다."),;
+    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "ALARM401_1", "유효하지 않은 ALARM ID 입니다."),
+    ;
 
     private final HttpStatus status;
     private final String errorCode;

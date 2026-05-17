@@ -1,0 +1,4 @@
+[[alarm-list]]
+=== 알림 목록 조회
+
+operation::alarm-query-controller-test/알림_목록을_조회합니다[snippets='http-request,query-parameters,http-response,response-fields']

@@ -1,0 +1,4 @@
+[[summary-delete]]
+=== 요약 삭제
+
+operation::summary-controller-test/요약을_삭제한다[snippets='http-request,path-parameters,http-response,response-fields']

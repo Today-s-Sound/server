@@ -10,8 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
- * 헤더 기반 인증 값 검증기
- * - X-User-ID, X-Device-Secret을 검증하여 유효한 User를 반환
+ * 헤더 기반 인증 값 검증기 - X-User-ID, X-Device-Secret을 검증하여 유효한 User를 반환
  */
 @Component
 @RequiredArgsConstructor

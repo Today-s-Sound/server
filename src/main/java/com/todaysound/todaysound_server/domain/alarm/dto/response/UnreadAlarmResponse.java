@@ -1,15 +1,14 @@
 package com.todaysound.todaysound_server.domain.alarm.dto.response;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.domain.summary.entity.Summary;
 import com.todaysound.todaysound_server.global.utils.TimeUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * 메인화면용 읽지 않은 알람 응답 DTO
- * - 읽지 않은 Summary만 포함
+ * 메인화면용 읽지 않은 알람 응답 DTO - 읽지 않은 Summary만 포함
  */
 public record UnreadAlarmResponse(
         @Schema(description = "구독 ID", example = "1")

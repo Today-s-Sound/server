@@ -1,7 +1,7 @@
 package com.todaysound.todaysound_server.domain.alarm.controller;
 
 import com.todaysound.todaysound_server.domain.alarm.dto.response.RecentAlarmResponse;
-import com.todaysound.todaysound_server.global.dto.PageRequestDTO;
+import com.todaysound.todaysound_server.global.dto.PageRequest;
 import com.todaysound.todaysound_server.global.exception.CustomErrorResponse;
 import com.todaysound.todaysound_server.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,10 +10,9 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestHeader;
-
-import java.util.List;
 
 @Tag(name = "Alarm", description = "알람 조회 및 읽음 처리 API")
 public interface AlarmApi {
@@ -91,7 +90,7 @@ public interface AlarmApi {
             )
     })
     List<RecentAlarmResponse> getRecentAlarms(
-            @ModelAttribute PageRequestDTO pageRequest,
+            @ModelAttribute PageRequest pageRequest,
             @RequestHeader("X-User-ID") String userUuid,
             @RequestHeader("X-Device-Secret") String deviceSecret
     );

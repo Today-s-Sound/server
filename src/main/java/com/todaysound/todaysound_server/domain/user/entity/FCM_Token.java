@@ -1,15 +1,20 @@
 package com.todaysound.todaysound_server.domain.user.entity;
 
 import com.todaysound.todaysound_server.global.entity.BaseEntity;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
 @Table(name = "fcm_tokens")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class FCM_Token extends BaseEntity {
 
     @ManyToOne
@@ -22,7 +27,18 @@ public class FCM_Token extends BaseEntity {
     @Column(name = "model", nullable = false, length = 100)
     private String model;
 
-    public void update(String sFcmToken) {
-        this.fcmToken = sFcmToken;
+    public void updateToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
+    @Builder
+    private FCM_Token(User user, String fcmToken, String model) {
+        this.user = user;
+        this.fcmToken = fcmToken;
+        this.model = model;
+    }
+
+    public static FCM_Token create(User user, String fcmToken, String model) {
+        return FCM_Token.builder().user(user).fcmToken(fcmToken).model(model).build();
     }
 }

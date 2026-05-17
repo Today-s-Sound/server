@@ -1,7 +1,7 @@
 name: Docs Template
 description: 문서 추가 또는 수정을 위한 템플릿
 title: "📖 [Docs] "
-labels: ["📖docs"]
+labels: [ "📖docs" ]
 
 body:
   - type: input

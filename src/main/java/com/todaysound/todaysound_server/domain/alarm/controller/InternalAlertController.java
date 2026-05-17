@@ -1,15 +1,19 @@
 package com.todaysound.todaysound_server.domain.alarm.controller;
 
-import com.todaysound.todaysound_server.domain.summary.entity.Summary;
-import com.todaysound.todaysound_server.domain.summary.repository.SummaryRepository;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
 import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
+import com.todaysound.todaysound_server.domain.summary.entity.Summary;
+import com.todaysound.todaysound_server.domain.summary.repository.SummaryRepository;
 import com.todaysound.todaysound_server.domain.user.entity.User;
+import static com.todaysound.todaysound_server.global.utils.LogMarkers.BUSINESS;
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
 import com.todaysound.todaysound_server.global.application.FCMService;
 import com.todaysound.todaysound_server.global.exception.BaseException;
 import com.todaysound.todaysound_server.global.exception.CommonErrorCode;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,19 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 크롤러용 알림 생성 엔드포인트
- *
- * POST /internal/alerts
- * {
- *   "user_id": 10,
- *   "subscription_id": 1,
- *   "site_post_id": "12345",
- *   "title": "게시글 제목",    
- *   "url": "https://...",
- *   "content_raw": "...원문...",
- *   "content_summary": "...요약...",
- *   "keyword_matched": true
- * }
+ * <p>
+ * POST /internal/alerts { "user_id": 10, "subscription_id": 1, "site_post_id": "12345", "title": "게시글 제목", "url":
+ * "https://...", "content_raw": "...원문...", "content_summary": "...요약...", "keyword_matched": true }
  */
+@Slf4j
 @RestController
 @RequestMapping("/internal")
 @RequiredArgsConstructor
@@ -41,6 +37,11 @@ public class InternalAlertController implements InternalAlertApi {
 
     @PostMapping("/alerts")
     public void createAlert(@RequestBody InternalAlertRequest request) {
+        log.info(BUSINESS, "크롤러 알림 수신 {} {} {}",
+                kv("userId", request.userId()),
+                kv("subscriptionId", request.subscriptionId()),
+                kv("sitePostId", request.sitePostId()));
+
         Subscription subscription = subscriptionRepository.findById(request.subscriptionId())
                 .orElseThrow(() -> BaseException.type(CommonErrorCode.ENTITY_NOT_FOUND));
 
@@ -52,13 +53,7 @@ public class InternalAlertController implements InternalAlertApi {
         // 알림이 활성화된 구독에 대해서만 푸시 전송
         if (subscription.isAlarmEnabled()) {
             User user = subscription.getUser();
-            String prefix;
-
-            if(request.keywordMatched == true) {
-                prefix = "[" + request.siteAlias + "]";
-            } else {
-                prefix = "[긴급/" + request.siteAlias + "]";
-            }
+            String prefix = "[" + request.siteAlias + "]";
 
             fcmService.sendNotificationToUser(
                     user,
@@ -79,6 +74,11 @@ public class InternalAlertController implements InternalAlertApi {
         );
 
         summaryRepository.save(summary);
+
+        log.info(BUSINESS, "크롤러 알림 처리 완료 {} {} {}",
+                kv("subscriptionId", request.subscriptionId()),
+                kv("sitePostId", request.sitePostId()),
+                kv("alarmSent", subscription.isAlarmEnabled()));
     }
 
     public record InternalAlertRequest(

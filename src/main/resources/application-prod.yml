@@ -20,6 +20,7 @@ spring:
     show-sql: false
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
         jdbc.batch_size: 20
         order_inserts: true
         order_updates: true
@@ -64,3 +65,14 @@ management:
     distribution:
       percentiles-histogram:
         http.server.requests: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+sentry:
+  dsn: ${SENTRY_DSN}
+  environment: ${spring.profiles.active}
+  exception-resolver-order: -2147483647
+  max-request-body-size: none
+  send-default-pii: false
+  traces-sample-rate: ${SENTRY_TRACES_SAMPLE_RATE:1.0}

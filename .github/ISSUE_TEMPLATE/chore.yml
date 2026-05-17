@@ -1,7 +1,7 @@
 name: Chore Template
 description: 기타 사항 추가 시 쓰는 템플릿
 title: "🚀 [Chore] "
-labels: ["🚀chore"]
+labels: [ "🚀chore" ]
 
 body:
   - type: input

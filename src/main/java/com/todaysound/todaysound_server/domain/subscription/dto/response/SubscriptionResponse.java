@@ -2,7 +2,6 @@ package com.todaysound.todaysound_server.domain.subscription.dto.response;
 
 import com.todaysound.todaysound_server.domain.subscription.entity.Keyword;
 import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
-
 import java.util.List;
 
 public record SubscriptionResponse(

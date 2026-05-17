@@ -1,6 +1,6 @@
 package com.todaysound.todaysound_server.domain.subscription.controller;
 
-import com.todaysound.todaysound_server.domain.subscription.dto.response.InternalSubscriptionResponseDto;
+import com.todaysound.todaysound_server.domain.subscription.dto.response.InternalSubscriptionResponse;
 import com.todaysound.todaysound_server.global.exception.CustomErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -9,10 +9,9 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
 
 @Tag(name = "InternalSubscription", description = "크롤러용 구독 조회 및 상태 업데이트 내부 API")
 public interface InternalSubscriptionApi {
@@ -32,7 +31,7 @@ public interface InternalSubscriptionApi {
                     description = "구독 정보 조회 성공",
                     content = @Content(
                             mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = InternalSubscriptionResponseDto.class)),
+                            array = @ArraySchema(schema = @Schema(implementation = InternalSubscriptionResponse.class)),
                             examples = @ExampleObject(
                                     name = "구독 목록 예시",
                                     value = """
@@ -69,7 +68,7 @@ public interface InternalSubscriptionApi {
                     )
             )
     })
-    List<InternalSubscriptionResponseDto> getSubscriptions();
+    List<InternalSubscriptionResponse> getSubscriptions();
 
     @Operation(
             summary = "마지막으로 본 게시글 ID 업데이트 (크롤러용)",

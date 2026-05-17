@@ -1,4 +1,7 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/today_sound_local?serverTimezone=Asia/Seoul}
     username: ${DB_USERNAME:root}
@@ -8,16 +11,26 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
-        show_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
         generate_statistics: true
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+      logging: slf4j
+
+# FCM 설정
+fcm:
+  secret-string: ${FCM_JSON:}
 
 # 로컬 개발용 로깅 설정
 logging:
   level:
+    org.flywaydb: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     com.todaysound.todaysound_server: DEBUG
@@ -38,3 +51,7 @@ management:
   endpoint:
     health:
       show-details: always
+  tracing:
+    enabled: true           # Tracing 기능 활성화 (기본 true)
+    sampling:
+      probability: 1.0      # 로컬 테스트를 위해 모든 요청을 추적하도록 1.0(100%) 설정

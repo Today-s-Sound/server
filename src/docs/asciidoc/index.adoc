@@ -13,3 +13,28 @@ endif::[]
 == Subscription API
 
 include::api/subscription/subscription.adoc[]
+
+[[Feed-API]]
+== Feed API
+
+include::api/feed/feed.adoc[]
+
+[[Alarm-API]]
+== Alarm API
+
+include::api/alarm/alarm.adoc[]
+
+[[Url-API]]
+== URL API
+
+include::api/url/url.adoc[]
+
+[[Summary-API]]
+== Summary API
+
+include::api/summary/summary.adoc[]
+
+[[User-API]]
+== User API
+
+include::api/user/user.adoc[]

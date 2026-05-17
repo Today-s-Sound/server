@@ -5,7 +5,7 @@ spring:
     username: root
     password: password
   flyway:
-    locations: classpath:db/migration/prod
+    locations: classpath:db/migration
   jpa:
     show-sql: false
     properties:
@@ -24,3 +24,7 @@ jwt:
 cookie:
   valid-time: 604800 # 60 * 60 * 24 * 7 (일주일)
   name: HCC_SES
+
+
+fcm:
+  secret-string: ${FCM_JSON:}

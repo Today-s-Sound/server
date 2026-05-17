@@ -4,10 +4,10 @@ import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.exception.UserErrorCode;
 import com.todaysound.todaysound_server.domain.user.repository.UserRepository;
 import com.todaysound.todaysound_server.global.exception.BaseException;
+import com.todaysound.todaysound_server.global.utils.CryptoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.todaysound.todaysound_server.global.utils.CryptoUtils;
 
 @RequiredArgsConstructor
 @Service

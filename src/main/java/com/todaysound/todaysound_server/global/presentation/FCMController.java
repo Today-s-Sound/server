@@ -1,10 +1,11 @@
 package com.todaysound.todaysound_server.global.presentation;
 
-import com.todaysound.todaysound_server.domain.user.dto.request.FCMNotificationRequestDto;
-import com.todaysound.todaysound_server.domain.user.dto.response.FCMNotificationResponseDto;
+import com.todaysound.todaysound_server.domain.user.dto.request.FCMNotificationRequest;
+import com.todaysound.todaysound_server.domain.user.dto.response.FCMNotificationResponse;
 import com.todaysound.todaysound_server.domain.user.service.UserQueryService;
 import com.todaysound.todaysound_server.global.application.FCMService;
 import com.todaysound.todaysound_server.global.dto.FCMUpdateRequest;
+import com.todaysound.todaysound_server.global.dto.FCMUpdateRequestV2;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,15 +24,15 @@ public class FCMController implements FCMApi {
     private final UserQueryService userQueryService;
 
     @PostMapping("/send")
-    public FCMNotificationResponseDto sendNotification(@RequestHeader("X-User-ID") String userId,
-            @Valid @RequestBody FCMNotificationRequestDto requestDto) {
+    public FCMNotificationResponse sendNotification(@RequestHeader("X-User-ID") String userId,
+                                                    @Valid @RequestBody FCMNotificationRequest requestDto) {
         // X-User-ID로 사용자 조회
         var user = userQueryService.findByUserId(userId);
 
         // FCM 알림 전송
         fcmService.sendNotificationToUser(user, requestDto.title(), requestDto.body());
 
-        return FCMNotificationResponseDto.success();
+        return FCMNotificationResponse.success();
     }
 
     @PutMapping("")
@@ -41,6 +42,12 @@ public class FCMController implements FCMApi {
         fcmService.updateFcmToken(userId, deviceSecret, request.fcmToken());
     }
 
+    @PutMapping("/v2")
+    public void updateFcmTokenV2(@RequestHeader("X-User-ID") String userId,
+                                 @RequestHeader("X-Device-Secret") String deviceSecret,
+                                 @Valid @RequestBody FCMUpdateRequestV2 request) {
+        fcmService.updateFcmTokenV2(userId, deviceSecret, request.fcmToken(), request.model());
+    }
 
 }
 
