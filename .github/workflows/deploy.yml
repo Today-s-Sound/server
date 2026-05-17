@@ -1,0 +1,62 @@
+name: Deploy to homeserver
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "build.gradle"
+      - "settings.gradle"
+      - "gradle/**"
+      - "Dockerfile"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-homeserver-todaysound
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, homeserver]
+    timeout-minutes: 25
+
+    env:
+      REPO_DIR: /Users/parkparkjihyeon/homeserver/services/todaysound/repo
+      APP_DIR:  /Users/parkparkjihyeon/homeserver/services/todaysound
+
+    steps:
+      - name: Sync repo on host
+        run: |
+          cd "$REPO_DIR"
+          git fetch --all --prune
+          git reset --hard origin/main
+
+      - name: Build backend image
+        run: |
+          cd "$APP_DIR"
+          DOCKER_BUILDKIT=1 docker compose build
+
+      - name: Roll out
+        run: |
+          cd "$APP_DIR"
+          docker compose up -d
+          docker image prune -f
+
+      - name: Smoke test (e2e via caddy with correct Host)
+        run: |
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            code=$(docker exec caddy wget -S -q -O- \
+                --header "Host: today-sound.com" \
+                http://localhost/actuator/health 2>&1 \
+              | awk '/HTTP\//{print $2; exit}')
+            if [ "$code" = "200" ] || [ "$code" = "401" ] || [ "$code" = "403" ]; then
+              echo "Backend OK ($code)"
+              exit 0
+            fi
+            echo "Retry $i (code=$code)..."
+            sleep 6
+          done
+          echo "Backend healthcheck failed"
+          docker logs todaysound-server --tail 100 || true
+          exit 1
