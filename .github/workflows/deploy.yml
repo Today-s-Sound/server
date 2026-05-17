@@ -2,7 +2,7 @@ name: Deploy to homeserver
 
 on:
   push:
-    branches: [main]
+    branches: [dev]
     paths:
       - "src/**"
       - "build.gradle"
@@ -30,7 +30,7 @@ jobs:
         run: |
           cd "$REPO_DIR"
           git fetch --all --prune
-          git reset --hard origin/main
+          git reset --hard origin/dev
 
       - name: Build backend image
         run: |
