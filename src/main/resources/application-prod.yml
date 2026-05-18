@@ -68,6 +68,12 @@ management:
   tracing:
     sampling:
       probability: 1.0
+    propagation:
+      type: b3,w3c        # Brave 기본은 b3. w3c도 받아서 OTel 클라이언트 호환
+  zipkin:
+    tracing:
+      # 같은 web 도커 네트워크의 Tempo. ZIPKIN_ENDPOINT 환경변수로 오버라이드 가능.
+      endpoint: ${ZIPKIN_ENDPOINT:http://tempo:9411/api/v2/spans}
 
 sentry:
   dsn: ${SENTRY_DSN}

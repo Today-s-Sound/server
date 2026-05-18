@@ -48,6 +48,9 @@ dependencies {
 
     // Micrometer Tracing - traceId/spanId 자동 생성
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    // Tempo로 trace export (Zipkin wire format). brave가 classpath에 있으면
+    // Spring Boot이 ZipkinAutoConfiguration로 자동 구성.
+    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
 
     // 구조화된 JSON 로깅
     implementation 'net.logstash.logback:logstash-logback-encoder:8.0'
