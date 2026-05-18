@@ -49,11 +49,12 @@ dependencies {
     // Micrometer Tracing - traceId/spanId 자동 생성
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'
     // Tempo로 trace export (Zipkin wire format).
-    // Spring Boot 3.4+ BOM이 io.zipkin.reporter3 그룹을 관리(reporter2는 deprecated).
+    // Spring Boot 3.5 BOM이 io.zipkin.reporter2 그룹을 3.5.x 버전으로 관리.
+    // ("reporter3" 그룹은 존재하지 않음 — 그룹명은 reporter2 유지하고 내부 버전만 v3로 올라옴.)
     // - reporter-brave: Brave Span → Zipkin V2 모델 변환
     // - sender-urlconnection: 실제 HTTP POST. Sender 없으면 ZipkinSpanHandler 빈 생성 안 됨
-    implementation 'io.zipkin.reporter3:zipkin-reporter-brave'
-    implementation 'io.zipkin.reporter3:zipkin-sender-urlconnection'
+    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+    implementation 'io.zipkin.reporter2:zipkin-sender-urlconnection'
 
     // 구조화된 JSON 로깅
     implementation 'net.logstash.logback:logstash-logback-encoder:8.0'
