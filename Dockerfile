@@ -1,12 +1,17 @@
-FROM eclipse-temurin:17-jre
+# syntax=docker/dockerfile:1.7
+
+FROM eclipse-temurin:17-jdk AS build
+WORKDIR /src
+COPY . .
+RUN --mount=type=cache,target=/root/.gradle \
+    chmod +x gradlew && \
+    ./gradlew --no-daemon clean bootJar -x test -x asciidoctor
 
 WORKDIR /app
-
-COPY build/libs/*SNAPSHOT*.jar /app/app.jar
+COPY --from=build /src/build/libs/*SNAPSHOT*.jar /app/app.jar
 
 ENV JAVA_OPTS="-Xms128m -Xmx512m -XX:+UseContainerSupport"
 ENV SPRING_PROFILES_ACTIVE=prod
 EXPOSE 8080
 
-# 💡 수정된 부분: sh -c 를 사용해 JAVA_OPTS 변수를 주입합니다.
 ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar /app/app.jar"]
