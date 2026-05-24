@@ -7,6 +7,7 @@ RUN --mount=type=cache,target=/root/.gradle \
     chmod +x gradlew && \
     ./gradlew --no-daemon clean bootJar -x test -x asciidoctor
 
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=build /src/build/libs/*SNAPSHOT*.jar /app/app.jar
 
