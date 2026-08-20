@@ -20,7 +20,7 @@
 | ---------- | ---------------------------------------------------------------------------- |
 | 언어·런타임 | Java 17 (Corretto / Temurin), Gradle                                          |
 | 프레임워크 | Spring Boot 3.5.6, Spring Web, Spring Security, Spring Data JPA, QueryDSL 5.0 |
-| 데이터     | MySQL 8.0, Flyway 11, Redis 7, p6spy                                          |
+| 데이터     | MySQL 8.0, Flyway 11, p6spy                                                   |
 | 알림       | Firebase Admin SDK 9.2 (FCM)                                                  |
 | 문서화     | Spring REST Docs (Asciidoctor), springdoc-openapi 2.7                         |
 | 관측       | Actuator, Micrometer Prometheus, Micrometer Tracing(Brave) + Zipkin, Loki(logstash-logback-encoder), Sentry |
@@ -33,7 +33,7 @@
 
 ![AWS 인프라](https://raw.githubusercontent.com/Today-s-Sound/.github/main/docs/images/infra.png)
 
-- **main EC2** — Spring Boot(:8080) · Redis · Grafana Alloy 세 컨테이너를 `docker compose`로 운영합니다.
+- **main EC2** — Spring Boot(:8080)와 Grafana Alloy 컨테이너를 `docker compose`로 운영합니다.
 - **RDS MySQL 8.0** — private 서브넷에 두고 db subnet group으로 묶었습니다. 스키마는 Flyway가 관리합니다.
 - **S3** — 서비스 자산 버킷(버저닝·CORS)과 로그 버킷(Loki 청크 저장소)을 분리했습니다.
 - **관측** — Alloy가 `/actuator/prometheus` 메트릭, 도커 로그, OTLP 트레이스를 각각 Prometheus · Loki · Tempo로 보내고 Grafana에서 함께 봅니다.
