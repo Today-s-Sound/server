@@ -5,8 +5,6 @@
 시각장애인을 위한 맞춤형 정보 구독 알림 서비스의 API 서버입니다.
 구독한 웹페이지의 새 글을 크롤러가 수집·요약하면, 이 서버가 저장하고 푸시로 내보냅니다.
 
-<img src="https://raw.githubusercontent.com/Today-s-Sound/.github/main/docs/screenshots/feed.jpg" width="200"/>
-
 [![App Store](https://img.shields.io/badge/App_Store-다운로드-0D96F6?style=flat-square&logo=appstore&logoColor=white)](https://apps.apple.com/kr/app/%EC%98%A4%EB%8A%98%EC%9D%98-%EC%86%8C%EB%A6%AC/id6756462316)
 [![전체 문서](https://img.shields.io/badge/프로젝트_전체_문서-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/Today-s-Sound)
 
