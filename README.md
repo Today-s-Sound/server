@@ -104,77 +104,7 @@ src/main/java/com/todaysound/todaysound_server
 
 <br/>
 
-## 6️⃣ 데이터 모델
-
-Flyway 마이그레이션(`src/main/resources/db/migration`, `V1` ~ `V4`) 기준입니다.
-
-```mermaid
-erDiagram
-    users ||--o{ fcm_tokens : "기기 토큰"
-    users ||--o{ subscriptions : "구독"
-    urls ||--o{ subscriptions : "대상 페이지"
-    subscriptions ||--o{ subscriptions_keywords : "키워드 연결"
-    keywords ||--o{ subscriptions_keywords : "키워드"
-    subscriptions ||--o{ summaries : "요약"
-
-    users {
-        bigint id PK
-        varchar user_id UK "UUID"
-        varchar hashed_secret
-        varchar secret_fingerprint UK
-        enum user_type "ADMIN / ANONYMOUS / USER"
-        bit is_active
-        datetime created_at
-        datetime updated_at
-    }
-    fcm_tokens {
-        bigint id PK
-        varchar fcm_token
-        varchar model "기기 모델"
-        bigint user_id FK
-    }
-    urls {
-        bigint id PK
-        varchar link
-        varchar title
-    }
-    subscriptions {
-        bigint id PK
-        varchar alias "사용자가 붙인 이름"
-        bit is_alarm_enabled
-        varchar last_seen_post_id "마지막으로 본 게시글"
-        datetime last_alarm_toggle_at
-        datetime created_at
-        datetime updated_at
-        bigint url_id FK
-        bigint user_id FK
-    }
-    keywords {
-        bigint id PK
-        varchar name
-    }
-    subscriptions_keywords {
-        bigint id PK
-        bigint subscription_id FK
-        bigint keyword_id FK
-    }
-    summaries {
-        bigint id PK
-        varchar title
-        varchar content "요약문"
-        varchar hash_tag
-        varchar post_url
-        varchar post_date
-        bit is_keyword_matched
-        datetime created_at
-        datetime updated_at
-        bigint subscription_id FK
-    }
-```
-
-<br/>
-
-## 7️⃣ 로컬 실행
+## 6️⃣ 로컬 실행
 
 ```bash
 # 1) 실행 (기본 프로필: local)
@@ -196,7 +126,7 @@ erDiagram
 
 <br/>
 
-## 8️⃣ API 문서
+## 7️⃣ API 문서
 
 | 문서            | 경로                                                    |
 | --------------- | ------------------------------------------------------- |
@@ -208,7 +138,7 @@ API 동작이 바뀌면 REST Docs 스니펫을 갱신하고 PR 본문에 함께 
 
 <br/>
 
-## 9️⃣ 브랜치 · 커밋 컨벤션
+## 8️⃣ 브랜치 · 커밋 컨벤션
 
 - 기본 브랜치는 `dev`, 배포 기준 브랜치는 `main`입니다.
 - 작업 브랜치는 `dev`에서 분기하고, PR 대상은 항상 `dev`입니다.
@@ -217,7 +147,7 @@ API 동작이 바뀌면 REST Docs 스니펫을 갱신하고 PR 본문에 함께 
 
 <br/>
 
-## 🔟 관련 저장소
+## 9️⃣ 관련 저장소
 
 | 저장소                                                                  | 설명                          |
 | ----------------------------------------------------------------------- | ----------------------------- |
