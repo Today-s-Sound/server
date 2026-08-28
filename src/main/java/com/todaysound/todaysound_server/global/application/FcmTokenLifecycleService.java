@@ -14,6 +14,9 @@ public class FcmTokenLifecycleService {
 
     private final FCMRepository fcmRepository;
 
+    /**
+     * 트랜잭션 없이 실행되는 직접 발송 경로에서도 토큰 무효화만 독립적으로 커밋한다.
+     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void deactivateAllIfTokenMatches(Collection<FcmTarget> attemptedTokens) {
         if (attemptedTokens.isEmpty()) {

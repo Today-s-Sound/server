@@ -39,6 +39,7 @@ public class NotificationDeliveryRetryPolicy {
         if (retryAfter == null || retryAfter.isNegative()) {
             return backoff;
         }
+        // 서버 백오프보다 FCM Retry-After가 길면 공급자가 요구한 최소 대기 시간을 우선한다.
         return retryAfter.compareTo(backoff) > 0 ? retryAfter : backoff;
     }
 

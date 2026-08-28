@@ -31,6 +31,7 @@ public class InternalAlertService {
 
     @Transactional
     public void createAlert(InternalAlertCommand command) {
+        // 동일 구독의 중복 콜백을 직렬화해 Summary 검사와 Outbox 생성을 한 임계 구역에서 처리한다.
         Subscription subscription = subscriptionRepository.findByIdForUpdate(command.subscriptionId())
                 .orElseThrow(() -> BaseException.type(CommonErrorCode.ENTITY_NOT_FOUND));
 
@@ -61,6 +62,7 @@ public class InternalAlertService {
             return;
         }
 
+        // 구독이 달라도 같은 URL의 같은 게시글은 하나의 이벤트로 식별해 토큰별 중복 작업을 막는다.
         String eventId = CryptoUtils.sha256(
                 subscription.getUrl().getId() + ":" + command.sitePostId());
         LocalDateTime now = LocalDateTime.now();

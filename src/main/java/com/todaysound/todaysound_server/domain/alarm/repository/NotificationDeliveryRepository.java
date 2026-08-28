@@ -14,6 +14,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface NotificationDeliveryRepository extends JpaRepository<NotificationDelivery, Long> {
 
+    /**
+     * 동시에 들어온 크롤러 콜백이 같은 event-token 작업을 생성하더라도
+     * unique 충돌로 트랜잭션을 롤백하지 않고 기존 작업을 유지한다.
+     */
     @Modifying(flushAutomatically = true)
     @Query(value = """
             INSERT INTO notification_deliveries (
@@ -42,6 +46,10 @@ public interface NotificationDeliveryRepository extends JpaRepository<Notificati
             @Param("createdAt") LocalDateTime createdAt
     );
 
+    /**
+     * 다른 워커가 잠근 행은 기다리지 않고 건너뛰며, lease가 만료된 작업은 다시 선점한다.
+     * 반환된 행의 잠금은 호출한 claimBatch() 트랜잭션이 끝날 때까지 유지된다.
+     */
     @Query(value = """
             SELECT delivery.id
             FROM notification_deliveries delivery
@@ -77,6 +85,9 @@ public interface NotificationDeliveryRepository extends JpaRepository<Notificati
             """)
     List<NotificationDelivery> findAllForDispatchByIdIn(@Param("ids") Collection<Long> ids);
 
+    /**
+     * 결과 반영과 재선점이 교차하지 않도록 행을 잠가 lease 확인과 상태 변경을 직렬화한다.
+     */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
             SELECT delivery
