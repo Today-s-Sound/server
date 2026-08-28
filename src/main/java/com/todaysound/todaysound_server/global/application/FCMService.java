@@ -118,6 +118,7 @@ public class FCMService {
 
             ApnsConfig apnsConfig = ApnsConfig.builder()
                     .putHeader("apns-priority", "10")
+                    // APNs에 대기 중인 동일 이벤트의 병합을 요청하며 이미 표시된 알림까지 제거하지는 않는다.
                     .putHeader("apns-collapse-id", eventId)
                     .setAps(Aps.builder().setSound("default").setBadge(1).build())
                     .build();
@@ -125,6 +126,7 @@ public class FCMService {
             MulticastMessage message = MulticastMessage.builder()
                     .setNotification(notification)
                     .setApnsConfig(apnsConfig)
+                    // 클라이언트가 eventId를 기준으로 중복 표시를 방지할 수 있도록 함께 전달한다.
                     .putData("eventId", eventId)
                     .addAllTokens(targets.stream().map(FcmTarget::token).toList())
                     .build();
@@ -158,6 +160,7 @@ public class FCMService {
         List<SendResponse> responses = response == null ? null : response.getResponses();
         List<FcmSendResult> results = new ArrayList<>(targets.size());
 
+        // Admin SDK가 입력 토큰과 응답 순서를 보존하므로 같은 index의 발송 건에 결과를 대응한다.
         for (int index = 0; index < targets.size(); index++) {
             FcmTarget target = targets.get(index);
             if (responses == null || index >= responses.size() || responses.get(index) == null) {
@@ -237,6 +240,7 @@ public class FCMService {
         );
     }
 
+    /** Retry-After의 delta-seconds와 HTTP-date 형식을 모두 지연 시간으로 변환한다. */
     private Duration retryAfterOf(FirebaseMessagingException exception) {
         if (exception.getHttpResponse() == null) {
             return null;

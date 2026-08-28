@@ -18,6 +18,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+/**
+ * 선점 트랜잭션을 끝낸 뒤 FCM을 호출하고, 결과는 별도 트랜잭션으로 저장한다.
+ * 외부 호출 중에는 DB 잠금과 커넥션을 점유하지 않는다. FCM 성공 직후 프로세스가 종료되면
+ * lease 만료 후 재발송될 수 있으므로 전체 전달 보장은 exactly-once가 아닌 at-least-once다.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -35,6 +40,7 @@ public class NotificationDeliveryDispatcher {
             return 0;
         }
 
+        // 하나의 Multicast는 payload를 공유하므로 메시지 내용과 eventId가 모두 같은 작업만 묶는다.
         Map<MessageKey, List<ClaimedDelivery>> groups = claimed.stream()
                 .collect(Collectors.groupingBy(
                         delivery -> new MessageKey(

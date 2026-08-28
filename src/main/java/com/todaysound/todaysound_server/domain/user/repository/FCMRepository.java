@@ -16,6 +16,10 @@ public interface FCMRepository extends JpaRepository<FCM_Token, Long> {
 
     FCM_Token findByUserId(Long userId);
 
+    /**
+     * 발송 당시 토큰과 현재 토큰이 같을 때만 비활성화해,
+     * 늦은 UNREGISTERED 응답이 이미 갱신된 토큰을 끄지 않게 한다.
+     */
     @Modifying
     @Query("""
             UPDATE FCM_Token token

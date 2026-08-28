@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class NotificationDeliveryService {
 
+    // 최초 전송 1회와 최대 3회의 재시도를 합한 횟수다.
     public static final int MAX_ATTEMPTS = 4;
     public static final int MAX_BATCH_SIZE = 500;
     private static final Duration LEASE_DURATION = Duration.ofMinutes(5);
@@ -46,6 +47,7 @@ public class NotificationDeliveryService {
     public List<ClaimedDelivery> claimBatch(int requestedBatchSize, LocalDateTime requestedAt) {
         int batchSize = Math.max(1, Math.min(requestedBatchSize, MAX_BATCH_SIZE));
         LocalDateTime now = truncateToMicros(requestedAt);
+        // 후보 행 잠금부터 PROCESSING 전환까지 한 트랜잭션으로 묶어 선점을 원자적으로 만든다.
         List<Long> eligibleIds = deliveryRepository.findEligibleIdsForUpdate(now, batchSize);
         if (eligibleIds.isEmpty()) {
             return List.of();
@@ -118,6 +120,7 @@ public class NotificationDeliveryService {
                         (first, ignored) -> first,
                         LinkedHashMap::new
                 ));
+        // 행 잠금 아래에서 lease를 검사해야 늦은 결과와 만료 작업의 재선점이 서로 덮어쓰지 않는다.
         List<NotificationDelivery> processingDeliveries = deliveryRepository.findAllByStatusAndIdIn(
                 DeliveryStatus.PROCESSING,
                 resultByDeliveryId.keySet()
@@ -145,6 +148,7 @@ public class NotificationDeliveryService {
         String errorCode = normalizedErrorCode(result.errorCode());
         if (result.unregistered()) {
             delivery.markFailed(errorCode);
+            // 발송 중 토큰이 갱신됐을 수 있으므로 실제 시도한 토큰과 현재 값이 같을 때만 끈다.
             int deactivatedCount = fcmRepository.deactivateIfTokenMatches(
                     delivery.getFcmToken().getId(),
                     result.attemptedToken(),

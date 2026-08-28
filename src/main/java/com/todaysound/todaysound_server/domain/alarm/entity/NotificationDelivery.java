@@ -97,6 +97,9 @@ public class NotificationDelivery extends BaseEntity {
         this.leaseUntil = truncateToMicros(claimedLeaseUntil);
     }
 
+    /**
+     * 재선점 후 도착한 이전 워커의 응답이 현재 작업 상태를 덮지 못하도록 lease를 비교한다.
+     */
     public boolean isClaimedWith(LocalDateTime claimedLeaseUntil) {
         return status == DeliveryStatus.PROCESSING
                 && Objects.equals(leaseUntil, truncateToMicros(claimedLeaseUntil));

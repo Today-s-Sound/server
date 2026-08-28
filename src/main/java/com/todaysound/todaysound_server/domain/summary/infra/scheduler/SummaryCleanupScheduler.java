@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SummaryCleanupScheduler {
 
+    // Summary의 cascade 삭제로 미완료 발송 작업이 사라지지 않도록 정리 대상에서 제외한다.
     private static final Set<DeliveryStatus> IN_FLIGHT_DELIVERY_STATUSES = Set.of(
             DeliveryStatus.PENDING,
             DeliveryStatus.PROCESSING,
