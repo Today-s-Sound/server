@@ -7,6 +7,8 @@ spring:
   flyway:
     locations: classpath:db/migration
   jpa:
+    hibernate:
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
@@ -28,3 +30,7 @@ cookie:
 
 fcm:
   secret-string: ${FCM_JSON:}
+
+notification:
+  delivery:
+    scheduler-enabled: false

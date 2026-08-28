@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,8 +28,29 @@ public class FCM_Token extends BaseEntity {
     @Column(name = "model", nullable = false, length = 100)
     private String model;
 
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive = true;
+
+    @Column(name = "invalidated_at")
+    private LocalDateTime invalidatedAt;
+
     public void updateToken(String fcmToken) {
         this.fcmToken = fcmToken;
+        activate();
+    }
+
+    public void activate() {
+        this.isActive = true;
+        this.invalidatedAt = null;
+    }
+
+    public void deactivate() {
+        deactivate(LocalDateTime.now());
+    }
+
+    public void deactivate(LocalDateTime invalidatedAt) {
+        this.isActive = false;
+        this.invalidatedAt = invalidatedAt;
     }
 
     @Builder
@@ -36,6 +58,7 @@ public class FCM_Token extends BaseEntity {
         this.user = user;
         this.fcmToken = fcmToken;
         this.model = model;
+        this.isActive = true;
     }
 
     public static FCM_Token create(User user, String fcmToken, String model) {

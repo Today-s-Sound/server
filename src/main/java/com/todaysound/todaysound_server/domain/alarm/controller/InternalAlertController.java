@@ -1,17 +1,11 @@
 package com.todaysound.todaysound_server.domain.alarm.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.todaysound.todaysound_server.domain.subscription.entity.Subscription;
-import com.todaysound.todaysound_server.domain.subscription.repository.SubscriptionRepository;
-import com.todaysound.todaysound_server.domain.summary.entity.Summary;
-import com.todaysound.todaysound_server.domain.summary.repository.SummaryRepository;
-import com.todaysound.todaysound_server.domain.user.entity.User;
 import static com.todaysound.todaysound_server.global.utils.LogMarkers.BUSINESS;
 import static net.logstash.logback.argument.StructuredArguments.kv;
 
-import com.todaysound.todaysound_server.global.application.FCMService;
-import com.todaysound.todaysound_server.global.exception.BaseException;
-import com.todaysound.todaysound_server.global.exception.CommonErrorCode;
+import com.todaysound.todaysound_server.domain.alarm.service.InternalAlertCommand;
+import com.todaysound.todaysound_server.domain.alarm.service.InternalAlertService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,9 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class InternalAlertController implements InternalAlertApi {
 
-    private final SubscriptionRepository subscriptionRepository;
-    private final SummaryRepository summaryRepository;
-    private final FCMService fcmService;
+    private final InternalAlertService internalAlertService;
 
     @PostMapping("/alerts")
     public void createAlert(@RequestBody InternalAlertRequest request) {
@@ -42,43 +34,20 @@ public class InternalAlertController implements InternalAlertApi {
                 kv("subscriptionId", request.subscriptionId()),
                 kv("sitePostId", request.sitePostId()));
 
-        Subscription subscription = subscriptionRepository.findById(request.subscriptionId())
-                .orElseThrow(() -> BaseException.type(CommonErrorCode.ENTITY_NOT_FOUND));
-
-        // 간단한 소유자 검증 (userId 가 다르면 거부)
-        if (!subscription.getUser().getId().equals(request.userId())) {
-            throw BaseException.type(CommonErrorCode.FORBIDDEN);
-        }
-
-        // 알림이 활성화된 구독에 대해서만 푸시 전송
-        if (subscription.isAlarmEnabled()) {
-            User user = subscription.getUser();
-            String prefix = "[" + request.siteAlias + "]";
-
-            fcmService.sendNotificationToUser(
-                    user,
-                    prefix + request.title(),
-                    request.contentSummary()
-            );
-        }
-
-        // sitePostId 를 해시 키로 사용
-        Summary summary = Summary.create(
+        internalAlertService.createAlert(new InternalAlertCommand(
+                request.userId(),
+                request.subscriptionId(),
                 request.sitePostId(),
                 request.title(),
-                request.contentSummary(),
                 request.url(),
                 request.publishedAt(),
-                request.keywordMatched,
-                subscription
-        );
+                request.contentSummary(),
+                request.keywordMatched()
+        ));
 
-        summaryRepository.save(summary);
-
-        log.info(BUSINESS, "크롤러 알림 처리 완료 {} {} {}",
+        log.info(BUSINESS, "크롤러 알림 처리 완료 {} {}",
                 kv("subscriptionId", request.subscriptionId()),
-                kv("sitePostId", request.sitePostId()),
-                kv("alarmSent", subscription.isAlarmEnabled()));
+                kv("sitePostId", request.sitePostId()));
     }
 
     public record InternalAlertRequest(
@@ -95,5 +64,3 @@ public class InternalAlertController implements InternalAlertApi {
     ) {
     }
 }
-
-

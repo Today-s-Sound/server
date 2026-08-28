@@ -1,5 +1,9 @@
 package com.todaysound.todaysound_server.global.application;
 
+import static com.todaysound.todaysound_server.global.utils.LogMarkers.EXTERNAL_API;
+import static net.logstash.logback.argument.StructuredArguments.kv;
+
+import com.google.firebase.ErrorCode;
 import com.google.firebase.messaging.ApnsConfig;
 import com.google.firebase.messaging.Aps;
 import com.google.firebase.messaging.BatchResponse;
@@ -8,16 +12,21 @@ import com.google.firebase.messaging.MessagingErrorCode;
 import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.SendResponse;
-import static com.todaysound.todaysound_server.global.utils.LogMarkers.EXTERNAL_API;
-import static net.logstash.logback.argument.StructuredArguments.kv;
-
 import com.todaysound.todaysound_server.domain.user.entity.FCM_Token;
 import com.todaysound.todaysound_server.domain.user.entity.User;
 import com.todaysound.todaysound_server.domain.user.repository.FCMRepository;
 import com.todaysound.todaysound_server.domain.user.validator.HeaderAuthValidator;
+import com.todaysound.todaysound_server.global.utils.CryptoUtils;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,9 +37,29 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class FCMService {
 
+    private static final int MULTICAST_LIMIT = 500;
+    private static final String CLIENT_RESPONSE_MISMATCH = "CLIENT_RESPONSE_MISMATCH";
+    private static final String CLIENT_RUNTIME_EXCEPTION = "CLIENT_RUNTIME_EXCEPTION";
+    private static final Set<MessagingErrorCode> RETRYABLE_MESSAGING_ERRORS = EnumSet.of(
+            MessagingErrorCode.INTERNAL,
+            MessagingErrorCode.UNAVAILABLE,
+            MessagingErrorCode.QUOTA_EXCEEDED
+    );
+    private static final Set<ErrorCode> RETRYABLE_FIREBASE_ERRORS = EnumSet.of(
+            ErrorCode.ABORTED,
+            ErrorCode.CANCELLED,
+            ErrorCode.DATA_LOSS,
+            ErrorCode.DEADLINE_EXCEEDED,
+            ErrorCode.INTERNAL,
+            ErrorCode.RESOURCE_EXHAUSTED,
+            ErrorCode.UNAVAILABLE,
+            ErrorCode.UNKNOWN
+    );
+
     private final FCMRepository fcmRepository;
     private final HeaderAuthValidator headerAuthValidator;
     private final FirebaseMessagingClient firebaseMessagingClient;
+    private final FcmTokenLifecycleService fcmTokenLifecycleService;
 
     /**
      * (핵심 메소드) 특정 User에게 알림을 발송합니다.
@@ -39,92 +68,247 @@ public class FCMService {
      * @param title 알림 제목
      * @param body  알림 본문
      */
-    @Transactional
     public void sendNotificationToUser(User user, String title, String body) {
-
-        List<FCM_Token> devices = fcmRepository.findByUser(user);
+        List<FCM_Token> devices = fcmRepository.findByUserAndIsActiveTrue(user);
 
         if (devices.isEmpty()) {
             log.warn(EXTERNAL_API, "알림을 보낼 기기 토큰 없음 {}", kv("userId", user.getId()));
             return;
         }
 
-        // FCM 토큰 문자열만 추출
-        List<String> tokens = devices.stream().map(FCM_Token::getFcmToken).collect(Collectors.toList());
+        String eventId = CryptoUtils.sha256("manual:" + UUID.randomUUID());
+        List<FcmTarget> unregisteredTokens = new ArrayList<>();
 
-        // 알림 메시지 내용 구성
-        Notification notification = Notification.builder().setTitle(title).setBody(body).build();
+        for (int start = 0; start < devices.size(); start += MULTICAST_LIMIT) {
+            int end = Math.min(start + MULTICAST_LIMIT, devices.size());
+            List<FcmTarget> targets = devices.subList(start, end).stream()
+                    .map(device -> new FcmTarget(device.getId(), device.getFcmToken()))
+                    .toList();
 
-        ApnsConfig apnsConfig = ApnsConfig.builder().putHeader("apns-priority", "10")
-                .setAps(Aps.builder().setSound("default").setBadge(1).build()).build();
+            sendMulticast(title, body, eventId, targets).stream()
+                    .filter(FcmSendResult::unregistered)
+                    .map(result -> new FcmTarget(result.referenceId(), result.attemptedToken()))
+                    .forEach(unregisteredTokens::add);
+        }
 
-        // 여러 토큰에 한 번에 보내는 MulticastMessage 구성
-        MulticastMessage message = MulticastMessage.builder().setNotification(notification).setApnsConfig(apnsConfig)
-                .addAllTokens(tokens).build();
+        fcmTokenLifecycleService.deactivateAllIfTokenMatches(unregisteredTokens);
+    }
 
-        // FCM에 일괄 발송 요청
-        BatchResponse response;
+    public List<FcmSendResult> sendMulticast(
+            String title,
+            String body,
+            String eventId,
+            List<FcmTarget> targets
+    ) {
+        if (targets.isEmpty()) {
+            return List.of();
+        }
+        if (targets.size() > MULTICAST_LIMIT) {
+            throw new IllegalArgumentException("FCM multicast supports at most 500 targets");
+        }
+        if (eventId == null || !eventId.matches("[0-9a-fA-F]{64}")) {
+            throw new IllegalArgumentException("eventId must be a 64-character SHA-256 hex value");
+        }
+
         try {
-            response = firebaseMessagingClient.sendEachForMulticast(message);
+            Notification notification = Notification.builder()
+                    .setTitle(title)
+                    .setBody(body)
+                    .build();
 
-            log.info(EXTERNAL_API, "FCM 알림 발송 완료 {} {} {}",
-                    kv("total", response.getSuccessCount() + response.getFailureCount()),
-                    kv("success", response.getSuccessCount()),
-                    kv("failure", response.getFailureCount()));
+            ApnsConfig apnsConfig = ApnsConfig.builder()
+                    .putHeader("apns-priority", "10")
+                    .putHeader("apns-collapse-id", eventId)
+                    .setAps(Aps.builder().setSound("default").setBadge(1).build())
+                    .build();
 
-            if (response.getFailureCount() > 0) {
-                handleFailedTokens(response, tokens);
-            }
+            MulticastMessage message = MulticastMessage.builder()
+                    .setNotification(notification)
+                    .setApnsConfig(apnsConfig)
+                    .putData("eventId", eventId)
+                    .addAllTokens(targets.stream().map(FcmTarget::token).toList())
+                    .build();
 
-        } catch (FirebaseMessagingException e) {
+            BatchResponse response = firebaseMessagingClient.sendEachForMulticast(message);
+            List<FcmSendResult> results = mapResponse(response, targets);
+            logResultSummary(results);
+            return results;
+        } catch (FirebaseMessagingException exception) {
             log.error(EXTERNAL_API, "FCM Multicast 발송 실패 {} {}",
-                    kv("userId", user.getId()),
-                    kv("errorMessage", e.getMessage()), e);
+                    kv("errorCode", errorCodeOf(exception)),
+                    kv("errorMessage", exception.getMessage()), exception);
+            return targets.stream()
+                    .map(target -> failureResult(target, exception))
+                    .toList();
+        } catch (RuntimeException exception) {
+            log.error(EXTERNAL_API, "FCM Multicast 클라이언트 예외 {}",
+                    kv("exceptionType", exception.getClass().getSimpleName()), exception);
+            return targets.stream()
+                    .map(target -> FcmSendResult.failure(
+                            target.referenceId(),
+                            target.token(),
+                            false,
+                            false,
+                            CLIENT_RUNTIME_EXCEPTION))
+                    .toList();
         }
     }
 
-    /**
-     * 발송 실패(특히 UNREGISTERED) 응답을 받은 토큰을 DB에서 삭제
-     */
-    private void handleFailedTokens(BatchResponse response, List<String> originalTokens) {
-        List<String> tokensToDelete = new ArrayList<>();
+    private List<FcmSendResult> mapResponse(BatchResponse response, List<FcmTarget> targets) {
+        List<SendResponse> responses = response == null ? null : response.getResponses();
+        List<FcmSendResult> results = new ArrayList<>(targets.size());
 
-        List<SendResponse> responses = response.getResponses();
+        for (int index = 0; index < targets.size(); index++) {
+            FcmTarget target = targets.get(index);
+            if (responses == null || index >= responses.size() || responses.get(index) == null) {
+                results.add(responseMismatch(target));
+                continue;
+            }
 
-        for (int i = 0; i < responses.size(); i++) {
-            SendResponse sendResponse = responses.get(i);
+            SendResponse sendResponse = responses.get(index);
+            if (sendResponse.isSuccessful()) {
+                results.add(FcmSendResult.success(
+                        target.referenceId(),
+                        target.token(),
+                        sendResponse.getMessageId()
+                ));
+                continue;
+            }
 
-            // 발송 실패한 경우 처리
-            if (!sendResponse.isSuccessful()) {
+            FirebaseMessagingException exception = sendResponse.getException();
+            if (exception == null) {
+                results.add(responseMismatch(target));
+                continue;
+            }
 
-                String failedToken = originalTokens.get(i);
-                FirebaseMessagingException exception = sendResponse.getException();
+            FcmSendResult result = failureResult(target, exception);
+            results.add(result);
+            logSendFailure(target, exception, result);
+        }
 
-                MessagingErrorCode errorCode = exception.getMessagingErrorCode(); // Enum 값
-                String errorMessage = exception.getMessage(); // 실제 에러 내용
+        return List.copyOf(results);
+    }
 
-                String maskedToken = maskToken(failedToken);
-                int httpStatus = exception.getHttpResponse() != null
-                        ? exception.getHttpResponse().getStatusCode() : 0;
+    private FcmSendResult responseMismatch(FcmTarget target) {
+        log.error(EXTERNAL_API, "FCM 응답과 발송 대상 불일치 {}",
+                kv("referenceId", target.referenceId()));
+        return FcmSendResult.failure(
+                target.referenceId(),
+                target.token(),
+                true,
+                false,
+                CLIENT_RESPONSE_MISMATCH
+        );
+    }
 
-                log.error(EXTERNAL_API, "FCM 발송 실패 {} {} {} {}",
-                        kv("token", maskedToken),
-                        kv("errorCode", errorCode),
-                        kv("errorMessage", errorMessage),
-                        kv("httpStatus", httpStatus));
+    private FcmSendResult failureResult(FcmTarget target, FirebaseMessagingException exception) {
+        Duration retryAfter = retryAfterOf(exception);
+        MessagingErrorCode messagingErrorCode = exception.getMessagingErrorCode();
+        if (messagingErrorCode != null) {
+            return FcmSendResult.failure(
+                    target.referenceId(),
+                    target.token(),
+                    RETRYABLE_MESSAGING_ERRORS.contains(messagingErrorCode),
+                    messagingErrorCode == MessagingErrorCode.UNREGISTERED,
+                    messagingErrorCode.name(),
+                    retryAfter
+            );
+        }
 
-                if (errorCode == MessagingErrorCode.UNREGISTERED) {
-                    log.warn(EXTERNAL_API, "만료된 FCM 토큰 삭제 대상 추가 {}", kv("token", maskedToken));
-                    tokensToDelete.add(failedToken);
-                }
+        ErrorCode firebaseErrorCode = exception.getErrorCode();
+        if (firebaseErrorCode == null) {
+            return FcmSendResult.failure(
+                    target.referenceId(),
+                    target.token(),
+                    true,
+                    false,
+                    ErrorCode.UNKNOWN.name(),
+                    retryAfter
+            );
+        }
+
+        return FcmSendResult.failure(
+                target.referenceId(),
+                target.token(),
+                RETRYABLE_FIREBASE_ERRORS.contains(firebaseErrorCode),
+                false,
+                firebaseErrorCode.name(),
+                retryAfter
+        );
+    }
+
+    private Duration retryAfterOf(FirebaseMessagingException exception) {
+        if (exception.getHttpResponse() == null) {
+            return null;
+        }
+
+        Object headerValue = exception.getHttpResponse().getHeaders().entrySet().stream()
+                .filter(entry -> "Retry-After".equalsIgnoreCase(entry.getKey()))
+                .map(java.util.Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+        String retryAfter = firstHeaderValue(headerValue);
+        if (retryAfter == null || retryAfter.isBlank()) {
+            return null;
+        }
+
+        try {
+            return Duration.ofSeconds(Math.max(0, Long.parseLong(retryAfter.trim())));
+        } catch (NumberFormatException ignored) {
+            try {
+                Instant retryAt = ZonedDateTime.parse(
+                        retryAfter.trim(),
+                        DateTimeFormatter.RFC_1123_DATE_TIME
+                ).toInstant();
+                Duration delay = Duration.between(Instant.now(), retryAt);
+                return delay.isNegative() ? Duration.ZERO : delay;
+            } catch (DateTimeParseException invalidRetryAfter) {
+                return null;
             }
         }
+    }
 
-        // 삭제할 토큰이 있다면 DB에서 일괄 삭제
-        if (!tokensToDelete.isEmpty()) {
-            fcmRepository.deleteAllByFcmTokenIn(tokensToDelete);
-            log.info(EXTERNAL_API, "만료된 FCM 토큰 DB 삭제 완료 {}", kv("deletedCount", tokensToDelete.size()));
+    private String firstHeaderValue(Object headerValue) {
+        if (headerValue instanceof Iterable<?> values) {
+            var iterator = values.iterator();
+            return iterator.hasNext() ? String.valueOf(iterator.next()) : null;
         }
+        return headerValue == null ? null : String.valueOf(headerValue);
+    }
+
+    private String errorCodeOf(FirebaseMessagingException exception) {
+        MessagingErrorCode messagingErrorCode = exception.getMessagingErrorCode();
+        if (messagingErrorCode != null) {
+            return messagingErrorCode.name();
+        }
+        return exception.getErrorCode() == null
+                ? ErrorCode.UNKNOWN.name()
+                : exception.getErrorCode().name();
+    }
+
+    private void logResultSummary(List<FcmSendResult> results) {
+        long successCount = results.stream().filter(FcmSendResult::success).count();
+        log.info(EXTERNAL_API, "FCM 알림 발송 완료 {} {} {}",
+                kv("total", results.size()),
+                kv("success", successCount),
+                kv("failure", results.size() - successCount));
+    }
+
+    private void logSendFailure(
+            FcmTarget target,
+            FirebaseMessagingException exception,
+            FcmSendResult result
+    ) {
+        int httpStatus = exception.getHttpResponse() == null
+                ? 0
+                : exception.getHttpResponse().getStatusCode();
+
+        log.error(EXTERNAL_API, "FCM 발송 실패 {} {} {} {} {}",
+                kv("token", maskToken(target.token())),
+                kv("errorCode", result.errorCode()),
+                kv("retryable", result.retryable()),
+                kv("errorMessage", exception.getMessage()),
+                kv("httpStatus", httpStatus));
     }
 
     private static String maskToken(String token) {
@@ -146,9 +330,7 @@ public class FCMService {
             fcmRepository.save(newToken);
         } else {
             FCM_Token existingToken = FCM_Tokens.get(0);
-            if (!existingToken.getFcmToken().equals(requestToken)) {
-                existingToken.updateToken(requestToken);
-            }
+            existingToken.updateToken(requestToken);
         }
 
     }
@@ -165,9 +347,7 @@ public class FCMService {
             fcmRepository.save(newToken);
         } else {
             FCM_Token existingToken = fcmTokens.get(0);
-            if (!existingToken.getFcmToken().equals(requestToken)) {
-                existingToken.updateToken(requestToken);
-            }
+            existingToken.updateToken(requestToken);
         }
     }
 
